@@ -17,7 +17,6 @@ Imports:
     DT,
     exactRankTests,
     dunn.test,
-    Rmisc, 
     ROCR,
     ggplot2,
     psych,
@@ -25,6 +24,9 @@ Imports:
     reshape,
     scales,
     shiny,
+    survival,
+    survminer,
+    survAUC,
     stargazer,
     spls
 Encoding: UTF-8

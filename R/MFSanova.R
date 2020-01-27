@@ -17,7 +17,6 @@
 ##' @import ggplot2
 ##'
 ##' @importFrom psych describeBy
-##' @importFrom Rmisc summarySE
 ##' @importFrom graphics plot
 ##' @importFrom utils head read.csv write.csv
 ##' @importFrom stats TukeyHSD aov pairwise.t.test anova kruskal.test relevel

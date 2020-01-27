@@ -167,6 +167,26 @@ plot_msdm <- function(datam, var, grp){
 
 ##' @title plot functions in MEPHAS
 ##'
+##' @param data input data frame
+##' @param varx input x variable name
+##' @param vary input y variable name
+##'
+##' @export
+plot_line1 <- function(data, varx, vary){
+  x <- data[,varx]
+  y <- data[,vary]
+  ggplot(data, aes(x=x, y=y)) + 
+  geom_line() +
+  ylim(0,1) +
+  xlab("") +ylab("")+
+  geom_point(shape = 19, size=0.5) +
+  scale_colour_brewer(palette="Set1")+
+  theme_minimal() + theme(legend.title = element_blank())
+}
+
+
+##' @title plot functions in MEPHAS
+##'
 ##' @param data2 input data frame
 ##' @param var input variable name
 ##' @param grp1 input factor group 1 name
@@ -187,6 +207,22 @@ plot_line2 <- function(data2, var, grp1, grp2){
   theme_minimal() + theme(legend.title = element_blank())
 }
 
+##' @title plot functions in MEPHAS
+##'
+##' @param data input data frame
+##' @param ybreak input variable name as y-break
+##'
+##' @export
+plot_mat <- function(data, ybreak){
+data$id <- 1:nrow(data) 
+plot_data <- reshape::melt(data, id.var=c("id", ybreak))
+y <- plot_data[,ybreak]
+value <- plot_data[,"value"]
+variable <- plot_data[,"variable"]
+ggplot(plot_data, aes(x=value, y=y, group=variable)) +
+  geom_line(aes(lty=as.factor(variable))) +
+  theme_minimal() + theme(legend.title = element_blank())
+}
 
 
 ##' @title plot functions in MEPHAS
