@@ -1897,7 +1897,7 @@ else {y=DF3()[,input$t]}
 
 output$splot = renderPlot({
 validate(need((input$effect.cx =="" || input$effect.cx=="Strata" ||input$effect.cx=="Cluster"), "Frailty models can not be used in this plot."))
-ggadjustedcurves(coxfit(), DF3(),
+survminer::ggadjustedcurves(coxfit(), data=DF3(),
   ggtheme = theme_minimal(), palette = "Set1",
   font.x = 12,font.y = 12,font.main = 12)
   })

@@ -1651,7 +1651,7 @@ output$spls_cv  <- renderPrint({
   validate(need(input$cv.s>=1, "Please input correct number of components"))
   validate(need(input$cv.eta>0 && input$nc.eta<1, "Please correct parameters"))
   spls::cv.spls(X,Y, eta = seq(0.1,input$cv.eta,0.1), K = c(1:input$cv.s),
-    select="pls2", fit = input$method.s, plot_it = FALSE)
+    select="pls2", fit = input$method.s, plot.it = FALSE)
   
   })
 

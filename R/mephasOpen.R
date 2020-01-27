@@ -13,7 +13,10 @@
 ##' @param method choose method from MEPHAS
 ##'
 ##' @export
-mephasOpen <- function(method){
+mephasOpen <- function(method=c("condist","disdist","ttest","nptest","proptest","tabletest","anova","linereg","logisreg","surv","pca","pls")){
+
+method <- match.arg(method)
+
   switch(method,
          condist = MFScondist(),
          disdist = MFSdisdist(),

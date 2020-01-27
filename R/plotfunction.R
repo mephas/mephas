@@ -644,8 +644,8 @@ plot_corr <- function(data){
     #adjust plot margins
     theme(axis.text.x = element_text(angle = 90),
           axis.title.x=element_blank(),
-          axis.title.y=element_blank(),
-          plot_margin = unit(c(3, 1, 0, 0), "mm")) +
+          axis.title.y=element_blank())+#,
+          #plot_margin = unit(c(3, 1, 0, 0), "mm")) +
     #set correlation fill gradient
     scale_fill_gradient(low="white", high="red") +
     guides(fill=F) #omit unnecessary gradient legend

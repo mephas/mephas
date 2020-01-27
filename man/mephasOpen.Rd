@@ -4,7 +4,10 @@
 \alias{mephasOpen}
 \title{MEPHAS Open Windows}
 \usage{
-mephasOpen(method)
+mephasOpen(
+  method = c("condist", "disdist", "ttest", "nptest", "proptest", "tabletest", "anova",
+    "linereg", "logisreg", "surv", "pca", "pls")
+)
 }
 \arguments{
 \item{method}{choose method from MEPHAS}
