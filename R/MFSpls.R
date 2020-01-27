@@ -1150,7 +1150,7 @@ output$tx = renderUI({
  })
 
  output$p1 = renderPlot({
-  MFSscat(X(), varx=input$tx, vary=input$ty)
+  plot_scat(X(), varx=input$tx, vary=input$ty)
    #ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) + 
    #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })
@@ -1166,7 +1166,7 @@ output$hx = renderUI({
 })
 
 output$p2 = renderPlot({
-  MFShist1(X(), input$hx, input$bin)
+  plot_hist1(X(), input$hx, input$bin)
    #ggplot(X(), aes(x = X()[, input$hx])) + 
    #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
      #geom_density()+
@@ -1174,7 +1174,7 @@ output$p2 = renderPlot({
    })
 
 output$p21 = renderPlot({
-  MFSdensity1(X(), input$hx)
+  plot_density1(X(), input$hx)
    #ggplot(X(), aes(x = X()[, input$hx])) + 
      #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
      #geom_density() + 
@@ -1296,7 +1296,7 @@ output$pcr.resi <- DT::renderDT({as.data.frame(pcr()$residuals[,,1:pcr()$ncomp])
 output$pcr.s.plot  <- renderPlot({ 
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
-MFSscore(score, input$c1, input$c2)
+plot_score(score, input$c1, input$c2)
 #df <- as.data.frame(pcr()$scores[,1:pcr()$ncomp])
 
 #  ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
@@ -1308,7 +1308,7 @@ MFSscore(score, input$c1, input$c2)
 
 output$pcr.l.plot  <- renderPlot({ 
   load <- load()
-  MFSload(load, input$nc)
+  plot_load(load, input$nc)
 #ll <- as.data.frame(pcr()$loadings[,1:pcr()$ncomp])
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
@@ -1331,7 +1331,7 @@ output$pcr.bp   <- renderPlot({
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
 load <- load()
-MFSbiplot(score, load, input$c1, input$c2)
+plot_biplot(score, load, input$c1, input$c2)
 #plot(pcr(), plottype = c("biplot"), comps=c(input$c1,input$c2),var.axes = TRUE, main="")
 })
 
@@ -1507,7 +1507,7 @@ output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])
 output$pls.s.plot  <- renderPlot({ 
 validate(need(input$nc.r>=2, "The number of components must be >= 2"))
 score <- score.r()
-MFSscore(score, input$c1.r, input$c2.r)
+plot_score(score, input$c1.r, input$c2.r)
 #df <- as.data.frame(pls()$scores[,1:input$nc.r])
 
 #  ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
@@ -1519,7 +1519,7 @@ MFSscore(score, input$c1.r, input$c2.r)
 
 output$pls.l.plot  <- renderPlot({ 
 load <- load.r()
-MFSload(load, input$nc.r)
+plot_load(load, input$nc.r)
 #ll <- as.data.frame(pls()$loadings[,1:input$nc.r])
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
@@ -1542,7 +1542,7 @@ output$pls.bp   <- renderPlot({
   validate(need(input$nc.r>=2, "The number of components must be >= 2"))
 score <- score.r()
 load <- load.r()
-MFSbiplot(score, load, input$c1.r, input$c2.r)
+plot_biplot(score, load, input$c1.r, input$c2.r)
 #plot(pls(), plottype = c("biplot"), comps=c(input$c1.r,input$c2.r),var.axes = TRUE)
 })
 
@@ -1651,7 +1651,7 @@ output$spls_cv  <- renderPrint({
   validate(need(input$cv.s>=1, "Please input correct number of components"))
   validate(need(input$cv.eta>0 && input$nc.eta<1, "Please correct parameters"))
   spls::cv.spls(X,Y, eta = seq(0.1,input$cv.eta,0.1), K = c(1:input$cv.s),
-    select="pls2", fit = input$method.s, plot.it = FALSE)
+    select="pls2", fit = input$method.s, plot_it = FALSE)
   
   })
 
@@ -1728,7 +1728,7 @@ output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
 output$spls.s.plot  <- renderPlot({ 
   validate(need(input$nc.s>=2, "The number of components must be >=2"))
     score <- score.s()
-  MFSscore(score, input$c1.s, input$c2.s)
+  plot_score(score, input$c1.s, input$c2.s)
 
 #df <- data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
 
@@ -1741,7 +1741,7 @@ output$spls.s.plot  <- renderPlot({
 
 output$spls.l.plot  <- renderPlot({ 
   load <- load.s()
-  MFSload(load, a=input$nc.s)
+  plot_load(load, a=input$nc.s)
 #ll <- as.data.frame(spls()$projection)
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
@@ -1764,7 +1764,7 @@ output$spls.biplot<- renderPlot({
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score.s()
 load <- load.s()
-MFSbiplot(score, load, input$c1.s, input$c2.s)
+plot_biplot(score, load, input$c1.s, input$c2.s)
 })
 
 #source("pr3_server.R", local=TRUE, encoding="UTF-8")

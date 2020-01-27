@@ -1128,7 +1128,7 @@ N = reactive({
 output$norm.plot2 = renderPlot({
 df = N()
 x <- names(df)
-MFShist1c(df, x, input$bin)+ 
+plot_hist1c(df, x, input$bin)+ 
 geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
 #ggplot(df, aes(x = x)) + 
 #theme_minimal() + 
@@ -1190,7 +1190,7 @@ output$makeplot.1 <- renderPlot({
   #x = NN()
   df = NN()
   x <- names(df)
-  MFShist1(df, x, input$bin1)+
+  plot_hist1(df, x, input$bin1)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
   
   #ggplot(x, aes(x = x[,1])) + 
@@ -1205,7 +1205,7 @@ output$makeplot.2 <- renderPlot({
   #x = NN()
   df = NN()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
   
   #ggplot(x, aes(x = x[,1])) + 
@@ -1263,7 +1263,7 @@ output$download2 <- downloadHandler(
 output$e.plot2 = renderPlot({
 	df = E()
   x <- names(df)
-	MFShist1c(df, x, input$e.bin)+
+	plot_hist1c(df, x, input$e.bin)+
 	geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = E()
@@ -1316,7 +1316,7 @@ Y <- reactive({
 output$makeplot.e1 <- renderPlot({
   df = Y()
   x <- names(df)
-  MFShist1(df, x, input$bin.e)+
+  plot_hist1(df, x, input$bin.e)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = Y()
@@ -1330,7 +1330,7 @@ output$makeplot.e1 <- renderPlot({
 output$makeplot.e2 <- renderPlot({
   df = Y()
   x <- names(df)
-  MFShist1(df, x, input$bin.e)+
+  plot_hist1(df, x, input$bin.e)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = Y()
@@ -1390,7 +1390,7 @@ output$download3 <- downloadHandler(
 output$g.plot2 = renderPlot({
 df = G()
 x <- names(df)
-MFShist1c(df, x, input$g.bin)+
+plot_hist1c(df, x, input$g.bin)+
 geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = G()
@@ -1443,7 +1443,7 @@ Z <- reactive({
 output$makeplot.g1 <- renderPlot({
   df = Z()
   x <- names(df)
-  MFShist1(df, x, input$bin.g)+
+  plot_hist1(df, x, input$bin.g)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = Z()
@@ -1459,7 +1459,7 @@ output$makeplot.g1 <- renderPlot({
 output$makeplot.g2 <- renderPlot({
   df = Z()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm = TRUE)), color="red", size=0.3)
   
   #x = Z()
@@ -1521,7 +1521,7 @@ output$download4 <- downloadHandler(
 output$b.plot2 = renderPlot({
   df = B()
   x <- names(df)
-	MFShist1c(df, x, input$b.bin)+
+	plot_hist1c(df, x, input$b.bin)+
 	geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = B()
@@ -1574,7 +1574,7 @@ ZZ <- reactive({
 output$makeplot.b1 <- renderPlot({
   df = ZZ()
   x <- names(df)
-  MFShist1(df, x, input$bin.b)+
+  plot_hist1(df, x, input$bin.b)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(ZZ())
@@ -1584,7 +1584,7 @@ output$makeplot.b1 <- renderPlot({
 output$makeplot.b2 <- renderPlot({
   df = ZZ()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm = TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(ZZ())
@@ -1641,7 +1641,7 @@ output$download5 <- downloadHandler(
 output$t.plot2 = renderPlot({
   df = T()
   x <- names(df)
-	MFShist1c(df, x, input$t.bin)+
+	plot_hist1c(df, x, input$t.bin)+
 	geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = T()
@@ -1695,7 +1695,7 @@ TT <- reactive({
 output$makeplot.t1 <- renderPlot({
   df = TT()
   x <- names(df)
-  MFShist1(df, x, input$bin.t)+
+  plot_hist1(df, x, input$bin.t)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(TT())
@@ -1704,7 +1704,7 @@ output$makeplot.t1 <- renderPlot({
 output$makeplot.t2 <- renderPlot({
   df = TT()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm = TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(TT())
@@ -1759,7 +1759,7 @@ output$download6 <- downloadHandler(
 output$x.plot2 = renderPlot({
   df = X()
   x <- names(df)
-	MFShist1c(df, x, input$x.bin)+
+	plot_hist1c(df, x, input$x.bin)+
 	geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = X()
@@ -1811,7 +1811,7 @@ XX <- reactive({
 output$makeplot.x1 <- renderPlot({
   df = XX()
   x <- names(df)
-  MFShist1(df, x, input$bin.x)+
+  plot_hist1(df, x, input$bin.x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(XX())
@@ -1820,7 +1820,7 @@ output$makeplot.x1 <- renderPlot({
 output$makeplot.x2 <- renderPlot({
   df = XX()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm = TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(XX())
@@ -1877,7 +1877,7 @@ output$table4 = renderDataTable({head(F(), n = 100L)},  options = list(pageLengt
 output$f.plot2 = renderPlot({
   df = F()
   x <- names(df)
-	MFShist1c(df, x, input$f.bin)+
+	plot_hist1c(df, x, input$f.bin)+
 	geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = F()
@@ -1931,7 +1931,7 @@ FF <- reactive({
 output$makeplot.f1 <- renderPlot({
   df = FF()
   x <- names(df)
-  MFShist1(df, x, input$bin.f)+
+  plot_hist1(df, x, input$bin.f)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(FF())
@@ -1940,7 +1940,7 @@ output$makeplot.f1 <- renderPlot({
 output$makeplot.f2 <- renderPlot({
   df = FF()
   x <- names(df)
-  MFSdensity1(df, x)+
+  plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm = TRUE)), color="red", size=0.3)
   
   #x = as.data.frame(FF())

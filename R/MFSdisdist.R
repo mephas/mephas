@@ -336,7 +336,7 @@ N = reactive({
 output$b.plot2 <- renderPlot({
   df = N()
   x <- names(df)
-  MFShist1c(df, x, input$bin)
+  plot_hist1c(df, x, input$bin)
 
 #df = N()
 #ggplot(df, aes(x = x)) + 
@@ -391,7 +391,7 @@ NN <- reactive({
 output$makeplot.1 <- renderPlot({
   df = NN()
   x <- names(df)
-  MFShist1(df, x, input$bin1)
+  plot_hist1(df, x, input$bin1)
   
   #x = NN()
   #ggplot(x, aes(x = x[,1])) + 
@@ -444,7 +444,7 @@ N.p = reactive({
 output$p.plot2 <- renderPlot({
   df = N.p()
   x <- names(df)
-  MFShist1c(df, x, input$bin.p)
+  plot_hist1c(df, x, input$bin.p)
 
 #df = N.p()
 #ggplot(df, aes(x = x)) + 
@@ -499,7 +499,7 @@ NN.p <- reactive({
 output$makeplot.2 <- renderPlot({
   df = NN.p()
   x <- names(df)
-  MFShist1(df, x, input$bin1.p)
+  plot_hist1(df, x, input$bin1.p)
   
   #x = NN.p()
   #ggplot(x, aes(x = x[,1])) + 

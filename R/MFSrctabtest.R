@@ -1270,14 +1270,14 @@ output$dt1.3 = DT::renderDT({prop.table(T1())},
 
 output$makeplot1 <- renderPlot({  #shinysession 
   x <- as.data.frame(T1())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
 })
 
 output$makeplot1.1 <- renderPlot({  #shinysession 
   x <- as.data.frame(T1())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"id"], y = mx[,2], fill = mx[,"time"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
 })
@@ -1375,7 +1375,7 @@ output$dt2.3 = DT::renderDT({prop.table(T2())},
 
 output$makeplot2 <- renderPlot({  #shinysession 
   x <- as.data.frame(T2())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
   })
@@ -1470,13 +1470,13 @@ output$dt4.3 = DT::renderDT({prop.table(T4())}, #class="row-border",
 
 output$makeplot4 <- renderPlot({  #shinysession 
   x <- as.data.frame(T4())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
   })
 output$makeplot4.1 <- renderPlot({  #shinysession 
   x <- as.data.frame(T4())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"id"], y = mx[,2], fill = mx[,"time"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
  })
@@ -1566,7 +1566,7 @@ output$dt3.3 = DT::renderDT({prop.table(T3())},
 
 output$makeplot3 <- renderPlot({  #shinysession 
   x <- as.data.frame(T3())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
   #plot2 = ggplot(mx, aes(x = mx[,"id"], y = mx[,2], fill = mx[,"time"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
@@ -1662,7 +1662,7 @@ output$dt5.3 = DT::renderDT({prop.table(T5())},
 
 output$makeplot5 <- renderPlot({  #shinysession 
   x <- as.data.frame(T5())
-  MFSbar(x)
+  plot_bar(x)
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")
   #plot2 = ggplot(mx, aes(x = mx[,"id"], y = mx[,2], fill = mx[,"time"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")

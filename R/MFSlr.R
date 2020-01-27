@@ -675,7 +675,7 @@ output$tx = renderUI({
  
  ## scatter plot
  output$p1 = renderPlot({
-MFSscat(input$tx, input$ty)
+plot_scat(input$tx, input$ty)
    #ggplot(DF3(), aes(x = DF3()[, input$tx], y = DF3()[, input$ty])) + geom_point(shape = 1) + 
    #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })
@@ -690,7 +690,7 @@ MFSscat(input$tx, input$ty)
  })
  
 output$p2 = renderPlot({
-  MFShist1(DF3(), input$hx, input$bin)
+  plot_hist1(DF3(), input$hx, input$bin)
    #ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
    #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
    #  #geom_density()+
@@ -698,7 +698,7 @@ output$p2 = renderPlot({
    })
 
 output$p21 = renderPlot({
-  MFSdensity1(DF3(), input$hx)
+  plot_density1(DF3(), input$hx)
    #ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
      #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
    #  geom_density() + 
@@ -802,7 +802,7 @@ output$step = renderPrint({step(fit())})
 output$p.lm1 = renderPlot({
 
 x <-data.frame(res=fit()$residuals)
-MFSqq1(x, "res")
+plot_qq1(x, "res")
 #ggplot(x, aes(sample = res)) + 
 #stat_qq() + 
 #ggtitle("") + 
@@ -812,7 +812,7 @@ MFSqq1(x, "res")
 
 output$p.lm2 = renderPlot({
 x <- data.frame(fit=fit()$fitted.values, res=fit()$residuals)
-MFSres(x, "fit", "res")
+plot_res(x, "fit", "res")
 #ggplot(x, aes(fit, res))+
 ##geom_point()+
 #stat_smooth(method="loess")+
@@ -883,7 +883,7 @@ scrollX = TRUE))
   x <- pred.lm()
   vx <- input$y
   vy <- names(x)[1] 
-  MFSscat(x, vx, vy)
+  plot_scat(x, vx, vy)
   #min = min(c(pred.lm()[, input$y], pred.lm()[, 1]))
   #max = max(c(pred.lm()[, input$y], pred.lm()[, 1]))
   #ggplot(pred.lm(), aes(x = pred.lm()[, input$y], y = pred.lm()[, 1])) + geom_point(shape = 1) + 

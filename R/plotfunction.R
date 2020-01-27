@@ -7,7 +7,7 @@
 ##' @param vary input y variable name
 ##'
 ##' @export
-MFSscat <- function(data, varx, vary){
+plot_scat <- function(data, varx, vary){
   x = data[, varx]
   y = data[, vary]
   name <- rownames(data)
@@ -24,7 +24,7 @@ MFSscat <- function(data, varx, vary){
 ##' @param vary input y variable name
 ##'
 ##' @export
-MFSslgt <- function(data, varx, vary){
+plot_slgt <- function(data, varx, vary){
   x = data[, varx]
   y = as.numeric(as.factor(data[, vary]))-1
   name <- rownames(data)
@@ -41,7 +41,7 @@ MFSslgt <- function(data, varx, vary){
 ##' @param vary input y variable name
 ##'
 ##' @export
-MFSres <- function(data, varx, vary){
+plot_res <- function(data, varx, vary){
   x = data[, varx]
   y = data[, vary]
   name <- rownames(data)
@@ -59,7 +59,7 @@ MFSres <- function(data, varx, vary){
 ##' @param varx input x variable name
 ##'
 ##' @export
-MFSbox1 <- function(data, varx){
+plot_box1 <- function(data, varx){
   value = data[,varx]
   ggplot(data, aes(x = varx, y = value)) +
   geom_boxplot(outlier.colour = "red", fill="cornflowerblue", size=0.3) +
@@ -72,7 +72,7 @@ MFSbox1 <- function(data, varx){
 ##' @param data2 input data frame
 ##'
 ##' @export
-MFSbox2 <- function(data2){
+plot_box2 <- function(data2){
   data2$group <- rownames(data2)
   data <- reshape::melt(data2, id="group")
   value = data$value
@@ -88,7 +88,7 @@ MFSbox2 <- function(data2){
 ##' @param datam input data frame
 ##'
 ##' @export
-MFSboxm <- function(datam){
+plot_boxm <- function(datam){
   #data <- reshape::melt(datam, id=names(datam))
   value = datam[,1]
   variable = datam[,2]
@@ -106,7 +106,7 @@ MFSboxm <- function(datam){
 ##' @param varx input x variable name
 ##'
 ##' @export
-MFSmsd1 <- function(data, varx){
+plot_msd1 <- function(data, varx){
   des <- data.frame(psych::describe(data[, varx]))
   rownames(des) = varx
   variable <-rownames(des)
@@ -126,7 +126,7 @@ MFSmsd1 <- function(data, varx){
 ##' @param data input data frame
 ##'
 ##' @export
-MFSmsd2 <- function(data){
+plot_msd2 <- function(data){
   des = data.frame(psych::describe(data))
   rownames(des) = names(data)
   variable <-rownames(des)
@@ -149,7 +149,7 @@ MFSmsd2 <- function(data){
 ##' @param grp input factor group variable name
 ##'
 ##' @export
-MFSmsdm <- function(datam, var, grp){
+plot_msdm <- function(datam, var, grp){
   des = data.frame(psych::describeBy(datam[,var], datam[,grp], mat=TRUE))
   rownames(des) = des[,"group1"]
   variable <-rownames(des)
@@ -173,7 +173,7 @@ MFSmsdm <- function(datam, var, grp){
 ##' @param grp2 input factor group 2 name
 ##'
 ##' @export
-MFSline2 <- function(data2, var, grp1, grp2){
+plot_line2 <- function(data2, var, grp1, grp2){
   des <- data.frame(psych::describeBy(data2[,var], list(data2[,grp1],data2[,grp2]), mat=TRUE))
   group1 <-des[,"group1"]
   group2 <-des[,"group2"]
@@ -195,8 +195,8 @@ MFSline2 <- function(data2, var, grp1, grp2){
 ##' @param varx input x variable name
 ##' @param bw input bin numbers
 ##'
-##' @export MFShist1
-MFShist1 <- function(data, varx, bw){
+##' @export plot_hist1
+plot_hist1 <- function(data, varx, bw){
 
   variable = data[, varx]
   if (bw==0) {
@@ -219,8 +219,8 @@ MFShist1 <- function(data, varx, bw){
 ##' @param varx input x variable name
 ##' @param bw input bin numbers
 ##'
-##' @export MFShist1c
-MFShist1c <- function(data, varx, bw){
+##' @export plot_hist1c
+plot_hist1c <- function(data, varx, bw){
 
   variable = data[, varx]
   if (bw==0) {
@@ -244,7 +244,7 @@ MFShist1c <- function(data, varx, bw){
 ##' @param bw input bin numbers
 ##'
 ##' @export
-MFShist2 <- function(data2, bw){
+plot_hist2 <- function(data2, bw){
   data2$group <- rownames(data2)
   data <- reshape::melt(data2, id="group")
   value = data$value
@@ -272,7 +272,7 @@ MFShist2 <- function(data2, bw){
 ##' @param varx input x variable name
 ##'
 ##' @export
-MFSdensity1 <- function(data, varx){
+plot_density1 <- function(data, varx){
   variable = data[, varx]
   ggplot(data, aes(x = variable)) +
   geom_density(size=0.3) +
@@ -286,7 +286,7 @@ MFSdensity1 <- function(data, varx){
 ##' @param data2 input data frame
 ##'
 ##' @export
-MFSdensity2 <- function(data2){
+plot_density2 <- function(data2){
   data2$group <- rownames(data2)
   data <- reshape::melt(data2, id="group")
   value = data$value
@@ -305,7 +305,7 @@ MFSdensity2 <- function(data2){
 ##' @param varx input x sample name
 ##'
 ##' @export
-MFSqq1 <- function(data, varx){
+plot_qq1 <- function(data, varx){
   variable = data[, varx]
   ggplot(data, aes(sample = variable)) +
     stat_qq() + stat_qq_line(size=0.3, colour="red")+
@@ -319,7 +319,7 @@ MFSqq1 <- function(data, varx){
 ##' @param data2 input data frame
 ##'
 ##' @export
-MFSqq2 <- function(data2){
+plot_qq2 <- function(data2){
   data2$group <- rownames(data2)
   data <- reshape::melt(data2, id="group")
   value <- data$value
@@ -337,7 +337,7 @@ MFSqq2 <- function(data2){
 ##' @param data input data frame
 ##'
 ##' @export
-MFSpie <- function(data){
+plot_pie <- function(data){
   value <- data[,"value"]
   groups <- data[,"group"]
   ggplot(data, aes(x=" ", y=value, fill=groups))+
@@ -356,7 +356,7 @@ MFSpie <- function(data){
 ##' @param count input count data frame
 ##'
 ##' @export
-MFSbar <- function(count){
+plot_bar <- function(count){
   mx <- reshape(count, varying = list(names(count)), times = names(count), ids = row.names(count), direction = "long")
   group <- mx[,"time"]
   value <- mx[,2]
@@ -374,7 +374,7 @@ MFSbar <- function(count){
 ##' @param count input count data frame
 ##'
 ##' @export
-MFSbar1 <- function(count){
+plot_bar1 <- function(count){
   mx <- reshape(count, varying = list(names(count)), times = names(count), ids = row.names(count), direction = "long")
   group <- mx[,"time"]
   value <- mx[,2]
@@ -393,7 +393,7 @@ MFSbar1 <- function(count){
 ##' @param y itrue values
 ##'
 ##' @export
-MFSroc <- function(yhat, y){
+plot_roc <- function(yhat, y){
 
   p <- ROCR::prediction(yhat, y)
   ps <- ROCR::performance(p, "tpr", "fpr")
@@ -425,7 +425,7 @@ MFSroc <- function(yhat, y){
 ##' @param data input data frame
 ##'
 ##' @export
-MFScoxstep <-function(data){
+plot_coxstep <-function(data){
   time <- data[,"time"]
   hazard <- data[,"H"]
   ggplot() +
@@ -441,7 +441,7 @@ MFScoxstep <-function(data){
 ##' @param data input data frame
 ##'
 ##' @export
-MFSdevres <- function(data){
+plot_devres <- function(data){
   id <- data[,"id"]
   dev <- data[,"dev"]
   ggplot(data, aes(x=id, y=dev)) +
@@ -460,7 +460,7 @@ MFSdevres <- function(data){
 ##' @param a number of components
 ##'
 ##' @export
-MFSload <- function(loads, a){
+plot_load <- function(loads, a){
 
   ll <- loads
   ll$group <- rownames(ll)
@@ -488,7 +488,7 @@ MFSload <- function(loads, a){
 ##' @param n2 input nth component for y-axis
 ##'
 ##' @export
-MFSscoreg <- function(scores, n1, n2){
+plot_scoreg <- function(scores, n1, n2){
   x <- scores[,n1]
   y <- scores[,n2]
   group <- as.factor(scores[,"group"])
@@ -513,7 +513,7 @@ MFSscoreg <- function(scores, n1, n2){
 ##' @param type the type of circle
 ##'
 ##' @export
-MFSscorec <- function(scores, n1, n2, type){
+plot_scorec <- function(scores, n1, n2, type){
   x <- scores[,n1]
   y <- scores[,n2]
   group <- as.factor(scores[,"group"])
@@ -539,7 +539,7 @@ MFSscorec <- function(scores, n1, n2, type){
 ##' @param n2 input nth component for y-axis
 ##'
 ##' @export
-MFSscore <- function(scores, n1, n2){
+plot_score <- function(scores, n1, n2){
   x <- scores[,n1]
   y <- scores[,n2]
   name <- rownames(scores)
@@ -563,7 +563,7 @@ MFSscore <- function(scores, n1, n2){
 ##' @param n2 input nth component for y-axis
 ##'
 ##' @export
-MFSbiplot <- function(scores, loads, n1, n2){
+plot_biplot <- function(scores, loads, n1, n2){
 names <- rownames(loads)
 pname <- rownames(scores)
 loads[[n1]]<-scales::rescale(loads[[n1]], to = c(min(scores[[n1]]),max(scores[[n1]])))
@@ -589,7 +589,7 @@ theme_minimal()+theme(legend.title=element_blank())
 ##' @param data correaltion matrix
 ##'
 ##' @export
-MFScorr <- function(data){
+plot_corr <- function(data){
   c <- as.data.frame(cor(data))
   c$group <- rownames(c)
   corrs.m <- reshape::melt(c, id="group",
@@ -609,7 +609,7 @@ MFScorr <- function(data){
     theme(axis.text.x = element_text(angle = 90),
           axis.title.x=element_blank(),
           axis.title.y=element_blank(),
-          plot.margin = unit(c(3, 1, 0, 0), "mm")) +
+          plot_margin = unit(c(3, 1, 0, 0), "mm")) +
     #set correlation fill gradient
     scale_fill_gradient(low="white", high="red") +
     guides(fill=F) #omit unnecessary gradient legend

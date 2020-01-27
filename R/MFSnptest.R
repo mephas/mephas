@@ -758,7 +758,7 @@ output$table <- DT::renderDT(A(),
    output$bp = renderPlot({
     x = A()
     var <- names(x)[1]
-    MFSbox1(x, var)
+    plot_box1(x, var)
     #ggplot(x, aes(x = 0, y = x[,1])) + geom_boxplot(width = 0.2, outlier.colour = "red", outlier.size = 2) + xlim(-1,1)+
     #ylab("") + xlab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
     }) 
@@ -773,13 +773,13 @@ output$table <- DT::renderDT(A(),
   output$makeplot <- renderPlot({  #shinysession 
     x <- A()
     var <- names(x)[1]
-    MFShist1(x, var, input$bin)
+    plot_hist1(x, var, input$bin)
     #ggplot(x, aes(x = x[,1])) + geom_histogram(colour="black", fill = "grey", binwidth=input$bin, position="identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title=element_blank())
     })
   output$makeplot.1 <- renderPlot({  #shinysession 
     x <- A()
     var <- names(x)[1]
-    MFSdensity1(x, var)
+    plot_density1(x, var)
     #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title=element_blank())
     })
   
@@ -888,7 +888,7 @@ output$table2 <-DT::renderDT({B()},
 
   output$bp2 = renderPlot({
     x <- B()
-    MFSbox2(x)
+    plot_box2(x)
     
     #mx <- melt(B(), idvar = colnames(x))
     #ggplot(mx, aes(x =mx[,"variable"], y = mx[,"value"], fill=mx[,"variable"])) + geom_boxplot(alpha=.3, width = 0.2, outlier.color = "red", outlier.size = 2)+ 
@@ -904,13 +904,13 @@ output$table2 <-DT::renderDT({B()},
 
   output$makeplot2 <- renderPlot({
     x <- B()
-    MFShist2(x, input$bin2)
+    plot_hist2(x, input$bin2)
     #mx <- melt(B(), idvar = colnames(x))
     #ggplot(mx, aes(x=mx[,"value"], fill=mx[,"variable"])) + geom_histogram(binwidth=input$bin2, alpha=.5, position="identity") + xlab("")+ylab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
     })
   output$makeplot2.1 <- renderPlot({
     x <- B()
-    MFSdensity2(x)
+    plot_density2(x)
     #mx <- melt(B(), idvar = colnames(x))
     #ggplot(mx, aes(x=mx[,"value"], colour=mx[,"variable"])) + geom_density()+ xlab("")+ ylab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
     })
@@ -1023,7 +1023,7 @@ output$table3 <-DT::renderDT(C() ,
   output$bp3 = renderPlot({
     x <- C()
     var <- names(C())[3]
-    MFSbox1(x, var)
+    plot_box1(x, var)
     #ggplot(x, aes(x = 0, y = x[,3])) + geom_boxplot(width = 0.2, outlier.color = "red") + xlim(-1,1)+
     #ylab("") + ggtitle("") + theme_minimal()
     })
@@ -1038,13 +1038,13 @@ output$table3 <-DT::renderDT(C() ,
   output$makeplot3 <- renderPlot({
     x <- C()
     var <- colnames(x)[3]
-    MFShist1(x, var, input$bin3)
+    plot_hist1(x, var, input$bin3)
     #ggplot(x, aes(x=x[,3])) + geom_histogram(colour="black", fill = "grey", binwidth=input$bin3, alpha=.5, position="identity") + ylab("Frequncy") + xlab("") +  ggtitle("") + theme_minimal() + theme(legend.title=element_blank())
     })
   output$makeplot3.1 <- renderPlot({
     x <- C()
     var <- names(x)[3]
-    MFSdensity1(x, var)
+    plot_density1(x, var)
     #ggplot(x, aes(x=x[,3])) + geom_density() + ggtitle("") + theme_minimal() + ylab("Density") + xlab("") + theme(legend.title=element_blank())
     })
 

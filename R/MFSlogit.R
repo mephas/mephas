@@ -649,7 +649,7 @@ choices = type.bi())
  
  ## scatter plot
 output$p1 = renderPlot({
-  MFSscat(DF3(), input$tx, input$ty)
+  plot_scat(DF3(), input$tx, input$ty)
 #ggplot(DF3(), aes(x=DF3()[, input$tx], y=(as.numeric(as.factor(DF3()[, input$ty]))-1))) + 
 #geom_point(shape = 1,  size = 1) + 
 #stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE,  size = 0.5) +
@@ -666,7 +666,7 @@ output$p1 = renderPlot({
  })
  
 output$p2 = renderPlot({
-  MFShist1(DF3(), input$hx, input$bin)
+  plot_hist1(DF3(), input$hx, input$bin)
 #   ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
 #     geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
 #     #geom_density()+
@@ -674,7 +674,7 @@ output$p2 = renderPlot({
    })
 
 output$p21 = renderPlot({
-  MFSdensity1(DF3(), input$hx)
+  plot_density1(DF3(), input$hx)
 #   ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
 #     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
 #     geom_density() + 
@@ -794,7 +794,7 @@ output$step = renderPrint({step(fit())})
  output$p.lm = renderPlot({
   yhat <- predict(fit())
   y <- DF3()[,input$y]
-  MFSroc(yhat, y)
+  plot_roc(yhat, y)
   #p <- ROCR::prediction(predict(fit()), DF3()[,input$y])
   #ps <- ROCR::performance(p, "tpr", "fpr")
   #pf <- ROCR::performance(p, "auc")#
@@ -896,7 +896,7 @@ output$pred = DT::renderDT(pred.lm(),
   validate(need((pred.lm()[, input$y]), "This evaluation plot will not show unless dependent variable Y is given in the new data"))
   yhat <- pred.lm()[,2]
   y <- pred.lm()[,input$y]
-  MFSroc(yhat, y)
+  plot_roc(yhat, y)
   #p <- ROCR::prediction(pred.lm()[,2], pred.lm()[,input$y])
   #ps <- ROCR::performance(p, "tpr", "fpr")
   #pf <- ROCR::performance(p, "auc")

@@ -1201,12 +1201,12 @@ output$bas1.t <- DT::renderDT({
 
 output$mbp1 = renderPlot({
   x = Y1()
-  MFSboxm(x)
+  plot_boxm(x)
   })
 
 output$mmean1 = renderPlot({
   x = Y1()
-  MFSmsdm(x, names(x)[1], names(x)[2])
+  plot_msdm(x, names(x)[1], names(x)[2])
   #b = Rmisc::summarySE(x,names(x)[1], names(x)[2])
 
   #ggplot(b, aes(x=b[,1], y=b[,3], fill=b[,1])) +
@@ -1324,7 +1324,7 @@ output$meanp.a = renderPlot({
   #b = Rmisc::summarySE(x,colnames(x)[1], c(colnames(x)[2], colnames(x)[3]))
 
   if (input$tick == "TRUE"){
-    MFSline2(x, names(x)[1], names(x)[2], names(x)[3])
+    plot_line2(x, names(x)[1], names(x)[2], names(x)[3])
   #ggplot(b, aes(x=b[,1], y=b[,4], colour=b[,2], group=b[,2])) +
   #    geom_line() + xlab("") +ylab("")+
   #    geom_point(shape=21, size=3, fill="white") +
@@ -1332,7 +1332,7 @@ output$meanp.a = renderPlot({
     }
 
   else {
-    MFSline2(x, names(x)[1], names(x)[3], names(x)[2])
+    plot_line2(x, names(x)[1], names(x)[3], names(x)[2])
   #ggplot(b, aes(x=b[,2], y=b[,4], colour=b[,1], group=b[,1])) +
   #    geom_line() + xlab("") +ylab("")+
   #    geom_point(shape=21, size=3, fill="white") +
@@ -1346,7 +1346,7 @@ output$mmean.a = renderPlot({
   #b = Rmisc::summarySE(x,colnames(x)[1], c(colnames(x)[2], colnames(x)[3]))
 
   if (input$tick2 == "TRUE"){
-    MFSmsdm(x, names(x)[1], names(x)[2])
+    plot_msdm(x, names(x)[1], names(x)[2])
   #ggplot(b, aes(x=b[,1], y=b[,4], fill=b[,2])) +
   #  geom_bar(stat="identity", position = "dodge")+ xlab("") +ylab("")+
   #  geom_errorbar(aes(ymin=b[,4]-b[,6], ymax=b[,4]+b[,6]),
@@ -1356,7 +1356,7 @@ output$mmean.a = renderPlot({
     }
 
   else {
-    MFSmsdm(x, names(x)[1], names(x)[3])
+    plot_msdm(x, names(x)[1], names(x)[3])
   #ggplot(b, aes(x=b[,2], y=b[,4], fill=b[,1])) +
   #  geom_bar(stat="identity", position = "dodge")+ xlab("") +ylab("")+
    #     geom_errorbar(aes(ymin=b[,4]-b[,6], ymax=b[,4]+b[,6]),
@@ -1476,12 +1476,12 @@ output$basm.t <- DT::renderDT({
 
 output$mbp1m = renderPlot({
   x = Ym()
-  MFSboxm(x)
+  plot_boxm(x)
   })
 
 output$mmeanm = renderPlot({
   x = Ym()
-  MFSmsdm(x, names(x)[1], names(x)[2])
+  plot_msdm(x, names(x)[1], names(x)[2])
   #b = Rmisc::summarySE(x,names(x)[1], names(x)[2])
 
   #ggplot(b, aes(x=b[,1], y=b[,3], fill=b[,1])) +
@@ -1651,22 +1651,22 @@ output$meanp.am = renderPlot({
   x = Ym2()
 
   if (input$tickm == "TRUE"){
-  MFSline2(x, names(x)[1], names(x)[2], names(x)[3])
+  plot_line2(x, names(x)[1], names(x)[2], names(x)[3])
     }
 
   else {
-  MFSline2(x, names(x)[1], names(x)[3], names(x)[2])
+  plot_line2(x, names(x)[1], names(x)[3], names(x)[2])
   }
   })
 
 output$mmean.am = renderPlot({
   x = Ym2()  
   if (input$tick2m == "TRUE"){
-  MFSmsdm(x, names(x)[1], names(x)[2])
+  plot_msdm(x, names(x)[1], names(x)[2])
     }
 
   else {
-  MFSmsdm(x, names(x)[1], names(x)[3])
+  plot_msdm(x, names(x)[1], names(x)[3])
   }
   })
 
@@ -1775,7 +1775,7 @@ output$basnp1.t <- DT::renderDT({
 
 output$mmeannp1 = renderPlot({
   x = Ynp1()
-  MFSboxm(x)
+  plot_boxm(x)
   #ggplot(x, aes(y=x[,1], x=x[,2], fill=x[,2])) + geom_boxplot()+ xlab("") +ylab("")+
   #  scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
   })
@@ -1870,7 +1870,7 @@ output$basnp2.t <- DT::renderDT({
 
 output$mmeannp2 = renderPlot({
   x = Ynp2()
-  MFSboxm(x)
+  plot_boxm(x)
   #ggplot(x, aes(y=x[,1], x=x[,2], fill=x[,2])) + geom_boxplot()+ xlab("") +ylab("")+
   #  scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
   })

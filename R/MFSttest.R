@@ -792,7 +792,7 @@ output$bas <- DT::renderDT({basic_desc()},
 output$bp = renderPlot({
   x = X()
   var <- names(x)[1]
-  MFSbox1(x, var)
+  plot_box1(x, var)
   #ggplot(x, aes(x = 0, y = x[,1])) + geom_boxplot(width = 0.2, outlier.colour = "red") + xlim(-1,1) + ylab("") + xlab(names(x)) + ggtitle("") + theme_minimal()
   })
 
@@ -808,7 +808,7 @@ output$info1 <- renderText({
 output$meanp = renderPlot({
   x = X()
   var <- names(x)[1]
-  MFSmsd1(x, var)
+  plot_msd1(x, var)
   #des = data.frame(psych::describe(x))
   #rownames(des) = names(x)
   #ggplot(des, aes(x = rownames(des), y = mean)) +
@@ -821,19 +821,19 @@ output$meanp = renderPlot({
 output$makeplot1 <- renderPlot({
   x = X()
   var <- names(x)[1]
-  MFSqq1(x, var)
+  plot_qq1(x, var)
   #ggplot(x, aes(sample = x[,1])) + stat_qq() + ggtitle("") + xlab("") + theme_minimal()  ## add line,
   })
 output$makeplot1.2 <- renderPlot({
   x = X()
   var <- names(x)[1]
-  MFShist1(x, var, input$bin)
+  plot_hist1(x, var, input$bin)
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
   })
 output$makeplot1.3 <- renderPlot({
   x = X()
   var <- names(x)[1]
-  MFSdensity1(x, var)
+  plot_density1(x, var)
   #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())
   })
 
@@ -935,7 +935,7 @@ basic_desc2()
 
 output$bp2 = renderPlot({
   x = Y()
-  MFSbox2(x)
+  plot_box2(x)
   #mx = melt(x, idvar = names(x))
   ##ggplot(mx, aes(x = mx[,"variable"], y = mx[,"value"], fill = mx[,"variable"])) +
   #geom_boxplot(width = 0.4,outlier.colour = "red",alpha = .3) +
@@ -944,7 +944,7 @@ output$bp2 = renderPlot({
 
 output$meanp2 = renderPlot({
   x = Y()
-  MFSmsd2(x)
+  plot_msd2(x)
   #des = data.frame(psych::describe(x))
   #rownames(des) = names(x)
   #ggplot(des, aes(x = rownames(des), y = mean, fill = rownames(des))) +
@@ -956,14 +956,14 @@ output$meanp2 = renderPlot({
 
 output$makeplot2 <- renderPlot({
   x <- Y()
-  MFSmsd2(x)
+  plot_msd2(x)
   #mx <- melt(x, idvar = names(x))  ###bug: using as id variables
   # normal qq plot
   #ggplot(x, aes(sample = x[, 1])) + stat_qq(color = "brown1") + ggtitle(paste0("Normal Q-Q Plot of ", colnames(x[1]))) + theme_minimal()
   })
 #output$makeplot2.2 <- renderPlot({
 #  x <- Y()
-#  MFSmsd2(x)
+#  plot_msd2(x)
   #mx <- melt(x, idvar = names(x))  ###bug: using as id variables
   # normal qq plot
   #ggplot(x, aes(sample = x[, 2])) + stat_qq(color = "forestgreen") + ggtitle(paste0("Normal Q-Q Plot of ", colnames(x[2]))) + theme_minimal()
@@ -971,7 +971,7 @@ output$makeplot2 <- renderPlot({
  # })
 output$makeplot2.3 <- renderPlot({
   x <- Y()
-  MFShist2(x, input$bin2)
+  plot_hist2(x, input$bin2)
   #mx <- melt(x, idvar = names(x))  ###bug: using as id variables
   #ggplot(mx, aes(x = mx[,"value"], colour = mx[,"variable"], fill = mx[,"variable"])) +
   #  geom_histogram(binwidth = input$bin2, alpha = .3, position = "identity") +
@@ -979,7 +979,7 @@ output$makeplot2.3 <- renderPlot({
   })
 output$makeplot2.4 <- renderPlot({
   x <- Y()
-  MFSdensity2(x)
+  plot_density2(x)
   #mx <- melt(x, idvar = names(x))  ###bug: using as id variables
   #ggplot(mx, aes(x = mx[,"value"], colour = mx[,"variable"])) + geom_density() +
   #  ggtitle("Density Plot") + xlab("") + theme_minimal() + theme(legend.title = element_blank())
@@ -1160,7 +1160,7 @@ output$bas.p <- DT::renderDT({
 output$bp.p = renderPlot({
   x = Z()
   var <- names(Z())[3]
-  MFSbox1(x, var)
+  plot_box1(x, var)
   #ggplot(x, aes(x = 0, y = x[, 3])) + geom_boxplot(width = 0.2, outlier.colour = "red") + xlim(-1,1) +
   #ylab("") + xlab("") + ggtitle("") + theme_minimal()
   })
@@ -1168,7 +1168,7 @@ output$bp.p = renderPlot({
 output$meanp.p = renderPlot({
   x = Z()
   var <- names(Z())[3]
-  MFSmsd1(x, var)
+  plot_msd1(x, var)
   #x = Z()[,3]
   #des = data.frame(psych::describe(x))
   #rownames(des) = names(x)
@@ -1191,19 +1191,19 @@ output$info3 <- renderText({
 output$makeplot.p <- renderPlot({
   x <- Z()
   var <- colnames(x)[3]
-  MFSqq1(x, var)
+  plot_qq1(x, var)
   #ggplot(x, aes(sample = x[, 3])) + stat_qq() + ggtitle("Normal Q-Q Plot of the Mean Differences") + xlab("") + theme_minimal()  ## add line,
   })
 output$makeplot.p2 <- renderPlot({
   x <- Z()
   var <- colnames(x)[3]
-  MFShist1(x, var, input$bin.p)
+  plot_hist1(x, var, input$bin.p)
   #ggplot(x, aes(x = x[, 3])) + geom_histogram(colour = "black",fill = "grey", binwidth = input$bin.p, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
   })
 output$makeplot.p3 <- renderPlot({
   x <- Z()
   var <- names(x)[3]
-  MFSdensity1(x, var)
+  plot_density1(x, var)
   #ggplot(x, aes(x = x[, 3])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title = element_blank())
   })
 

@@ -587,7 +587,7 @@ output$makeplot <- renderPlot({  #shinysession
     group = c(unlist(strsplit(input$ln, "[\n]"))),
     value = c(input$x, input$n-input$x)
     )
-  MFSpie(x)
+  plot_pie(x)
   #ggplot(x, aes(x="", y=x[,"value"], fill=x[,"group"]))+ geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + xlab("")+ ylab("") + scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
   })
 #source("p2_server.R", local=TRUE)$value
@@ -621,7 +621,7 @@ output$makeplot2 <- renderPlot({  #shinysession
     group = c(unlist(strsplit(input$cn.2, "[\n]"))),
     value = c(input$x1, input$n1-input$x1)
     )
-    MFSpie(x1)
+    plot_pie(x1)
   #ggplot(x1, aes(x="", y=x1[,"value"], fill=x1[,"group"]))+ geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + xlab(rownames(T())[1])+ ylab("") + scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
   #p2 = ggplot(x2, aes(x="", y=x2[,"value"], fill=x2[,"group"]))+ geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + xlab(rownames(T())[2])+ ylab("") + scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
 
@@ -633,7 +633,7 @@ output$makeplot2.1 <- renderPlot({  #shinysession
     group = c(unlist(strsplit(input$cn.2, "[\n]"))),
     value = c(input$x2, input$n2-input$x2)
     )
-    MFSpie(x2)
+    plot_pie(x2)
   #p1 = ggplot(x1, aes(x="", y=x1[,"value"], fill=x1[,"group"]))+ geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + xlab(rownames(T())[1])+ ylab("") + scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
   #ggplot(x2, aes(x="", y=x2[,"value"], fill=x2[,"group"]))+ geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + xlab(rownames(T())[2])+ ylab("") + scale_fill_brewer(palette="Paired")+theme_minimal()+theme(legend.title=element_blank())
 
@@ -698,7 +698,7 @@ output$n.t = DT::renderDT({
 output$makeplot3 <- renderPlot({  #shinysession
 
   x<-as.data.frame(N())
-  MFSbar1(x)
+  plot_bar1(x)
   #X <- as.numeric(unlist(strsplit(input$xx, "[\n,;\t ]")))
   #Y <- as.numeric(unlist(strsplit(input$nn, "[\n,;\t ]")))
   #validate(need((sum((Y-X)<0))==0, "Please check your data whether x <= n"))
@@ -773,7 +773,7 @@ output$dt4.2 = DT::renderDT({prop.table(T4(), 2)},
 
 output$makeplot4 <- renderPlot({  #shinysession
   x <- as.data.frame(T4())
-  MFSbar(x)
+  plot_bar(x)
   #x <- as.data.frame(T4())
   #mx <- reshape(x, varying = list(names(x)), times = names(x), ids = row.names(x), direction = "long")
   #ggplot(mx, aes(x = mx[,"time"], y = mx[,2], fill = mx[,"id"]))+geom_bar(stat = "identity", position = position_dodge()) + ylab("Counts") + xlab("") + labs(fill = "") + theme_minimal() + scale_fill_brewer(palette = "Paired")

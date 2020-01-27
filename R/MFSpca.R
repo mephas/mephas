@@ -645,7 +645,7 @@ output$tx = renderUI({
  })
 
  output$p1 = renderPlot({
-    MFSscat(X(), input$tx, input$ty)
+    plot_scat(X(), input$tx, input$ty)
  #  ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) + 
  #    geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })
@@ -661,7 +661,7 @@ output$hx = renderUI({
 })
 
 output$p2 = renderPlot({
-  MFShist1(X(), input$hx, input$bin)
+  plot_hist1(X(), input$hx, input$bin)
  #  ggplot(X(), aes(x = X()[, input$hx])) + 
  #    geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
  #    #geom_density()+
@@ -669,7 +669,7 @@ output$p2 = renderPlot({
    })
 
 output$p21 = renderPlot({
-  MFSdensity1(X(), input$hx)
+  plot_density1(X(), input$hx)
  #  ggplot(X(), aes(x = X()[, input$hx])) + 
  #    #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
  #    geom_density() + 
@@ -706,7 +706,7 @@ output$cor <- DT::renderDT({as.data.frame(cor(DF4()))},
     scrollX = TRUE))
 
 output$cor.plot   <- renderPlot({ 
-  MFScorr(DF4())
+  plot_corr(DF4())
 #c <- as.data.frame(cor(DF4()))
 #c$group <- rownames(c)
 #corrs.m <- reshape::melt(c, id="group",
@@ -723,7 +723,7 @@ output$cor.plot   <- renderPlot({
 #  theme(axis.text.x = element_text(angle = 90), 
 #        axis.title.x=element_blank(), 
 #        axis.title.y=element_blank(), 
-#        plot.margin = unit(c(3, 1, 0, 0), "mm")) +
+#        plot_margin = unit(c(3, 1, 0, 0), "mm")) +
   #set correlation fill gradient
 #  scale_fill_gradient(low="white", high="red") + 
 #  guides(fill=F) #omit unnecessary gradient legend
@@ -786,7 +786,7 @@ df <- as.data.frame(pca()$x)
   if (input$frame == FALSE)
   {
   df$group <- rep(1, nrow(df))
-  MFSscore(df, input$c1, input$c2)
+  plot_score(df, input$c1, input$c2)
   #ggplot(df,aes(x = df[,input$c1], y = df[,input$c2], color=df$group))+
   #geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
   #theme_minimal()+
@@ -795,7 +795,7 @@ df <- as.data.frame(pca()$x)
   else
   {
   df$group <- X()[,input$g]
-  MFSscorec(df, input$c1, input$c2, input$type)
+  plot_scorec(df, input$c1, input$c2, input$type)
   #ggplot(df, aes(x = df[,input$c1], y = df[,input$c2], color=df$group))+
   #geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
   #stat_ellipse(type = input$type)+ theme_minimal()+
@@ -805,7 +805,7 @@ df <- as.data.frame(pca()$x)
 
 output$pca.ind2  <- renderPlot({ 
 load <- as.data.frame(pca()$rotation)
-MFSload(loads=load, a=input$nc)
+plot_load(loads=load, a=input$nc)
   #validate(need(input$nc>=2, "Components are not enough to create the plot."))
 #ll <- as.data.frame(pca()$rotation)
 #ll$group <- rownames(ll)
@@ -838,7 +838,7 @@ output$pca.bp   <- renderPlot({
 validate(need(input$nc>=2, "Components are not enough to create the plot."))
 score <- as.data.frame(pca()$x)
 load <- as.data.frame(pca()$rotation)
-MFSbiplot(score, load, input$c1, input$c2)
+plot_biplot(score, load, input$c1, input$c2)
 #biplot(pca(), choice=c(input$c1,input$c2))
 })
 
@@ -922,7 +922,7 @@ psych::fa.diagram(fa(), cut = 0)
 output$pca.ind.fa2  <- renderPlot({ 
     validate(need(input$ncfa>=2, "Components are not enough to create the plot."))
     load <- as.data.frame(fa()$loadings[,1:input$ncfa])
-    MFSload(loads=load, a=input$ncfa)
+    plot_load(loads=load, a=input$ncfa)
 #ll <- as.data.frame(fa()$loadings[,1:input$ncfa])
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
@@ -949,7 +949,7 @@ output$cor.fa <- DT::renderDT({as.data.frame(cor(DF4.fa()))},
     scrollX = TRUE))
 
 output$cor.fa.plot   <- renderPlot({ 
-  MFScorr(DF4.fa())
+  plot_corr(DF4.fa())
 #c <- as.data.frame(cor(DF4.fa()))
 #c$group <- rownames(c)
 #corrs.m <- reshape::melt(c, id="group",
@@ -966,7 +966,7 @@ output$cor.fa.plot   <- renderPlot({
 #  theme(axis.text.x = element_text(angle = 90), 
 #        axis.title.x=element_blank(), 
 #        axis.title.y=element_blank(), 
-#        plot.margin = unit(c(3, 1, 0, 0), "mm")) +
+#        plot_margin = unit(c(3, 1, 0, 0), "mm")) +
   #set correlation fill gradient
 #  scale_fill_gradient(low="white", high="red") + 
 #  guides(fill=F) #omit unnecessary gradient legend
@@ -977,7 +977,7 @@ output$fa.bp   <- renderPlot({
   validate(need(input$ncfa>=2, "Components are not enough to create the plot."))
   score <- as.data.frame(fa()$scores)
 load <- as.data.frame(fa()$loadings[,1:input$ncfa])
-MFSbiplot(score, load, input$c1.fa, input$c2.fa)
+plot_biplot(score, load, input$c1.fa, input$c2.fa)
 #biplot(fa(),labels=rownames(DF4.fa()), choose=c(input$c1.fa,input$c2.fa), main="")
 
 })
