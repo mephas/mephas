@@ -1,0 +1,32 @@
+Package: mephas
+Type: Package
+Title: Shiny Application of Medical and Pharmaceutical Statistics 
+Description: The web-based statistical fundamentals, tests, and models, aiming to facilitate researchers to analyze medical, pharmaceutical, and genomic data.
+Version: 2.0
+Authors@R: c(
+      person("Yi", "Zhou", email = c("zhouyi0426@126.com"),
+      role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9254-3245")))
+Maintainer: Yi Zhou <zhou-y@phs.osaka-u.ac.jp>
+Depends: R (>= 3.5.0)
+License: MIT + file LICENSE
+Imports:
+    dplyr,
+    DescTools,
+    DT,
+    exactRankTests,
+    dunn.test,
+    Rmisc, 
+    ROCR,
+    ggplot2,
+    psych,
+    pls,
+    reshape,
+    scales,
+    shiny,
+    stargazer,
+    spls
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
+URL: https://github.com/mephas/mephas
+BugReports: https://github.com/mephas/mephas/issues
