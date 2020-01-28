@@ -602,8 +602,12 @@ plot_score <- function(scores, n1, n2){
 plot_biplot <- function(scores, loads, n1, n2){
 names <- rownames(loads)
 pname <- rownames(scores)
-loads[[n1]]<-scales::rescale(loads[[n1]], to = c(min(scores[[n1]]),max(scores[[n1]])))
-loads[[n2]]<-scales::rescale(loads[[n2]], to = c(min(scores[[n2]]),max(scores[[n2]])))
+  linMap <- function(x, from, to)
+    (x - min(x)) / max(x - min(x)) * (to - from) + from
+#loads[[n1]]<-scales::rescale(loads[[n1]], to = c(min(scores[[n1]]),max(scores[[n1]])))
+loads[[n1]] <- linMap(loads[[n1]], min(scores[[n1]]),max(scores[[n1]]))
+#loads[[n2]]<-scales::rescale(loads[[n2]], to = c(min(scores[[n2]]),max(scores[[n2]])))
+loads[[n2]] <- linMap(loads[[n2]], min(scores[[n2]]),max(scores[[n2]]))
 
 x1 <- scores[,n1]
 y1 <- scores[,n2]

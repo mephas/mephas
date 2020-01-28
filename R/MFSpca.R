@@ -11,7 +11,6 @@
 ##' @import ggplot2
 ##'
 ##' @importFrom stats biplot cor prcomp screeplot
-##' @importFrom scales rescale
 ##'
 ##' @examples
 ##' # library(mephas)

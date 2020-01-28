@@ -22,7 +22,6 @@ Imports:
     psych,
     pls,
     reshape,
-    scales,
     shiny,
     survival,
     survminer,
