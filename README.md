@@ -1,2 +1,2 @@
 # mephas
-R package mephas2.0
+R package mephas 1.1
