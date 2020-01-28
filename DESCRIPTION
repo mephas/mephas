@@ -21,7 +21,7 @@ Imports:
     psych,
     pls,
     reshape,
-    shiny (== 1.4.0),
+    shiny,
     survival,
     survminer,
     survAUC,
@@ -32,7 +32,3 @@ LazyData: true
 RoxygenNote: 7.0.2
 URL: https://github.com/mephas/mephas
 BugReports: https://github.com/mephas/mephas/issues
-Suggests: 
-    rlang (== 0.4.2),
-    broom (== 0.5.3),
-    tidyr (== 1.0.0)

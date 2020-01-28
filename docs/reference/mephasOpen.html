@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>plot functions in MEPHAS — plot_res • mephas</title>
+<title>Open MEPHAS  Windows — mephasOpen • mephas</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="plot functions in MEPHAS — plot_res" />
-<meta property="og:description" content="plot functions in MEPHAS" />
+<meta property="og:title" content="Open MEPHAS  Windows — mephasOpen" />
+<meta property="og:description" content="Open MEPHAS interfaces" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,40 +105,60 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>plot functions in MEPHAS</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mephas/mephas/blob/master/R/plotfunction.R'><code>R/plotfunction.R</code></a></small>
-    <div class="hidden name"><code>plot_res.Rd</code></div>
+    <h1>Open MEPHAS  Windows</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mephas/mephas/blob/master/R/mephasOpen.R'><code>R/mephasOpen.R</code></a></small>
+    <div class="hidden name"><code>mephasOpen.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>plot functions in MEPHAS</p>
+    <p>Open MEPHAS interfaces</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_res</span>(<span class='no'>data</span>, <span class='no'>varx</span>, <span class='no'>vary</span>)</pre>
+    <pre class="usage"><span class='fu'>mephasOpen</span>(
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"condist"</span>, <span class='st'>"disdist"</span>, <span class='st'>"ttest"</span>, <span class='st'>"nptest"</span>, <span class='st'>"proptest"</span>, <span class='st'>"tabletest"</span>, <span class='st'>"anova"</span>,
+    <span class='st'>"linereg"</span>, <span class='st'>"logisreg"</span>, <span class='st'>"surv"</span>, <span class='st'>"pca"</span>, <span class='st'>"pls"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>input data frame</p></td>
-    </tr>
-    <tr>
-      <th>varx</th>
-      <td><p>input x variable name</p></td>
-    </tr>
-    <tr>
-      <th>vary</th>
-      <td><p>input y variable name</p></td>
+      <th>method</th>
+      <td><p>choose method from MEPHAS,
+"condist" opens continuous distribution,
+"disdist" opens discrete distribution,
+"ttest" opens t test,
+"nptest" opens non-parametric test,
+"proptest" opens test methods for proportions,
+"tabletest" opens test methods contingency table,
+"anova"opens ANOVA,
+"linereg" opens linear regression,
+"logisreg" opens logistic regression,
+"surv" opens survival models,
+"pca" opens principal component analysis,
+"pls" opens partial least square methods</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'># library(mephas)
+# mephasOpen("condist")
+# or,
+# mephas::mephasOpen("condist")
+# Use 'Stop and Quit' Button in the top to quit the interface
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
