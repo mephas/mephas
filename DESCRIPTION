@@ -2,7 +2,7 @@ Package: mephas
 Type: Package
 Title: Shiny Application of Medical and Pharmaceutical Statistics 
 Description: The shiny-based tools for statistical fundamentals, hypothesis tests, and statistical models, aiming to facilitate researchers to analyze medical, pharmaceutical, and genomic data. 
-Version: 1.2
+Version: 1.1
 Authors@R: c(
       person("Yi", "Zhou", 
       email = c("zhouyi0426@126.com"),
