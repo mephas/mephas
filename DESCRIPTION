@@ -33,4 +33,6 @@ RoxygenNote: 7.0.2
 URL: https://github.com/mephas/mephas
 BugReports: https://github.com/mephas/mephas/issues
 Suggests: 
-    rlang
+    rlang,
+    devtools,
+    usethis
