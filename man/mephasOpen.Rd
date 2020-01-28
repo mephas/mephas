@@ -25,7 +25,7 @@ mephasOpen(
 "pls" opens partial least square methods}
 }
 \value{
-shiny interface of MEPHAS
+shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)
 }
 \description{
 Open MEPHAS interfaces

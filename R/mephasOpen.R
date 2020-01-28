@@ -3,7 +3,7 @@
 ##'
 ##' @title Open MEPHAS  Windows
 ##'
-##' @return shiny interface of MEPHAS
+##' @return shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)
 ##'
 ##' @examples
 ##' # library(mephas)
