@@ -10,7 +10,6 @@
 ##'
 ##' @import shiny
 ##' @import ggplot2
-##' @import exactRankTests
 ##'
 ##' @importFrom reshape melt
 ##' @importFrom psych describe
@@ -26,7 +25,9 @@
 ##' @export
 MFSnptest <- function(){
 
-  requireNamespace("shiny")
+requireNamespace("shiny", quietly = TRUE)
+requireNamespace("ggplot2", quietly = TRUE)
+requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 

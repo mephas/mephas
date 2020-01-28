@@ -22,7 +22,9 @@
 ##' @export
 MFSlr <- function(){
 
-requireNamespace("shiny")
+requireNamespace("shiny", quietly = TRUE)
+requireNamespace("ggplot2", quietly = TRUE)
+requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
@@ -675,7 +677,8 @@ output$tx = renderUI({
  
  ## scatter plot
  output$p1 = renderPlot({
-plot_scat(input$tx, input$ty)
+
+plot_scat(DF3(),input$tx, input$ty)
    #ggplot(DF3(), aes(x = DF3()[, input$tx], y = DF3()[, input$ty])) + geom_point(shape = 1) + 
    #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })

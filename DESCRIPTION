@@ -8,7 +8,7 @@ Authors@R: c(
       email = c("zhouyi0426@126.com"),
       role = c("cre", "aut"), 
       comment = c(ORCID = "0000-0001-9254-3245")))
-Maintainer: Yi Zhou <zhou-y@phs.osaka-u.ac.jp>
+Maintainer: Yi Zhou <zhouyi0426@126.com>
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports:

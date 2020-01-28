@@ -35,5 +35,6 @@ Open MEPHAS interfaces
 ## or,
 # library(mephas)
 # mephasOpen("condist")
+# Please use Stop and Quit Button to close the interface
 
 }

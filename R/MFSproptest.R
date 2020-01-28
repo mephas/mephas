@@ -24,7 +24,9 @@
 ##' @export
 MFSproptest <- function(){
 
-  requireNamespace("shiny")
+requireNamespace("shiny", quietly = TRUE)
+requireNamespace("ggplot2", quietly = TRUE)
+requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 navbarPage(

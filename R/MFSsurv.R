@@ -27,7 +27,11 @@
 ##' @export
 MFSsurv <- function(){
 
-requireNamespace("shiny")
+requireNamespace("shiny", quietly = TRUE)
+requireNamespace("ggplot2", quietly = TRUE)
+requireNamespace("DT", quietly = TRUE)
+requireNamespace("survival", quietly = TRUE)
+requireNamespace("survminer", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 

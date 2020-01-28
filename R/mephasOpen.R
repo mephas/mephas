@@ -10,6 +10,7 @@
 ##' ## or,
 ##' # library(mephas)
 ##' # mephasOpen("condist")
+##' # Please use Stop and Quit Button to close the interface
 ##'
 ##' @param method choose method from MEPHAS,
 ##' "condist" opens continuous distribution,

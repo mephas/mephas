@@ -1,6 +1,11 @@
+anova
+condist
 correaltion
+disdist
 itrue
 kxk
+linereg
+logisreg
 MFSanova
 MFScondist
 MFSdisdist
@@ -13,7 +18,14 @@ MFSproptest
 MFSrctabtest
 MFSsurv
 MFSttest
+nptest
 paried
+pca
+pls
+proptest
 RxC
+surv
+tabletest
+ttest
 xC
 xk
