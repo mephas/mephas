@@ -14,8 +14,11 @@ MFSlogit includes
 (1) logistic regression for binary outcomes,
 }
 \examples{
-#mephas::MFSlogit()
-## or,
 # library(mephas)
 # MFSlogit()
+# or,
+# mephas::MFSlogit()
+# or,
+# mephasOpen("logisreg")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

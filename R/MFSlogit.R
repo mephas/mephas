@@ -15,14 +15,17 @@
 ##' @importFrom utils str write.table
 ##'
 ##' @examples
-##' #mephas::MFSlogit()
-##' ## or,
 ##' # library(mephas)
 ##' # MFSlogit()
+##' # or,
+##' # mephas::MFSlogit()
+##' # or,
+##' # mephasOpen("logisreg")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFSlogit <- function(){
-    
+
 requireNamespace("shiny", quietly = TRUE)
 requireNamespace("ggplot2", quietly = TRUE)
 requireNamespace("DT", quietly = TRUE)
@@ -41,14 +44,14 @@ headerPanel("Data Preparation"),
 
 HTML(
 "
-<b>Logistic regression</b> is used to model the probability of a certain class or event existing such as pass/fail, win/lose, alive/dead or healthy/sick. 
+<b>Logistic regression</b> is used to model the probability of a certain class or event existing such as pass/fail, win/lose, alive/dead or healthy/sick.
 Logistic regression uses a logistic function to model a binary dependent variable.
 
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
-<li> To upload data file, preview data set, and check the correctness of data input 
+<li> To upload data file, preview data set, and check the correctness of data input
 <li> To pre-process some variables (when necessary) for building the model
-<li> To get the basic descriptive statistics and plots of the variables 
+<li> To get the basic descriptive statistics and plots of the variables
 </ul>
 
 <h4><b> 2. About your data (training set) </b></h4>
@@ -56,14 +59,14 @@ Logistic regression uses a logistic function to model a binary dependent variabl
 <ul>
 <li> Your data need to include <b>one binary dependent variable (denoted as Y)</b> and <b> at least one independent variables (denoted as X)</b>
 <li> Your data need to have more rows than columns
-<li> Do not mix character and numbers in the same column 
+<li> Do not mix character and numbers in the same column
 <li> The data used to build model is called <b>training set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 
-Suppose we wanted to explore the Breast Cancer dataset and develop a model to try classifying suspected cells to Benign (B) or Malignant (M). 
-The dependent variable is binary outcome (B/M). We were interested (1) to build a model which calculates the probability of benign or malignant and then help us to determine whether the patient is benign or malignant, 
+Suppose we wanted to explore the Breast Cancer dataset and develop a model to try classifying suspected cells to Benign (B) or Malignant (M).
+The dependent variable is binary outcome (B/M). We were interested (1) to build a model which calculates the probability of benign or malignant and then help us to determine whether the patient is benign or malignant,
 and (2) find the relations between binary dependent variable and the other variables, that is find out which variable contributes greatly to the dependent variable.
 
 
@@ -83,8 +86,8 @@ sidebarPanel(
   tags$head(tags$style("#strfac {overflow-y:scroll; height: 100px; background: white};")),
   tags$head(tags$style("#fsum {overflow-y:scroll; height: 100px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")), 
-        choices =  c("Breast Cancer"), 
+selectInput("edata", h4(tags$b("Use example data (training set)")),
+        choices =  c("Breast Cancer"),
         selected = "Breast Cancer"),
 hr(),
 
@@ -125,7 +128,7 @@ h4(tags$b("(Optional) Change the types of some variable?")),
 uiOutput("factor1"),
 uiOutput("factor2"),
 
-h4(tags$b("(Optional) Change the referential level for categorical variable?")), 
+h4(tags$b("(Optional) Change the referential level for categorical variable?")),
 
 uiOutput("lvl"),
 
@@ -139,7 +142,7 @@ tags$textarea(id='ref',"")
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")), 
+p(tags$b("Data Preview")),
 DT::DTOutput("Xdata"),
 
 p(tags$b("1. Numeric variable information list")),
@@ -149,7 +152,7 @@ p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
 
-hr(),   
+hr(),
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -201,7 +204,7 @@ HTML(
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
 <li> To build simple or multiple logistic regression model
-<li> To get the estimates of regressions, including (1) estimate of coefficients with t test, p value, and 95% CI, (2) R<sup>2</sup> and adjusted R<sup>2</sup>, and (3) F-Test for overall significance in Regression 
+<li> To get the estimates of regressions, including (1) estimate of coefficients with t test, p value, and 95% CI, (2) R<sup>2</sup> and adjusted R<sup>2</sup>, and (3) F-Test for overall significance in Regression
 <li> To get additional information: (1) predicted dependent variable and residuals, (2) AIC-based variable selection, (3) ROC plot, and (4) sensitivity and specificity table for ROC plot
 </ul>
 
@@ -209,7 +212,7 @@ HTML(
 
 <ul>
 <li> The dependent variable is binary
-<li> Please prepare the training set data in the previous <b>Data</b> tab</ul> 
+<li> Please prepare the training set data in the previous <b>Data</b> tab</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
@@ -231,20 +234,20 @@ tags$head(tags$style("#fit2 {overflow-y:scroll; height: 400px; background: white
 tags$head(tags$style("#step {overflow-y:scroll; height: 400px; background: white};")),
 
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose variables to build the model")),      
+h4(tags$b("Step 1. Choose variables to build the model")),
 
-uiOutput('y'), 
+uiOutput('y'),
 uiOutput('x'),
 
 radioButtons("intercept", "3. (Optional) Keep or remove intercept / constant term", ##> intercept or not
      choices = c("Remove intercept / constant term" = "-1",
                  "Keep intercept / constant term" = ""),
      selected = ""),
-p(tags$b("4. (Optional) Add interaction term between categorical variables")), 
-p('Please input: + var1:var2'), 
-tags$textarea(id='conf', " " ), 
+p(tags$b("4. (Optional) Add interaction term between categorical variables")),
+p('Please input: + var1:var2'),
+tags$textarea(id='conf', " " ),
 hr(),
 h4(tags$b("Step 2. Check the model")),
 verbatimTextOutput("formula"),
@@ -301,8 +304,8 @@ tabPanel("Data Fitting",  br(),
 tabPanel("AIC-based Selection",  br(),
 HTML(
 "<b> Explanations </b>
-<ul> 
-<li> The Akaike Information Criterion (AIC) is a way of selecting a model from a set of models. 
+<ul>
+<li> The Akaike Information Criterion (AIC) is a way of selecting a model from a set of models.
 <li> Model fits are ranked according to their AIC values, and the model with the lowest AIC value is sometime considered the 'best'
 <li> This selection is just for your reference.
 </ul>"
@@ -317,7 +320,7 @@ tabPanel("ROC Plot",   br(),
 
 HTML(
 "<b> Explanations </b>
-<ul> 
+<ul>
 <li> ROC curve: receiver operating characteristic curve, is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied
 <li> ROC curve is created by plotting the true positive rate (TPR) against the false positive rate (FPR) at various threshold settings
 </ul>"
@@ -329,7 +332,7 @@ tabPanel("Sensitivity and Specificity",   br(),
 
 HTML(
 "<b> Explanations </b>
-<ul> 
+<ul>
 <li>Sensitivity (also called the true positive rate) measures the proportion of actual positives that are correctly identified as such
 <li>Specificity (also called the true negative rate) measures the proportion of actual negatives that are correctly identified as such
 </ul>"
@@ -363,7 +366,7 @@ HTML(
 <ul>
 <li> New data cover all the independent variables used in the model.
 <li> New data not used to build the model is called <b>test set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 
@@ -391,7 +394,7 @@ h4(tags$b("Use my own data (test set)")),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
 
-h4(tags$b("Step 1. Upload New Data File")),      
+h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -423,7 +426,7 @@ p("Correct separator and quote ensure the successful data input")
 
 mainPanel(
 
-actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 p(br()),
 tabsetPanel(
 tabPanel("Prediction",p(br()),
@@ -440,7 +443,7 @@ DT::DTOutput("sst.s")
 )
 )
 
-) 
+)
 ),
 hr()
 ),
@@ -472,7 +475,7 @@ server <- function(input, output) {
 
 data <- reactive({
                 switch(input$edata,
-               "Breast Cancer" = LGT)  
+               "Breast Cancer" = LGT)
                 })
 
 
@@ -513,7 +516,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0() 
+df <-DF0()
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -536,7 +539,7 @@ selectInput(
 
 
 DF2 <- reactive({
-  df <-DF1() 
+  df <-DF1()
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -609,7 +612,7 @@ sum <- reactive({
   })
 
 output$sum <- DT::renderDT({sum()},
-    extensions = 'Buttons', 
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -621,7 +624,7 @@ fsum = reactive({
   })
 
 output$fsum = renderPrint({fsum()})
- 
+
 output$download2 <- downloadHandler(
 filename = function() {
 "lr.des2.txt"
@@ -630,9 +633,9 @@ content = function(file) {
 write.table(fsum(), file, row.names = TRUE)
 }
 )
-# 
+#
 # # First Exploration of Variables
-# 
+#
 output$tx = renderUI({
 selectInput(
 'tx',
@@ -648,38 +651,38 @@ tags$b('2. Choose a binary variable for the y-axis'),
 selected = type.bi()[1],
 choices = type.bi())
 })
- 
+
  ## scatter plot
 output$p1 = renderPlot({
   plot_scat(DF3(), input$tx, input$ty)
-#ggplot(DF3(), aes(x=DF3()[, input$tx], y=(as.numeric(as.factor(DF3()[, input$ty]))-1))) + 
-#geom_point(shape = 1,  size = 1) + 
+#ggplot(DF3(), aes(x=DF3()[, input$tx], y=(as.numeric(as.factor(DF3()[, input$ty]))-1))) +
+#geom_point(shape = 1,  size = 1) +
 #stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE,  size = 0.5) +
 #xlab(input$tx) + ylab(input$ty) + theme_minimal()
 })
- 
+
 ## histogram
  output$hx = renderUI({
    selectInput(
      'hx',
      tags$b('Choose a numeric variable to see the distribution'),
-     selected = type.num3()[1], 
+     selected = type.num3()[1],
      choices = type.num3())
  })
- 
+
 output$p2 = renderPlot({
   plot_hist1(DF3(), input$hx, input$bin)
-#   ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
-#     geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
+#   ggplot(DF3(), aes(x = DF3()[, input$hx])) +
+#     geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") +
 #     #geom_density()+
 #     xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
 output$p21 = renderPlot({
   plot_density1(DF3(), input$hx)
-#   ggplot(DF3(), aes(x = DF3()[, input$hx])) + 
-#     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
-#     geom_density() + 
+#   ggplot(DF3(), aes(x = DF3()[, input$hx])) +
+#     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") +
+#     geom_density() +
 #     xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
@@ -692,7 +695,7 @@ type.bi <- reactive({
   x <- colnames(DF3())[names]
   return(x)
   })
-## 
+##
 output$y = renderUI({
 selectInput(
 'y',
@@ -725,19 +728,19 @@ output$str <- renderPrint({str(DF3())})
 ##3. regression formula
 formula = reactive({
 validate(need(input$x, "Please choose some independent variable"))
-as.formula(paste0(input$y,' ~ ',paste0(input$x, collapse = "+"), 
-    input$conf, 
+as.formula(paste0(input$y,' ~ ',paste0(input$x, collapse = "+"),
+    input$conf,
   input$intercept)
 )
 
 })
 
 output$formula = renderPrint({
-#validate(need(length(levels(as.factor(DF3()[, input$y])))==2, "Please choose a binary variable as Y")) 
+#validate(need(length(levels(as.factor(DF3()[, input$y])))==2, "Please choose a binary variable as Y"))
 validate(need(input$x, "Please choose some independent variable"))
 #formula()
-cat(paste0(input$y,' ~ ',paste0(input$x, collapse = " + "), 
-  input$conf, 
+cat(paste0(input$y,' ~ ',paste0(input$x, collapse = " + "),
+  input$conf,
   input$intercept))
 })
 
@@ -752,8 +755,8 @@ glm(formula(),family = binomial(link = "logit"), data = DF3())
 #gfit = eventReactive(input$B1, {
 #  glm(formula(), data = DF3())
 #})
-# 
-output$fit = renderPrint({ 
+#
+output$fit = renderPrint({
 stargazer::stargazer(
 fit(),
 #out="logistic.txt",
@@ -791,7 +794,7 @@ model.names = FALSE
 #sp = reactive({step(fit())})
 output$step = renderPrint({step(fit())})
 
-# 
+#
 # # residual plot
  output$p.lm = renderPlot({
   yhat <- predict(fit())
@@ -801,10 +804,10 @@ output$step = renderPrint({step(fit())})
   #ps <- ROCR::performance(p, "tpr", "fpr")
   #pf <- ROCR::performance(p, "auc")#
 
-  #df <- data.frame(tpr=unlist(ps@y.values), 
+  #df <- data.frame(tpr=unlist(ps@y.values),
   #  fpr=unlist(ps@x.values))
 
-#ggplot(df, aes(df$fpr,df$tpr)) + 
+#ggplot(df, aes(df$fpr,df$tpr)) +
 #  geom_step() +
 #  coord_cartesian(xlim=c(0,1), ylim=c(0,1)) +
 #  theme_minimal()+ ggtitle("") +
@@ -812,7 +815,7 @@ output$step = renderPrint({step(fit())})
 #  ylab("True positive rate (sensitivity)")+
 #  annotate("text", x = .75, y = .25, label = paste("AUC =",pf@y.values))
     })
-# 
+#
  fit.lm <- reactive({
  res <- data.frame(
   Y=DF3()[,input$y],
@@ -823,29 +826,29 @@ output$step = renderPrint({step(fit())})
  colnames(res) <- c("Dependent Variable = Y", "Numeric Y", "Linear Predictors = bX", "Predicted Y = 1/(1+exp(-bX))")
  return(res)
     })
-# 
+#
  output$fitdt0 = DT::renderDT(fit.lm(),
-    extensions = 'Buttons', 
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
-# 
+#
 
 sst <- reactive({
 pred <- ROCR::prediction(fit()[["fitted.values"]], DF3()[,input$y])
 perf <- ROCR::performance(pred,"sens","spec")
 perf2 <- data.frame(
-  sen=unlist(perf@y.values), 
-  spec=unlist(perf@x.values), 
-  spec2=1-unlist(perf@x.values), 
+  sen=unlist(perf@y.values),
+  spec=unlist(perf@x.values),
+  spec2=1-unlist(perf@x.values),
   cut=unlist(perf@alpha.values))
 colnames(perf2) <- c("Sensitivity", "Specificity", "1-Specificity","Cut-off Point")
 return(perf2)
   })
 
  output$sst = DT::renderDT(sst(),
-    extensions = 'Buttons', 
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -888,7 +891,7 @@ pred.lm <- reactive({
     })
 
 output$pred = DT::renderDT(pred.lm(),
-    extensions = 'Buttons', 
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -902,11 +905,11 @@ output$pred = DT::renderDT(pred.lm(),
   #p <- ROCR::prediction(pred.lm()[,2], pred.lm()[,input$y])
   #ps <- ROCR::performance(p, "tpr", "fpr")
   #pf <- ROCR::performance(p, "auc")
-  
-  #df <- data.frame(tpr=unlist(ps@y.values), 
+
+  #df <- data.frame(tpr=unlist(ps@y.values),
   #  fpr=unlist(ps@x.values))
 
-#ggplot(df, aes(df$fpr,df$tpr)) + 
+#ggplot(df, aes(df$fpr,df$tpr)) +
 #  geom_step() +
 #  coord_cartesian(xlim=c(0,1), ylim=c(0,1)) +
 #  theme_minimal()+ ggtitle("ROC plot") +
@@ -922,16 +925,16 @@ validate(need((pred.lm()[, input$y]), "This evaluation plot will not show unless
 pred <- ROCR::prediction(pred.lm()[,2], pred.lm()[,input$y])
 perf <- ROCR::performance(pred,"sens","spec")
 perf2 <- data.frame(
-  sen=unlist(perf@y.values), 
-  spec=unlist(perf@x.values), 
-  spec2=1-unlist(perf@x.values), 
+  sen=unlist(perf@y.values),
+  spec=unlist(perf@x.values),
+  spec2=1-unlist(perf@x.values),
   cut=unlist(perf@alpha.values))
 colnames(perf2) <- c("Sensitivity", "Specificity", "1-Specificity","Cut-off Point")
 return(perf2)
   })
 
  output$sst.s = DT::renderDT((sst.s()),
-    extensions = 'Buttons', 
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),

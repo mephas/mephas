@@ -31,10 +31,10 @@ shiny interface of MEPHAS
 Open MEPHAS interfaces
 }
 \examples{
-# mephas::mephasOpen("condist")
-## or,
 # library(mephas)
 # mephasOpen("condist")
-# Please use Stop and Quit Button to close the interface
+# or,
+# mephas::mephasOpen("condist")
+# Use 'Stop and Quit' Button in the top to quit the interface
 
 }

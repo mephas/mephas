@@ -16,9 +16,11 @@ MFSrctabtest includes test for counts data:
 and (3) 2xC and RxC table under K confounding categories
 }
 \examples{
-# mephas::MFSrctabtest()
-## or,
 # library(mephas)
 # MFSrctabtest()
-# not run
+# or,
+# mephas::MFSrctabtest()
+# or,
+# mephasOpen("tabletest")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

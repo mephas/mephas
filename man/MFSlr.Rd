@@ -14,8 +14,11 @@ MFSlr includes
 (1) linear regression for continuous outcomes
 }
 \examples{
-#mephas::MFSlr()
-## or,
 # library(mephas)
 # MFSlr()
+# or,
+# mephas::MFSlr()
+# or,
+# mephasOpen("linereg")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

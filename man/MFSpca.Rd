@@ -10,13 +10,16 @@ MFSpca()
 shiny interface
 }
 \description{
-MFSpca includes  
+MFSpca includes
 (1) principal component analysis
 and (2) factor analysis
 }
 \examples{
-# mephas::MFSpca()
-##-----
 # library(mephas)
 # MFSpca()
+# or,
+# mephas::MFSpca()
+# or,
+# mephasOpen("pca")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

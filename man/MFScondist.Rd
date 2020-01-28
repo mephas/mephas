@@ -23,8 +23,11 @@ and (7) F distribution.
 MFScondist also generates random numbers draw the distribution of user data
 }
 \examples{
-# mephas::MFScondist()
-## or,
 # library(mephas)
 # MFScondist()
+# or,
+# mephas::MFScondist()
+# or,
+# mephasOpen("condist")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

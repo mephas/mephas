@@ -1,5 +1,5 @@
 ##'
-##' MFSpca includes  
+##' MFSpca includes
 ##' (1) principal component analysis
 ##' and (2) factor analysis
 ##'
@@ -9,14 +9,17 @@
 ##'
 ##' @import shiny
 ##' @import ggplot2
-##' 
+##'
 ##' @importFrom stats biplot cor prcomp screeplot
 ##'
 ##' @examples
-##' # mephas::MFSpca()
-##' ##-----
 ##' # library(mephas)
 ##' # MFSpca()
+##' # or,
+##' # mephas::MFSpca()
+##' # or,
+##' # mephasOpen("pca")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFSpca <- function(){
@@ -42,7 +45,7 @@ HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
-<li> To upload data file, preview data set, and check the correctness of data input 
+<li> To upload data file, preview data set, and check the correctness of data input
 <li> To pre-process some variables (when necessary) for building the model
 <li> To get the basic descriptive statistics and plots of the variables
 </ul>
@@ -51,8 +54,8 @@ HTML(
 
 <ul>
 <li> Your data need to have more rows than columns
-<li> Your data need to be all numeric 
-</ul> 
+<li> Your data need to be all numeric
+</ul>
 
 <i><h4>Case Example 1: Chemical data</h4>
 
@@ -76,22 +79,22 @@ sidebarPanel(
   tags$head(tags$style("#strfac {overflow-y:scroll; height: 100px; background: white};")),
   tags$head(tags$style("#fsum {overflow-y:scroll; height: 100px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")), 
-        choices =  c("Chemical"), 
+selectInput("edata", h4(tags$b("Use example data (training set)")),
+        choices =  c("Chemical"),
         selected = "Chemical"),
 hr(),
 
 h4(tags$b("Use my own data (training set)")),
 p("We suggested putting the dependent variable (Y) in the left side of all independent variables (X) "),
 
-h4(tags$b("Step 1. Upload Data File")), 
+h4(tags$b("Step 1. Upload Data File")),
 
 fileInput('file', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-p(tags$b("2. Show 1st row as column names?")), 
+p(tags$b("2. Show 1st row as column names?")),
 checkboxInput("header", "Yes", TRUE),
 
-p(tags$b("3. Use 1st column as row names? (No duplicates)")), 
+p(tags$b("3. Use 1st column as row names? (No duplicates)")),
 checkboxInput("col", "Yes", TRUE),
 
 radioButtons("sep", "4. Which separator for data?",
@@ -123,7 +126,7 @@ uiOutput("factor2")
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")), 
+p(tags$b("Data Preview")),
 p(br()),
 DT::DTOutput("Xdata"),
 
@@ -133,7 +136,7 @@ verbatimTextOutput("strnum"),
 p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
-hr(),   
+hr(),
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -195,7 +198,7 @@ HTML(
 <ul>
 <li> From <parallel analysis> to estimate the number of components
 <li> To get correlation matrix and plot
-<li> To get the principal components and loadings result tables and 
+<li> To get the principal components and loadings result tables and
 <li> To get the principal components and loadings distribution plots
 </ul>
 
@@ -204,7 +207,7 @@ HTML(
 <ul>
 <li> All the data for analysis are numeric
 <li> More samples size than the number of independent variables, that is, he number of rows is greater than the number of columns
-</ul> 
+</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "),
@@ -218,11 +221,11 @@ sidebarPanel(
 
 #tags$head(tags$style("#x {height: 150px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose parameters to build the model")),    
+h4(tags$b("Step 1. Choose parameters to build the model")),
 
-uiOutput('x'), 
+uiOutput('x'),
 
 numericInput("nc", "2. How many components (a)", 4, min = 1, max = NA),
 p(tags$i("According to the suggested results from parallel analysis, we chose to generate 4 components from the data")),
@@ -270,15 +273,15 @@ tabPanel("Components", p(br()),
 <li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
 </ul>
 
-<i> Click the button to show and update the result. 
+<i> Click the button to show and update the result.
 <ul>
 <li> In the plot of PC1 and PC2 (without group circle), we could find some outliers in the up. After soring PC2 in the table, we could see 107 and 108 are two of the outliers.
-<li> In the plot of PC1 and PC2 (add group circle in Euclid distance), we could find chem2 is separated from chem3 and 5, and from others. 
+<li> In the plot of PC1 and PC2 (add group circle in Euclid distance), we could find chem2 is separated from chem3 and 5, and from others.
 
 </ul></i>
   "),
 checkboxInput("frame", tags$b("Add group circle in the component plot"), FALSE),
-uiOutput('g'), 
+uiOutput('g'),
 radioButtons("type", "The type of ellipse",
  choices = c("T: assumes a multivariate t-distribution" = 't',
              "Normal: assumes a multivariate normal-distribution" = "norm",
@@ -296,8 +299,8 @@ tabPanel("Loading", p(br()),
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
@@ -316,9 +319,9 @@ tabPanel("Component and Loading 2D Plot" ,p(br()),
 <li> Loadings identify which variables have the largest effect on each component.
 <li> Loadings can range from -1 to 1. Loadings close to -1 or 1 indicate that the variable strongly influences the component. Loadings close to 0 indicate that the variable has a weak influence on the component.
 </ul>
-<i> Click the button to show and update the result. 
+<i> Click the button to show and update the result.
 <ul>
-<li> In the plot of PC1 and PC2, we could find chem1,7 have comparatively strong negative effect to PC1, and chem 4 has comparatively strong positive effect on PC1. For PC2, chem 8 has strong positive effect and chem3 has strong negative effect. 
+<li> In the plot of PC1 and PC2, we could find chem1,7 have comparatively strong negative effect to PC1, and chem 4 has comparatively strong positive effect on PC1. For PC2, chem 8 has strong positive effect and chem3 has strong negative effect.
 The results are corresponding to the loading plot
 </ul></i>
 
@@ -348,7 +351,7 @@ HTML(
 <ul>
 <li> From <parallel analysis> to estimate the number of components
 <li> To get correlation matrix and plot
-<li> To get the factors and loadings result tables and 
+<li> To get the factors and loadings result tables and
 <li> To get the factors and loadings distribution plots
 </ul>
 
@@ -357,7 +360,7 @@ HTML(
 <ul>
 <li> All the data for analysis are numeric
 <li> More samples size than the number of independent variables, that is, he number of rows is greater than the number of columns
-</ul> 
+</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "),
@@ -372,11 +375,11 @@ sidebarPanel(
 #tags$head(tags$style("#x_fa {height: 150px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
 tags$head(tags$style("#fa {overflow-y:scroll; height: 300px; background: white};")),
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose parameters to build the model")),    
+h4(tags$b("Step 1. Choose parameters to build the model")),
 
-uiOutput('x.fa'), 
+uiOutput('x.fa'),
 
 numericInput("ncfa", "2. How many factors (a)", 4, min = 1, max = NA),
 p(tags$i("According to the suggested results from parallel analysis, we chose to generate 4 factors from the data")),
@@ -436,8 +439,8 @@ tabPanel("Loading", p(br()),
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
+<li> Use the proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
 
@@ -540,7 +543,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0() 
+df <-DF0()
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -561,7 +564,7 @@ selectInput(
 })
 
 X <- reactive({
-  df <-DF1() 
+  df <-DF1()
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -573,7 +576,7 @@ colnames(X()[unlist(lapply(X(), is.factor))])
  output$Xdata <- DT::renderDT({
   if (ncol(X())>1000 || nrow(X())>1000) {X()[,1:1000]}
   else { X()}
-  }, 
+  },
     extensions = list(
       'Buttons'=NULL,
       'Scroller'=NULL),
@@ -604,8 +607,8 @@ sum <- reactive({
   return(res)
   })
 
-output$sum <- DT::renderDT({sum()}, 
-    extensions = 'Buttons', 
+output$sum <- DT::renderDT({sum()},
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -631,24 +634,24 @@ output$fsum = renderPrint({fsum()})
 
 output$tx = renderUI({
    selectInput(
-     'tx', 
+     'tx',
      tags$b('1. Choose a numeric variable for the x-axis'),
      selected=type.num3()[2],
      choices = type.num3())
    })
- 
+
  output$ty = renderUI({
    selectInput(
      'ty',
      tags$b('2. Choose a numeric variable for the y-axis'),
      selected = type.num3()[1],
      choices = type.num3())
-   
+
  })
 
  output$p1 = renderPlot({
     plot_scat(X(), input$tx, input$ty)
- #  ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) + 
+ #  ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) +
  #    geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })
 
@@ -658,23 +661,23 @@ output$hx = renderUI({
   selectInput(
     'hx',
      tags$b('Choose a numeric variable'),
-     selected = type.num3()[1], 
+     selected = type.num3()[1],
      choices = type.num3())
 })
 
 output$p2 = renderPlot({
   plot_hist1(X(), input$hx, input$bin)
- #  ggplot(X(), aes(x = X()[, input$hx])) + 
- #    geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
+ #  ggplot(X(), aes(x = X()[, input$hx])) +
+ #    geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") +
  #    #geom_density()+
  #    xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
 output$p21 = renderPlot({
   plot_density1(X(), input$hx)
- #  ggplot(X(), aes(x = X()[, input$hx])) + 
- #    #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
- #    geom_density() + 
+ #  ggplot(X(), aes(x = X()[, input$hx])) +
+ #    #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") +
+ #    geom_density() +
  #    xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
@@ -700,34 +703,34 @@ DF4 <- reactive({
 output$table.x <- DT::renderDT(
     head(X()), options = list(scrollX = TRUE,dom = 't'))
 
-output$cor <- DT::renderDT({as.data.frame(cor(DF4()))}, 
-  extensions = 'Buttons', 
+output$cor <- DT::renderDT({as.data.frame(cor(DF4()))},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$cor.plot   <- renderPlot({ 
+output$cor.plot   <- renderPlot({
   plot_corr(DF4())
 #c <- as.data.frame(cor(DF4()))
 #c$group <- rownames(c)
 #corrs.m <- reshape::melt(c, id="group",
 #                            measure=rownames(c))
 
-#ggplot(corrs.m, aes(corrs.m$group, corrs.m$variable, fill=abs(corrs.m$value))) + 
+#ggplot(corrs.m, aes(corrs.m$group, corrs.m$variable, fill=abs(corrs.m$value))) +
 #  geom_tile() + #rectangles for each correlation
 #  #add actual correlation value in the rectangle
-#  geom_text(aes(label = round(corrs.m$value, 2)), size=2.5) + 
+#  geom_text(aes(label = round(corrs.m$value, 2)), size=2.5) +
 #  theme_bw(base_size=10) + #black and white theme with set font size
-  #rotate x-axis labels so they don't overlap, 
+  #rotate x-axis labels so they don't overlap,
   #get rid of unnecessary axis titles
   #adjust plot margins
-#  theme(axis.text.x = element_text(angle = 90), 
-#        axis.title.x=element_blank(), 
-#        axis.title.y=element_blank(), 
+#  theme(axis.text.x = element_text(angle = 90),
+#        axis.title.x=element_blank(),
+#        axis.title.y=element_blank(),
 #        plot_margin = unit(c(3, 1, 0, 0), "mm")) +
   #set correlation fill gradient
-#  scale_fill_gradient(low="white", high="red") + 
+#  scale_fill_gradient(low="white", high="red") +
 #  guides(fill=F) #omit unnecessary gradient legend
 })
 
@@ -747,22 +750,22 @@ output$var  <- DT::renderDT({
   res.tab<- as.data.frame(res$importance)[,1:input$nc]
   return(res.tab)
   },
-  extensions = 'Buttons', 
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 output$comp <- DT::renderDT({
-  as.data.frame(pca()$x)}, 
-  extensions = 'Buttons', 
+  as.data.frame(pca()$x)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$load <- DT::renderDT({pca()$rotation}, 
-  extensions = 'Buttons', 
+output$load <- DT::renderDT({pca()$rotation},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -782,7 +785,7 @@ choices = type.fac4()
 )
 })
 
-output$pca.ind  <- renderPlot({ 
+output$pca.ind  <- renderPlot({
 validate(need(input$nc>=2, "Components are not enough to create the plot."))
 df <- as.data.frame(pca()$x)
   if (input$frame == FALSE)
@@ -805,7 +808,7 @@ df <- as.data.frame(pca()$x)
   }
   })
 
-output$pca.ind2  <- renderPlot({ 
+output$pca.ind2  <- renderPlot({
 load <- as.data.frame(pca()$rotation)
 plot_load(loads=load, a=input$nc)
   #validate(need(input$nc>=2, "Components are not enough to create the plot."))
@@ -814,29 +817,29 @@ plot_load(loads=load, a=input$nc)
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:input$nc])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 #  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
+#  coord_flip() + #flip the axes so the test names can be horizontal
   #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
+#  scale_fill_gradient2(name = "Loading",
+#                       high = "blue", mid = "white", low = "red",
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$pc.plot   <- renderPlot({ 
+output$pc.plot   <- renderPlot({
 psych::fa.parallel((DF4()),fa="pc",fm="ml")
 })
 
-output$pcncomp   <- renderPrint({ 
+output$pcncomp   <- renderPrint({
 x <- psych::fa.parallel((DF4()),fa="pc",fm="ml")
 cat(paste0("Parallel analysis suggests that the number of components: ", x$ncomp))
 })
 
-output$pca.bp   <- renderPlot({ 
+output$pca.bp   <- renderPlot({
 validate(need(input$nc>=2, "Components are not enough to create the plot."))
 score <- as.data.frame(pca()$x)
 load <- as.data.frame(pca()$rotation)
@@ -848,7 +851,7 @@ plot_biplot(score, load, input$c1, input$c2)
 output$pca.plot <- renderPlot({ screeplot(pca(), npcs= input$nc, type="lines", main="") })
 
 
-#source("fa_server.R", local=TRUE, encoding="UTF-8") 
+#source("fa_server.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************fa
 
 output$x.fa = renderUI({
@@ -882,18 +885,18 @@ output$fa  <- renderPrint({
   summary(fa())
   })
 
-output$fa.plot   <- renderPlot({ 
+output$fa.plot   <- renderPlot({
 psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
 })
 
-output$fancomp   <- renderPrint({ 
+output$fancomp   <- renderPrint({
 x <- psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
 cat(paste0("Parallel analysis suggests that the number of factors: ", x$nfact))
 })
 
 
-output$comp.fa <- DT::renderDT({as.data.frame(fa()$scores)}, 
-  extensions = 'Buttons', 
+output$comp.fa <- DT::renderDT({as.data.frame(fa()$scores)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -901,27 +904,27 @@ output$comp.fa <- DT::renderDT({as.data.frame(fa()$scores)},
 
 output$load.fa <- DT::renderDT({
   validate(need(input$ncfa>=2, "Components must be >= 2."))
-  as.data.frame(fa()$loadings[,1:input$ncfa])}, 
-  extensions = 'Buttons', 
+  as.data.frame(fa()$loadings[,1:input$ncfa])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$var.fa <- DT::renderDT({as.data.frame(fa()$Vaccounted)}, 
-  extensions = 'Buttons', 
+output$var.fa <- DT::renderDT({as.data.frame(fa()$Vaccounted)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 
-output$pca.ind.fa  <- renderPlot({ 
+output$pca.ind.fa  <- renderPlot({
     validate(need(input$ncfa>=1, "Components are not enough to create the plot."))
 psych::fa.diagram(fa(), cut = 0)
   })
 
-output$pca.ind.fa2  <- renderPlot({ 
+output$pca.ind.fa2  <- renderPlot({
     validate(need(input$ncfa>=2, "Components are not enough to create the plot."))
     load <- as.data.frame(fa()$loadings[,1:input$ncfa])
     plot_load(loads=load, a=input$ncfa)
@@ -930,52 +933,52 @@ output$pca.ind.fa2  <- renderPlot({
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:input$ncfa])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 #  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
+#  coord_flip() + #flip the axes so the test names can be horizontal
 #  #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
+#  scale_fill_gradient2(name = "Loading",
+#                       high = "blue", mid = "white", low = "red",
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$cor.fa <- DT::renderDT({as.data.frame(cor(DF4.fa()))}, 
-  extensions = 'Buttons', 
+output$cor.fa <- DT::renderDT({as.data.frame(cor(DF4.fa()))},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$cor.fa.plot   <- renderPlot({ 
+output$cor.fa.plot   <- renderPlot({
   plot_corr(DF4.fa())
 #c <- as.data.frame(cor(DF4.fa()))
 #c$group <- rownames(c)
 #corrs.m <- reshape::melt(c, id="group",
 #                            measure=rownames(c))
 
-#ggplot(corrs.m, aes(corrs.m$group, corrs.m$variable, fill=abs(corrs.m$value))) + 
+#ggplot(corrs.m, aes(corrs.m$group, corrs.m$variable, fill=abs(corrs.m$value))) +
 #  geom_tile() + #rectangles for each correlation
 #  #add actual correlation value in the rectangle
-#  geom_text(aes(label = round(corrs.m$value, 2)), size=2.5) + 
+#  geom_text(aes(label = round(corrs.m$value, 2)), size=2.5) +
 #  theme_bw(base_size=10) + #black and white theme with set font size
-  #rotate x-axis labels so they don't overlap, 
+  #rotate x-axis labels so they don't overlap,
   #get rid of unnecessary axis titles
   #adjust plot margins
-#  theme(axis.text.x = element_text(angle = 90), 
-#        axis.title.x=element_blank(), 
-#        axis.title.y=element_blank(), 
+#  theme(axis.text.x = element_text(angle = 90),
+#        axis.title.x=element_blank(),
+#        axis.title.y=element_blank(),
 #        plot_margin = unit(c(3, 1, 0, 0), "mm")) +
   #set correlation fill gradient
-#  scale_fill_gradient(low="white", high="red") + 
+#  scale_fill_gradient(low="white", high="red") +
 #  guides(fill=F) #omit unnecessary gradient legend
 
 })
 
-output$fa.bp   <- renderPlot({ 
+output$fa.bp   <- renderPlot({
   validate(need(input$ncfa>=2, "Components are not enough to create the plot."))
   score <- as.data.frame(fa()$scores)
 load <- as.data.frame(fa()$loadings[,1:input$ncfa])

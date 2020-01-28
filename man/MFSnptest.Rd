@@ -16,8 +16,11 @@ MFSnptest includes Non-parametric test of
 and (3) two paried samples.
 }
 \examples{
-# mephas::MFSnptest()
-#
 # library(mephas)
 # MFSnptest()
+# or,
+# mephas::MFSnptest()
+# or,
+# mephasOpen("nptest")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

@@ -6,7 +6,7 @@
 ##' (4) beta distribution
 ##' (5) t distribution
 ##' (6) chi-square distribution
-##' and (7) F distribution. 
+##' and (7) F distribution.
 ##'
 ##' MFScondist also generates random numbers draw the distribution of user data
 ##'
@@ -20,10 +20,13 @@
 ##' @importFrom utils head
 
 ##' @examples
-##' # mephas::MFScondist()
-##' ## or,
 ##' # library(mephas)
 ##' # MFScondist()
+##' # or,
+##' # mephas::MFScondist()
+##' # or,
+##' # mephasOpen("condist")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFScondist <- function(){
@@ -47,10 +50,10 @@ tabPanel("Normal",
 headerPanel("Normal Distribution"),
 
 HTML(
-" 
+"
 <h4><b> What you can do on this page</b></h4>
 <ul>
-<li> Draw a Normal Distribution with N(&#956, &#963); &#956 is the location, and &#963 indicates the shape 
+<li> Draw a Normal Distribution with N(&#956, &#963); &#956 is the location, and &#963 indicates the shape
 <li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line and Pr(x1 less than X greater than x2) in the blue area
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
@@ -72,24 +75,24 @@ hr(),
 #****************************************************************************************************************************************************1.1. Normal distribution
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a Normal Distribution", p(br()),
 
-		  HTML("<h4><b>Step 1. Set Parameters for N(&#956, &#963)</h4></b>"), 
+		  HTML("<h4><b>Step 1. Set Parameters for N(&#956, &#963)</h4></b>"),
 		  numericInput("mu", HTML("Mean (&#956), the dashed line, indicates the location  "), value = 0),
 		  numericInput("sigma", HTML("Standard Deviation (&#963), indicates the shape"), value = 1, min = 0),
 		  hr(),
 
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 		  numericInput("n", HTML("Blue Area = Pr(Mean-n*SD < X < Mean+n*SD)"), value = 1, min = 0),
 	 		numericInput("pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
 
 	 		hr(),
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("xlim", "Range of x-asis, symmetric to 0", value = 5, min = 1)
 		  #numericInput("ylim", "Range of y-asis > 0", value = 0.5, min = 0.1, max = 1),
 
@@ -123,7 +126,7 @@ sidebarLayout(
         checkboxInput("col", "Yes", TRUE),
 
              # Input: Select separator ----
-        radioButtons("sep", 
+        radioButtons("sep",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -138,7 +141,7 @@ sidebarLayout(
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
-      
+
 		)
 	),
 
@@ -148,8 +151,8 @@ sidebarLayout(
 		tabsetPanel(
 			 tabPanel("Mathematical-based Plot", p(br()),
 			 tags$b("Normal distribution plot"),
-			 	#plotOutput("norm.plot", click = "plot_click", width = "600px", height = "400px"), #click = "plot_click", 
-			 	plotOutput("norm.plot", click = "plot_click", width = "80%"), #click = "plot_click", 
+			 	#plotOutput("norm.plot", click = "plot_click", width = "600px", height = "400px"), #click = "plot_click",
+			 	plotOutput("norm.plot", click = "plot_click", width = "80%"), #click = "plot_click",
 
 			 	verbatimTextOutput("info"),
 
@@ -159,7 +162,7 @@ sidebarLayout(
 			 tabPanel("Simulation-based Plot", p(br()),
 			 	numericInput("size", "Sample size of simulated numbers", value = 100, min = 1),
 			 	tags$b("Histogram from random numbers"),
-			 	plotOutput("norm.plot2", click = "plot_click2",  width = "80%"),	
+			 	plotOutput("norm.plot2", click = "plot_click2",  width = "80%"),
 
 			 	sliderInput("bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
       	p("When the number of bins is 0, plot will use the default number of bins"),
@@ -193,14 +196,14 @@ hr()
 ##########----------##########----------##########
 tabPanel("Exponential",
 
-headerPanel("Exponential Distribution"), 
+headerPanel("Exponential Distribution"),
 
 HTML(
-" 
+"
 <h4><b> What you can do on this page</b></h4>
 <ul>
 <li> Draw an Exponential Distribution with E(Rate); Rate indicates the rate of change
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
@@ -221,22 +224,22 @@ hr(),
 #****************************************************************************************************************************************************1.2. Exp distribution
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw an Exponential Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for E(Rate)")), 
+		  h4(tags$b("Step 1. Set Parameters for E(Rate)")),
 		  numericInput("r", HTML("Rate (> 0) indicates the rate of change"), value = 2, min = 0),
 		  hr(),
 
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("e.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
 
 		  #numericInput("e.ylim", "Range of y-asis > 0", value = 2.5, min = 0.1, max = 3),
 		  hr(),
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("e.xlim", "Range of x-asis > 0", value = 5, min = 1)
 
 
@@ -267,7 +270,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("e.col", "Yes", TRUE),
 
-        radioButtons("e.sep", 
+        radioButtons("e.sep",
           "3. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -282,7 +285,7 @@ sidebarLayout(
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
-      
+
 		)
 	),
 
@@ -308,11 +311,11 @@ sidebarLayout(
 
 				verbatimTextOutput("e.info2"),
 				downloadButton("download2", "Download Random Numbers"),
-		
+
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("e.sum"),
 				HTML(
-			    " 
+			    "
 			    <b> Explanation </b>
 			   <ul>
 			    <li>  Mean = 1/Rate
@@ -321,7 +324,7 @@ sidebarLayout(
 			    "
 			    )
 			  ),
-			 tabPanel("Distribution of Your Data", p(br()),	
+			 tabPanel("Distribution of Your Data", p(br()),
 			 	tags$b("Density from upload data"),
 				plotOutput("makeplot.e2", width = "80%"),
 			 	tags$b("Histogram from upload data"),
@@ -343,18 +346,18 @@ hr()
 ##########----------##########----------##########
 tabPanel("Gamma",
 
-headerPanel("Gamma Distribution"), 
+headerPanel("Gamma Distribution"),
 
 HTML(
-" 
-<h4><b> What you can do on this page</b></h4>    
+"
+<h4><b> What you can do on this page</b></h4>
 <ul>
 <li> Draw a Gamma Distribution with Gamma(&#945, &#952); &#945 controls the shape, 1/&#952 controls the change of rate
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
-<li> Get the probability distribution of your data which can be roughly compared to  Gamma(&#945, &#952)  
+<li> Get the probability distribution of your data which can be roughly compared to  Gamma(&#945, &#952)
 </ul>
 
 <i><h4>Case Example</h4>
@@ -370,25 +373,25 @@ hr(),
 #****************************************************************************************************************************************************1.3. gamma
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a Gamma Distribution", p(br()),
-		  HTML("<h4><b>Step 1. Set Parameters for Gamma(&#945, &#952)</h4></b>"), 
+		  HTML("<h4><b>Step 1. Set Parameters for Gamma(&#945, &#952)</h4></b>"),
 		  numericInput("g.shape", HTML("&#945 > 0, Shape parameter"), value = 9, min = 0),
 		  numericInput("g.scale", HTML("&#952 > 0, Scale parameter"), value = 0.5, min = 0),
 
 		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("g.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
- 			
+
  			hr(),
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("g.xlim", "Range of x-asis, > 0", value = 20, min = 1)
 		  #numericInput("g.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
-		 
+
 
 
 		),
@@ -417,7 +420,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("g.col", "Yes", TRUE),
 
-        radioButtons("g.sep", 
+        radioButtons("g.sep",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -433,7 +436,7 @@ sidebarLayout(
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
 
         )
-      
+
 		)
 	),
 
@@ -462,7 +465,7 @@ sidebarLayout(
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("g.sum"),
 				HTML(
-    " 
+    "
     <b> Explanation </b>
    <ul>
     <li>  Rate = &#946=1/&#952
@@ -493,18 +496,18 @@ hr()
 ##########----------##########----------##########
 tabPanel("Beta",
 
-headerPanel("Beta Distribution"), 
+headerPanel("Beta Distribution"),
 
 HTML(
-" 
-<h4><b> What you can do on this page</b></h4>    
+"
+<h4><b> What you can do on this page</b></h4>
 <ul>
 <li> Draw a Beta Distribution with Beta(&#945, &#946); &#945, &#946 controls the shape
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
-<li> Get the probability distribution of your data which can be roughly compared to Beta(&#945, &#946)  
+<li> Get the probability distribution of your data which can be roughly compared to Beta(&#945, &#946)
 </ul>
 
 <i><h4>Case Example</h4>
@@ -521,21 +524,21 @@ hr(),
 
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a Beta Distribution", p(br()),
-		  HTML("<h4><b>Step 1. Set Parameters for Beta(&#945, &#946)</h4></b>"), 
+		  HTML("<h4><b>Step 1. Set Parameters for Beta(&#945, &#946)</h4></b>"),
 		  numericInput("b.shape", HTML("&#945 > 0, Shape parameter"), value = 2, min = 0),
 		  numericInput("b.scale", HTML("&#946 > 0, Shape parameter"), value = 2, min = 0),
 
 		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("b.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
 		  hr(),
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("b.xlim", "Range of x-asis, > 0", value = 1, min = 1)
 		  #snumericInput("b.ylim", "Range of y-asis, > 0", value = 2.5, min = 0.1, max = 3),
 
@@ -567,7 +570,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("b.col", "Yes", TRUE),
 
-        radioButtons("b.sep", 
+        radioButtons("b.sep",
           "3. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -583,7 +586,7 @@ sidebarLayout(
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
 
         )
-      
+
 		)
 	),
 
@@ -608,11 +611,11 @@ sidebarLayout(
 			 	sliderInput("b.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
       	p("When the number of bins is 0, plot will use the default number of bins"),
 				verbatimTextOutput("b.info2"),
-				downloadButton("download4", "Download Random Numbers"),				
+				downloadButton("download4", "Download Random Numbers"),
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("b.sum"),
 				HTML(
-    " 
+    "
     <b> Explanation </b>
    <ul>
     <li>  Mean = &#945/(&#945+&#946)
@@ -644,14 +647,14 @@ hr()
 ##########----------##########----------##########
 tabPanel("T",
 
-headerPanel("Student's T Distribution"), 
+headerPanel("Student's T Distribution"),
 
 HTML(
-" 
-<h4><b> What you can do on this page</b></h4>    
+"
+<h4><b> What you can do on this page</b></h4>
 <ul>
-<li> Draw a T Distribution with T(v); v is the degree of freedom related to your sample size and control the shape 
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Draw a T Distribution with T(v); v is the degree of freedom related to your sample size and control the shape
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
@@ -670,21 +673,21 @@ hr(),
 #****************************************************************************************************************************************************1.5. T
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a T Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for T(v)")), 
+		  h4(tags$b("Step 1. Set Parameters for T(v)")),
 		  numericInput("t.df", HTML("v > 0, Degree of Freedom, related to the shape"), value = 4, min = 0),
-		  
+
 		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("t.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
-		  
-		  hr(),	 		
-		  p(tags$b("You can adjust x-axes range")), 
+
+		  hr(),
+		  p(tags$b("You can adjust x-axes range")),
 		  numericInput("t.xlim", "Range of x-asis", value = 5, min = 1)
 		  #numericInput("t.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
 
@@ -713,11 +716,11 @@ sidebarLayout(
 
         p(tags$b("2. Show 1st row as header?")),
         checkboxInput("t.header", "Show Data Header?", TRUE),
-        
+
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("t.col", "Yes", TRUE),
 
-        radioButtons("t.sep", 
+        radioButtons("t.sep",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -733,7 +736,7 @@ sidebarLayout(
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
 
         )
-      
+
 		)
 	),
 
@@ -761,12 +764,12 @@ sidebarLayout(
 				downloadButton("download5", "Download Random Numbers"),
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("t.sum")
-				
+
 			 	),
 
 			 tabPanel("Distribution of Your Data", p(br()),
 			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.t2", width = "80%"),   
+				plotOutput("makeplot.t2", width = "80%"),
 			 	tags$b("Histogram from upload data"),
 				plotOutput("makeplot.t1", width = "80%"),
 			sliderInput("bin.t","The number of bins in histogram", min = 0, max = 100, value = 0),
@@ -786,14 +789,14 @@ hr()
 ##########----------##########----------##########
 tabPanel("Chi",
 
-headerPanel("Chi-Squared Distribution"), 
+headerPanel("Chi-Squared Distribution"),
 
 HTML(
-" 
-<h4><b> What you can do on this page</b></h4>    
+"
+<h4><b> What you can do on this page</b></h4>
 <ul>
-<li> Draw a Chi-Squared Distribution with Chi(v); v is the degree of freedom related to your sample size and control the shape 
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Draw a Chi-Squared Distribution with Chi(v); v is the degree of freedom related to your sample size and control the shape
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
@@ -812,22 +815,22 @@ hr(),
 #****************************************************************************************************************************************************1.6. chi
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a Chi-squared Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for Chi(v)")), 
+		  h4(tags$b("Step 1. Set Parameters for Chi(v)")),
 		  numericInput("x.df", HTML("v > 0, Degree of Freedom related the the shape"), value = 4, min = 0),
 
 		  hr(),
 
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("x.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
 		  hr(),
 
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("x.xlim", "Range of x-asis, > 0", value = 8, min = 1)
 
 		),
@@ -856,7 +859,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("x.col", "Yes", TRUE),
 
-        radioButtons("x.sep", 
+        radioButtons("x.sep",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -872,7 +875,7 @@ sidebarLayout(
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
 
         )
-      
+
 		)
 	),
 
@@ -900,7 +903,7 @@ sidebarLayout(
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("x.sum"),
 				HTML(
-    " 
+    "
     <b> Explanation </b>
    <ul>
     <li>  Mean = v
@@ -931,14 +934,14 @@ hr()
 ##########----------##########----------##########
 tabPanel("F",
 
-headerPanel("F Distribution"), 
+headerPanel("F Distribution"),
 
 HTML(
-" 
-<h4><b> What you can do on this page</b></h4>    
+"
+<h4><b> What you can do on this page</b></h4>
 <ul>
-<li> Draw a F Distribution with F(df1, df2) ; df1 and df2 are the degree of freedom related to your sample size and control the shape 
-<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line 
+<li> Draw a F Distribution with F(df1, df2) ; df1 and df2 are the degree of freedom related to your sample size and control the shape
+<li> Get the probability distribution of x0 that Pr(X less than x0) = left to the red-line
 <li> Get the probability distribution from simulation numbers in Simulation-based tab
 <li> Download the random number in Simulation-based tab
 <li> Get the mean, SD, and Pr(X less than x0) of simulated numbers
@@ -957,24 +960,24 @@ hr(),
 #****************************************************************************************************************************************************1.7. F
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel(
 			"Draw a Beta Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters")), 
+		  h4(tags$b("Step 1. Set Parameters")),
 		  numericInput("df11", HTML("df1 > 0, Degree of Freedom 1"), value = 100, min = 0),
 		  numericInput("df21", HTML("df2 > 0, Degree of Freedom 2"), value = 100, min = 0),
 
 		  #numericInput("f.ylim", "Range of y-asis, > 0", value = 2.5, min = 0.1, max = 3),
 		  hr(),
 
-		  h4(tags$b("Step 2. Show Probability")),   
+		  h4(tags$b("Step 2. Show Probability")),
 	 		numericInput("f.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
 		  hr(),
 
-	 		p(tags$b("You can adjust x-axes range")), 
+	 		p(tags$b("You can adjust x-axes range")),
 		  numericInput("f.xlim", "Range of x-asis, > 0", value = 5, min = 1)
 
 		),
@@ -1017,7 +1020,7 @@ sidebarLayout(
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
-      
+
 		)
 	),
 
@@ -1090,7 +1093,7 @@ server <- function(input, output) {
 #source("p1_server.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.1. Normal
 output$norm.plot <- renderPlot({
-  
+
   mynorm = function (x) {
   norm = dnorm(x, input$mu, input$sigma)
   norm[x<=(input$mu-input$n*input$sigma) |x>=(input$mu+input$n*input$sigma)] = NA
@@ -1098,12 +1101,12 @@ output$norm.plot <- renderPlot({
   }
 
   ggplot(data = data.frame(x = c(-(input$xlim), input$xlim)), aes(x)) +
-  stat_function(fun = dnorm, n = 101, args = list(mean = input$mu, sd = input$sigma)) + 
+  stat_function(fun = dnorm, n = 101, args = list(mean = input$mu, sd = input$sigma)) +
   scale_y_continuous(breaks = NULL) +
-  stat_function(fun = mynorm, geom = "area", fill="cornflowerblue", alpha = 0.3) + 
+  stat_function(fun = mynorm, geom = "area", fill="cornflowerblue", alpha = 0.3) +
   scale_x_continuous(breaks = c(-input$xlim, input$xlim))+
-  ylab("Density") + 
-  theme_minimal() + 
+  ylab("Density") +
+  theme_minimal() +
   ggtitle("")+
   geom_vline(aes(xintercept=input$mu), color="red", linetype="dashed", size=0.5) +
   geom_vline(aes(xintercept=qnorm(input$pr, mean = input$mu, sd = input$sigma, lower.tail = TRUE, log.p = FALSE)), color="red", size=0.5) })
@@ -1120,24 +1123,24 @@ output$xs = renderTable({
   b = 100*pnorm(input$mu+input$n*input$sigma, input$mu, input$sigma)-pnorm(input$mu-input$n*input$sigma, input$mu, input$sigma)
   x <- t(data.frame(x.position = a, blue.area = b))
   rownames(x) <- c("Red-line Position (x0)", "Blue Area, Probability %")
-  return(x)}, 
+  return(x)},
   digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
 
-N = reactive({ 
+N = reactive({
   df = data.frame(x = rnorm(input$size, input$mu, input$sigma))
   return(df)})
 
 output$norm.plot2 = renderPlot({
 df = N()
 x <- names(df)
-plot_hist1c(df, x, input$bin)+ 
+plot_hist1c(df, x, input$bin)+
 geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 #ggtitle("")+
-#ylab("Frequency")+ geom_histogram(binwidth = input$bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-input$xlim, input$xlim) + 
+#ylab("Frequency")+ geom_histogram(binwidth = input$bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-input$xlim, input$xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1195,12 +1198,12 @@ output$makeplot.1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin1)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-  
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1, position = "identity") + 
-  #xlab("") + 
-  #ggtitle("") + 
-  #theme_minimal() + 
+
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1, position = "identity") +
+  #xlab("") +
+  #ggtitle("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())
   })
 
@@ -1210,11 +1213,11 @@ output$makeplot.2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-  
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_density() + 
-  #xlab("") + 
-  #theme_minimal() + 
+
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_density() +
+  #xlab("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())+
   #geom_vline(aes(xintercept=quantile(x[,1], probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
   })
@@ -1230,8 +1233,8 @@ output$sum2 = renderTable({
 output$e.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$e.xlim)), aes(x)) +
   stat_function(fun = "dexp", args = list(rate = input$r)) + ylab("Density") +
-  scale_y_continuous(breaks = NULL) + 
-  theme_minimal() + 
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
   ggtitle("") + #ylim(0, input$e.ylim) +
   geom_vline(aes(xintercept=qexp(input$e.pr, rate = input$r)), colour = "red")
   })
@@ -1270,11 +1273,11 @@ output$e.plot2 = renderPlot({
 	geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = E()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
-#ylab("Frequency")+ 
-#geom_histogram(binwidth = input$e.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-0.1, input$e.xlim) + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
+#ylab("Frequency")+
+#geom_histogram(binwidth = input$e.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-0.1, input$e.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.5)
 })
 
@@ -1321,13 +1324,13 @@ output$makeplot.e1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.e)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = Y()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.e, position = "identity") + 
-  #xlab("") + 
-  #ggtitle("") + 
-  #theme_minimal() + 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.e, position = "identity") +
+  #xlab("") +
+  #ggtitle("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())
    })
 output$makeplot.e2 <- renderPlot({
@@ -1335,12 +1338,12 @@ output$makeplot.e2 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.e)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = Y()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_density() + 
-  #ggtitle("") + 
-  #xlab("") + theme_minimal() + 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_density() +
+  #ggtitle("") +
+  #xlab("") + theme_minimal() +
   #theme(legend.title =element_blank())+
   #geom_vline(aes(xintercept=quantile(x[,1], probs = input$e.pr, na.rm = TRUE)), color="red", size=0.5)
    })
@@ -1355,9 +1358,9 @@ output$e.sum2 = renderTable({
 #****************************************************************************************************************************************************1.3. gamma
 output$g.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$g.xlim)), aes(x)) +
-  stat_function(fun = "dgamma", args = list(shape = input$g.shape, scale=input$g.scale)) + 
+  stat_function(fun = "dgamma", args = list(shape = input$g.shape, scale=input$g.scale)) +
   ylab("Density") +
-  theme_minimal() + 
+  theme_minimal() +
   ggtitle("")+
   scale_y_continuous(breaks = NULL) + #ylim(0, input$g.ylim) +
   geom_vline(aes(xintercept=qgamma(input$g.pr, shape = input$g.shape, scale=input$g.scale)), colour = "red")
@@ -1397,12 +1400,12 @@ plot_hist1c(df, x, input$g.bin)+
 geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = G()
-#ggplot(df, aes(x = x)) + 
-#ylab("Frequency")+ 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#ylab("Frequency")+
+#theme_minimal() +
 #ggtitle("")+
-#geom_histogram(binwidth = input$g.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-0.1, input$g.xlim) + 
+#geom_histogram(binwidth = input$g.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-0.1, input$g.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1448,15 +1451,15 @@ output$makeplot.g1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.g)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = Z()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.g, position = "identity") + 
-  #xlab("") + 
-  #ggtitle("") + 
-  #theme_minimal() + 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.g, position = "identity") +
+  #xlab("") +
+  #ggtitle("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())
- 
+
   })
 
 output$makeplot.g2 <- renderPlot({
@@ -1464,16 +1467,16 @@ output$makeplot.g2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm = TRUE)), color="red", size=0.3)
-  
+
   #x = Z()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_density() + 
-  #ggtitle("") + 
-  #xlab("") + 
-  #theme_minimal() + 
-  #theme(legend.title =element_blank())+ 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_density() +
+  #ggtitle("") +
+  #xlab("") +
+  #theme_minimal() +
+  #theme(legend.title =element_blank())+
   #geom_vline(aes(xintercept=quantile(x[,1], probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
- 
+
   })
 
 output$g.sum2 = renderTable({
@@ -1487,10 +1490,10 @@ output$g.sum2 = renderTable({
 #****************************************************************************************************************************************************1.4. beta
 output$b.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$b.xlim)), aes(x)) +
-  stat_function(fun = "dbeta", args = list(shape1 = input$b.shape, shape2=input$b.scale)) + 
+  stat_function(fun = "dbeta", args = list(shape1 = input$b.shape, shape2=input$b.scale)) +
   ylab("Density") +
-  scale_y_continuous(breaks = NULL) + 
-  theme_minimal() + 
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
   ggtitle("") + #ylim(0, input$b.ylim) +
   geom_vline(aes(xintercept=qbeta(input$b.pr, shape1 = input$b.shape, shape2=input$b.scale)), colour = "red")})
 
@@ -1528,12 +1531,12 @@ output$b.plot2 = renderPlot({
 	geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = B()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 #ggtitle("")+
-#ylab("Frequency")+ 
-#geom_histogram(binwidth = input$b.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-0.1, input$b.xlim) + 
+#ylab("Frequency")+
+#geom_histogram(binwidth = input$b.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-0.1, input$b.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1579,7 +1582,7 @@ output$makeplot.b1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.b)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(ZZ())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.b, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
@@ -1589,7 +1592,7 @@ output$makeplot.b2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm = TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(ZZ())
   #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank()) + geom_vline(aes(xintercept=quantile(x[,1], probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1604,12 +1607,12 @@ output$b.sum2 = renderTable({
 #source("p5_server.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.5. T
 output$t.plot <- renderPlot({
-  ggplot(data = data.frame(x = c(-input$t.xlim, input$t.xlim)), aes(x)) + 
-  stat_function(fun = dt, n = 100, args = list(df = input$t.df)) + 
+  ggplot(data = data.frame(x = c(-input$t.xlim, input$t.xlim)), aes(x)) +
+  stat_function(fun = dt, n = 100, args = list(df = input$t.df)) +
   stat_function(fun = dnorm, args = list(mean = 0, sd = 1), color = "cornflowerblue") +
-  ylab("Density") + 
-  scale_y_continuous(breaks = NULL) + 
-  theme_minimal() + 
+  ylab("Density") +
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
   ggtitle("")+
   geom_vline(aes(xintercept=qt(input$t.pr, df = input$t.df)), colour = "red")})
 
@@ -1648,12 +1651,12 @@ output$t.plot2 = renderPlot({
 	geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = T()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 ##ggtitle("")+
-#ylab("Frequency")+ 
-#geom_histogram(binwidth = input$t.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-input$t.xlim, input$t.xlim) + 
+#ylab("Frequency")+
+#geom_histogram(binwidth = input$t.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-input$t.xlim, input$t.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1700,7 +1703,7 @@ output$makeplot.t1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.t)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(TT())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.t, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
@@ -1709,7 +1712,7 @@ output$makeplot.t2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm = TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(TT())
   #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank()) + geom_vline(aes(xintercept=quantile(x[,1], probs = input$t.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1725,10 +1728,10 @@ output$t.sum2 = renderTable({
 #****************************************************************************************************************************************************1.6. chi
 output$x.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$x.xlim)), aes(x)) +
-  stat_function(fun = dchisq, n = 100, args = list(df = input$x.df)) + 
+  stat_function(fun = dchisq, n = 100, args = list(df = input$x.df)) +
   ylab("Density") +
-  scale_y_continuous(breaks = NULL) + 
-  theme_minimal() + 
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
   ggtitle("") + #ylim(0, input$x.ylim) +
   geom_vline(aes(xintercept=qchisq(input$x.pr, df = input$x.df)), colour = "red")})
 
@@ -1766,12 +1769,12 @@ output$x.plot2 = renderPlot({
 	geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = X()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 ##ggtitle("")+
-#ylab("Frequency")+ 
-#geom_histogram(binwidth = input$x.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-0.1, input$x.xlim) + 
+#ylab("Frequency")+
+#geom_histogram(binwidth = input$x.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-0.1, input$x.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1816,7 +1819,7 @@ output$makeplot.x1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(XX())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.x, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
@@ -1825,7 +1828,7 @@ output$makeplot.x2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm = TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(XX())
 #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())+ geom_vline(aes(xintercept=quantile(x[,1], probs = input$x.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1842,8 +1845,8 @@ output$x.sum2 = renderTable({
 output$f.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$f.xlim)), aes(x)) +
   stat_function(fun = "df", n= 100, args = list(df1 = input$df11, df2 = input$df21)) + ylab("Density") +
-  scale_y_continuous(breaks = NULL) + 
-  theme_minimal() + 
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
   ggtitle("") + #ylim(0, input$f.ylim) +
   geom_vline(aes(xintercept=qf(input$f.pr, df1 = input$df11, df2 = input$df21)), colour = "red")})
 
@@ -1884,12 +1887,12 @@ output$f.plot2 = renderPlot({
 	geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
 
 #df = F()
-#ggplot(df, aes(x = x)) + 
-#ggtitle("") + 
-#theme_minimal() + 
-#ylab("Frequency")+ 
-#geom_histogram(binwidth = input$f.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-#xlim(-0.1, input$f.xlim) + 
+#ggplot(df, aes(x = x)) +
+#ggtitle("") +
+#theme_minimal() +
+#ylab("Frequency")+
+#geom_histogram(binwidth = input$f.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
+#xlim(-0.1, input$f.xlim) +
 #geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
@@ -1936,7 +1939,7 @@ output$makeplot.f1 <- renderPlot({
   x <- names(df)
   plot_hist1(df, x, input$bin.f)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(FF())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.f, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
@@ -1945,7 +1948,7 @@ output$makeplot.f2 <- renderPlot({
   x <- names(df)
   plot_density1(df, x)+
   geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm = TRUE)), color="red", size=0.3)
-  
+
   #x = as.data.frame(FF())
  #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())+ geom_vline(aes(xintercept=quantile(x[,1], probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
    })

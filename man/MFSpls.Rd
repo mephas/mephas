@@ -10,14 +10,17 @@ MFSpls()
 The web-based GUI and interactive interfaces
 }
 \description{
-MFSpls includes 
+MFSpls includes
 (1) principal component regression
 (2) partial least squares regression
 and (3) sparse partial least squares regression
 }
 \examples{
-# mephas::MFSpls()
-#
 # library(mephas)
 # MFSpls()
+# or,
+# mephas::MFSpls()
+# or,
+# mephasOpen("pls")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

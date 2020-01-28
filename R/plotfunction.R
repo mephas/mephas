@@ -1,4 +1,4 @@
-## functions for MEPHAS
+## All kinds of plot functions for MEPHAS
 
 ##' @title plot functions in MEPHAS
 ##'
@@ -11,7 +11,7 @@ plot_scat <- function(data, varx, vary){
   x = data[, varx]
   y = data[, vary]
   name <- rownames(data)
-  ggplot(data, aes(x=x,y=y,label=name)) +    
+  ggplot(data, aes(x=x,y=y,label=name)) +
   geom_point(shape = 19, size=1) +
   geom_smooth(method = "lm", size=0.5) +
   xlab(varx) + ylab(vary) +
@@ -175,7 +175,7 @@ plot_msdm <- function(datam, var, grp){
 plot_line1 <- function(data, varx, vary){
   x <- data[,varx]
   y <- data[,vary]
-  ggplot(data, aes(x=x, y=y)) + 
+  ggplot(data, aes(x=x, y=y)) +
   geom_line() +
   ylim(0,1) +
   xlab("") +ylab("")+
@@ -214,7 +214,7 @@ plot_line2 <- function(data2, var, grp1, grp2){
 ##'
 ##' @export
 plot_mat <- function(data, ybreak){
-data$id <- 1:nrow(data) 
+data$id <- 1:nrow(data)
 plot_data <- reshape::melt(data, id.var=c("id", ybreak))
 y <- plot_data[,ybreak]
 value <- plot_data[,"value"]
@@ -467,7 +467,7 @@ plot_coxstep <-function(data){
   ggplot() +
   geom_step(data = data, mapping = aes(x = time, y = hazard)) +
   geom_abline(intercept =0,slope = 1, color = "red") +
-  theme_minimal() + 
+  theme_minimal() +
   xlab("Cox-Snell residuals") + ylab("Estimated Cumulative Hazard Function")
 }
 
@@ -485,7 +485,7 @@ plot_devres <- function(data){
   geom_hline(yintercept = 0, color="red", linetype=2)+
   geom_smooth(method = "loess", linetype=2) +
   theme_minimal() +
-  xlab("Observation Id") + ylab("Deviance residuals") 
+  xlab("Observation Id") + ylab("Deviance residuals")
 }
 
 
@@ -545,7 +545,7 @@ plot_scoreg <- function(scores, n1, n2){
 ##'
 ##' @param scores input score data frame
 ##' @param n1 input nth component for x-axis
-##' @param n2 input nth component for y-axis 
+##' @param n2 input nth component for y-axis
 ##' @param type the type of circle
 ##'
 ##' @export
@@ -558,7 +558,7 @@ plot_scorec <- function(scores, n1, n2, type){
   vary <- names(scores)[n2]
 
   ggplot(scores,aes(x = x, y = y, label=name, color=group, alpha=0.7))+
-  geom_point() + 
+  geom_point() +
   geom_hline(yintercept=0, lty=2,size=0.3) +
   geom_vline(xintercept=0, lty=2,size=0.3)+
   stat_ellipse(type = type)+
@@ -583,7 +583,7 @@ plot_score <- function(scores, n1, n2){
   vary <- names(scores)[n2]
 
   ggplot(scores,aes(x = x, y = y, label=name))+
-  geom_point(color="lightblue4", alpha=0.7) + 
+  geom_point(color="lightblue4", alpha=0.7) +
   geom_hline(yintercept=0, lty=2,size=0.3) +
   geom_vline(xintercept=0, lty=2,size=0.3)+
   xlab(varx)+ylab(vary)+
@@ -613,7 +613,7 @@ varx <- names(scores)[n1]
 vary <- names(scores)[n2]
 ggplot()+
 geom_point(data=scores, aes(x=x1, y=y1, label=pname), colour ="cornflowerblue", alpha=0.5)+
-geom_segment(data=loads, aes(x=0, y=0, xend=x2, yend=y2), 
+geom_segment(data=loads, aes(x=0, y=0, xend=x2, yend=y2),
              arrow=arrow(length=unit(0.3,"cm")), alpha=0.5, colour="red")+
 geom_text(data=loads, aes(x=x2, y=y2, label=names), alpha=0.5, size=3)+
 xlab(varx)+ylab(vary)+

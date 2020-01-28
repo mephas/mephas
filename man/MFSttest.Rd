@@ -16,8 +16,11 @@ MFSttest includes t test of
 and (3) two paired samples.
 }
 \examples{
-# mephas::MFSttest()
-# or,
 # library(mephas)
 # MFSttest()
+# or,
+# mephas::MFSttest()
+# or,
+# mephasOpen("ttest")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }

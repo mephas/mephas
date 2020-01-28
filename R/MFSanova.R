@@ -22,10 +22,13 @@
 ##' @importFrom stats TukeyHSD aov pairwise.t.test anova kruskal.test relevel
 ##'
 ##' @examples
-##' # mephas::MFSanova()
-##' ## or,
 ##' # library(mephas)
 ##' # MFSanova()
+##' # or,
+##' # mephas::MFSanova()
+##' # or,
+##' # mephasOpen("anova")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFSanova <- function(){
@@ -34,7 +37,7 @@ requireNamespace("shiny", quietly = TRUE)
 requireNamespace("ggplot2", quietly = TRUE)
 requireNamespace("DT", quietly = TRUE)
   #requireNamespace("ggplot2")
-  
+
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
@@ -51,7 +54,7 @@ HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
-<li> To determine if the means differ significantly among the factor groups 
+<li> To determine if the means differ significantly among the factor groups
 </ul>
 
 <h4><b> 2. About your data </b></h4>
@@ -61,11 +64,11 @@ HTML(
 <li> One vector is the observed values; one vector is to mark your values in different factor groups
 <li> The separate factor groups are independent and identically approximately normally distributed
 <li> Each mean of the factor group follows a normal distribution with the same variance and can be compared
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 Suppose we want to find whether passive smoking had a measurable effect on the incidence of cancer. In a study, we studied 6 group of smokers: nonsmokers (NS), passive smokers (PS), non-inhaling smokers (NI), light smokers (LS), moderate smokers (MS), and heavy smokers (HS).
-NS,PS,LS,MS,and HS group had 200 people in each. NI group had 50 people. The study measured the forced mid-expiatory flow (FEF). 
+NS,PS,LS,MS,and HS group had 200 people in each. NI group had 50 people. The study measured the forced mid-expiatory flow (FEF).
 We wanted to the know the FEF differences among the 6 groups.
 </h4></i>
 
@@ -176,7 +179,7 @@ mainPanel(
       <li> The box measures the difference between 75th and 25th percentiles
       <li> Outliers will be in red, if existing
     </ul>"
-      
+
     )
       ),
     tabPanel("Marginal Means Plot",p(br()),
@@ -364,7 +367,7 @@ mainPanel(
       <li> The box measures the difference between 75th and 25th percentiles
       <li> Outliers will be in red, if existing
     </ul>"
-      
+
     )
       ),
 
@@ -1661,7 +1664,7 @@ output$meanp.am = renderPlot({
   })
 
 output$mmean.am = renderPlot({
-  x = Ym2()  
+  x = Ym2()
   if (input$tick2m == "TRUE"){
   plot_msdm(x, names(x)[1], names(x)[2])
     }

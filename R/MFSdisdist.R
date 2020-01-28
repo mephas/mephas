@@ -15,10 +15,13 @@
 ##' @importFrom utils head
 
 ##' @examples
-##' # mephas::MFSdisdist()
-##' ## or,
 ##' # library(mephas)
 ##' # MFSdisdist()
+##' # or,
+##' # mephas::MFSdisdist()
+##' # or,
+##' # mephasOpen("disdist")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFSdisdist <- function(){
@@ -40,7 +43,7 @@ tabPanel("Binomial",
 titlePanel("Binomial Distribution"),
 
 HTML(
-" 
+"
 <h4><b>What you can do on this page  </b></h4>
 <ul>
 <li> Get a plot of Binomial Distribution B(n,p); n is the total sample size, p is the probability of success / event from the total sample; np=mean, np(1-p)=variance
@@ -52,26 +55,26 @@ Suppose we wanted to know the probability of 2 lymphocytes of 10 white blood cel
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 
 "
-), 
+),
 hr(),
 # source("p1_ui.R", local=TRUE)$value
 #****************************************************************************************************************************************************1. binom
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel("Draw a Binomial Distribution", p(br()),
 
-		  h4(tags$b("Step 1. Set Parameters")), 
+		  h4(tags$b("Step 1. Set Parameters")),
 			numericInput("m", "The number of trials / samples, n > 0", value = 10, min = 1 , max = 1000000000),
 		  numericInput("p", "The probability of success / event, p > 0", value = 0.2, min = 0, max = 1, step = 0.1),
 		  p(tags$i("From the example, we know n=10 (10 white blood cells), p=0.2 (the probability of any cell being a lymphocyte)")),
 
 		  hr(),
 
-		  h4(tags$b("Step 2. Change Observed Data")), 
+		  h4(tags$b("Step 2. Change Observed Data")),
 		  numericInput("k", "The observed number of success /event (Red-Dot)", value = 2, min =  0, max = 1000, step = 1),
 		  p(tags$i("The observed number is 2 lymphocytes"))
 		  ),
@@ -103,7 +106,7 @@ sidebarLayout(
         checkboxInput("col", "Yes", TRUE),
 
              # Input: Select separator ----
-        radioButtons("sep", 
+        radioButtons("sep",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -118,7 +121,7 @@ sidebarLayout(
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
-      
+
 		)
 	),
 
@@ -134,17 +137,17 @@ sidebarLayout(
 				),
 
 			 tabPanel("Simulation-based Plot", p(br()),
-			 	
+
 			 	numericInput("size", "The sample size of random numbers", value = 100, min = 1, max = 1000000, step = 1),
 			 	p(tags$b("Histogram from random numbers")),
-			 	plotOutput("b.plot2", width = "80%"),	
+			 	plotOutput("b.plot2", width = "80%"),
 
 			 	sliderInput("bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
         p("When the number of bins is 0, plot will use the default number of bins"),
 			 	downloadButton("download1", "Download Random Numbers"),
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("sum")
-			 	),    
+			 	),
 			tabPanel("Distribution of Your Data", p(br()),
 				p(tags$b("Histogram from upload data")),
 			plotOutput("makeplot.1", width = "80%"),
@@ -168,7 +171,7 @@ tabPanel("Poisson",
 titlePanel("Poisson Distribution"),
 
 HTML(
-" 
+"
 <h4><b>What you can do on this page  </b></h4>
 <ul>
 <li> Draw a plot of Poisson Distribution P(Rate); Rate indicates the expected number of occurrences; Rate = mean =variance
@@ -186,20 +189,20 @@ hr(),
 # source("p2_ui.R", local=TRUE)$value#****************************************************************************************************************************************************2. poisson
 sidebarLayout(
 
-	sidebarPanel(	
+	sidebarPanel(
 
 	tabsetPanel(
 
 		tabPanel("Draw a Binomial Distribution", p(br()),
 
-		  h4(tags$b("Step 1. Set Parameters")), 
+		  h4(tags$b("Step 1. Set Parameters")),
 		  numericInput("lad", "Rate, = mean = variance", value = 2.3, min = 0, max = 10000000000, step = 1),
 		  numericInput("k2", "The duration of occurrences > 0", value = 12, min = 0 , max = 1000000000),
 		  p(tags$i("From the example, the rate is 2.3 and the duration of the rate is 12 months")),
 
 		  hr(),
 
-		  h4(tags$b("Step 2. Change Observed Data")), 
+		  h4(tags$b("Step 2. Change Observed Data")),
 		  numericInput("x0", "The observed duration of occurrences (Red-Dot)", value = 5, min = 0 , max = 1000000000),
 		  p(tags$i("The observed is <= 5, and we wanted to know the cumulated probability after 5 months, which means 1 - cumulated probability of 0-5 months"))
 		  ),
@@ -227,7 +230,7 @@ sidebarLayout(
 
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("col.p", "Yes", TRUE),
-        radioButtons("sep.p", 
+        radioButtons("sep.p",
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -242,7 +245,7 @@ sidebarLayout(
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
-      
+
 		)
 	),
 
@@ -257,17 +260,17 @@ sidebarLayout(
 		p(tags$i("Explanation: the probability distribution until 5 month was 0.97. Thus, the probability distribution after 6 months was about 0.03"))
     ),
     tabPanel("Simulation-based Plot", p(br()),
-			 	
+
 			 	numericInput("size.p", "The sample size of random numbers", value = 100, min = 1, max = 1000000, step = 1),
 			 	p(tags$b("Histogram from random numbers")),
-			 	plotOutput("p.plot2", width = "80%"),	
+			 	plotOutput("p.plot2", width = "80%"),
 
 			 	sliderInput("bin.p", "The number of bins in histogram", min = 0, max = 100, value = 0),
         p("When the number of bins is 0, plot will use the default number of bins"),
 			 	downloadButton("download2", "Download Random Numbers"),
 				p(tags$b("Sample descriptive statistics")),
 				tableOutput("sum.p")
-			 	),    
+			 	),
 		tabPanel("Distribution of Your Data", p(br()),
 			p(tags$b("Histogram from upload data")),
 			plotOutput("makeplot.2", width = "80%"),
@@ -312,14 +315,14 @@ B = reactive({
   x2 = pbinom(1:input$m, input$m, input$p)
   x = x2-x1
   data = data.frame(x0 = c(0:length(x)), Pr.at.x0 = round(c(0, x), 6), Pr.x0.cumulated = round(c(0, x2), 6))
-  return(data) 
+  return(data)
 })
 
 output$b.plot <- renderPlot({
 X = B()
- ggplot(X, aes(X[,"x0"], X[,"Pr.at.x0"])) + geom_step() + 
+ ggplot(X, aes(X[,"x0"], X[,"Pr.at.x0"])) + geom_step() +
   geom_point(aes(x = X$x0[input$k+1], y = X$Pr.at.x0[input$k+1]),color = "red", size = 2.5) +
-  stat_function(fun = dnorm, args = list(mean = input$m*input$p, sd = sqrt(input$m*input$p*(1-input$p))), color = "cornflowerblue") + scale_y_continuous(breaks = NULL) + 
+  stat_function(fun = dnorm, args = list(mean = input$m*input$p, sd = sqrt(input$m*input$p*(1-input$p))), color = "cornflowerblue") + scale_y_continuous(breaks = NULL) +
   xlab("") + ylab("PMF")  + theme_minimal() + ggtitle("")
 
 })
@@ -331,7 +334,7 @@ output$b.k = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-N = reactive({ 
+N = reactive({
   df = data.frame(x = rbinom(input$size, input$m, input$p))
   return(df)})
 
@@ -341,10 +344,10 @@ output$b.plot2 <- renderPlot({
   plot_hist1c(df, x, input$bin)
 
 #df = N()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 #ggtitle("")+
-#ylab("Frequency")+ 
+#ylab("Frequency")+
 #geom_histogram(binwidth = input$bin, colour = "white", fill = "cornflowerblue", size = 1)
 #geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
 
@@ -394,13 +397,13 @@ output$makeplot.1 <- renderPlot({
   df = NN()
   x <- names(df)
   plot_hist1(df, x, input$bin1)
-  
+
   #x = NN()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1, position = "identity") + 
-  #xlab("") + 
-  #ggtitle("") + 
-  #theme_minimal() + 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1, position = "identity") +
+  #xlab("") +
+  #ggtitle("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())
 
   })
@@ -420,16 +423,16 @@ x1 = ppois(0:(input$k2-1), input$lad)
 x2 = ppois(1:input$k2, input$lad)
 x = x2-x1
 data = data.frame(x0 = c(0:length(x)), Pr.at.x0 = round(c(x1[1], x), 6), Pr.x0.cumulated = round(ppois(0:input$k2, input$lad), 6))
-return(data) 
+return(data)
 })
 
 output$p.plot <- renderPlot({
 X = P()
- ggplot(X, aes(X[,"x0"],X[,"Pr.at.x0"])) + geom_step() + 
+ ggplot(X, aes(X[,"x0"],X[,"Pr.at.x0"])) + geom_step() +
   geom_point(aes(x = X$x0[input$x0+1], y = X$Pr.at.x0[input$x0+1]),color = "red", size = 2.5) +
-  stat_function(fun = dnorm, args = list(mean = input$lad, sd = sqrt(input$lad)), color = "cornflowerblue") + scale_y_continuous(breaks = NULL) + 
+  stat_function(fun = dnorm, args = list(mean = input$lad, sd = sqrt(input$lad)), color = "cornflowerblue") + scale_y_continuous(breaks = NULL) +
   xlab("") + ylab("PMF")  + theme_minimal() + ggtitle("")
- 
+
    })
 
 output$p.k = renderTable({
@@ -439,7 +442,7 @@ rownames(x) <- c("Red-Dot Position", "Probability of Red-Dot Position", "Cumulat
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-N.p = reactive({ 
+N.p = reactive({
   df = data.frame(x = rpois(input$size.p, input$lad))
   return(df)})
 
@@ -449,10 +452,10 @@ output$p.plot2 <- renderPlot({
   plot_hist1c(df, x, input$bin.p)
 
 #df = N.p()
-#ggplot(df, aes(x = x)) + 
-#theme_minimal() + 
+#ggplot(df, aes(x = x)) +
+#theme_minimal() +
 #ggtitle("")+
-#ylab("Frequency")+ 
+#ylab("Frequency")+
 #geom_histogram(binwidth = input$bin.p, colour = "white", fill = "cornflowerblue", size = 1)
 #geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
 
@@ -502,13 +505,13 @@ output$makeplot.2 <- renderPlot({
   df = NN.p()
   x <- names(df)
   plot_hist1(df, x, input$bin1.p)
-  
+
   #x = NN.p()
-  #ggplot(x, aes(x = x[,1])) + 
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1.p, position = "identity") + 
-  #xlab("") + 
-  #ggtitle("") + 
-  #theme_minimal() + 
+  #ggplot(x, aes(x = x[,1])) +
+  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1.p, position = "identity") +
+  #xlab("") +
+  #ggtitle("") +
+  #theme_minimal() +
   #theme(legend.title =element_blank())
   })
 

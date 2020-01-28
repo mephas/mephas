@@ -1,5 +1,5 @@
 ##'
-##' MFSpls includes 
+##' MFSpls includes
 ##' (1) principal component regression
 ##' (2) partial least squares regression
 ##' and (3) sparse partial least squares regression
@@ -15,10 +15,13 @@
 ##' @importFrom spls cv.spls spls
 ##'
 ##' @examples
-##' # mephas::MFSpls()
-##' #
 ##' # library(mephas)
 ##' # MFSpls()
+##' # or,
+##' # mephas::MFSpls()
+##' # or,
+##' # mephasOpen("pls")
+##' # Use 'Stop and Quit' Button in the top to quit the interface
 
 ##' @export
 MFSpls <- function(){
@@ -44,7 +47,7 @@ HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
-<li> To upload data file, preview data set, and check the correctness of data input 
+<li> To upload data file, preview data set, and check the correctness of data input
 <li> To pre-process some variables (when necessary) for building the model
 <li> To get the basic descriptive statistics and plots of the variables
 </ul>
@@ -54,14 +57,14 @@ HTML(
 <ul>
 <li> The data need to be all numeric
 <li> The data used to build model is called <b>training set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example 1: NKI data</h4>
 
-Suppose we wanted to explore 100 lymph node positive breast cancer patients on metastasis-free survival. 
-Data contained the clinical risk factors: (1) Age: Patient age at diagnosis (years) and (2) the year until relapse; 
+Suppose we wanted to explore 100 lymph node positive breast cancer patients on metastasis-free survival.
+Data contained the clinical risk factors: (1) Age: Patient age at diagnosis (years) and (2) the year until relapse;
 and gene expression measurements of 70 genes found to be prognostic for metastasis-free survival in an earlier study.
-In this example, we wanted to create a model that could find the relations between risk factors and gene expression measurements. 
+In this example, we wanted to create a model that could find the relations between risk factors and gene expression measurements.
 
 </i>
 
@@ -87,22 +90,22 @@ sidebarPanel(
   tags$head(tags$style("#strfac {overflow-y:scroll; height: 100px; background: white};")),
   tags$head(tags$style("#fsum {overflow-y:scroll; height: 100px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")), 
-        choices =  c("NKI", "Liver"), 
+selectInput("edata", h4(tags$b("Use example data (training set)")),
+        choices =  c("NKI", "Liver"),
         selected = "NKI"),
 hr(),
 
 h4(tags$b("Use my own data (training set)")),
 p("We suggested putting the dependent variable (Y) in the left side of all independent variables (X) "),
 
-h4(tags$b("Step 1. Upload Data File")), 
+h4(tags$b("Step 1. Upload Data File")),
 
 fileInput('file', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-p(tags$b("2. Show 1st row as column names?")), 
+p(tags$b("2. Show 1st row as column names?")),
 checkboxInput("header", "Yes", TRUE),
 
-p(tags$b("3. Use 1st column as row names? (No duplicates)")), 
+p(tags$b("3. Use 1st column as row names? (No duplicates)")),
 checkboxInput("col", "Yes", TRUE),
 
 radioButtons("sep", "4. Which separator for data?",
@@ -127,7 +130,7 @@ a(tags$i("Find some example data here"),href = "https://github.com/mephas/datase
 
 h4(tags$b("(Optional) Change the types of some variable?")),
 
-#p(tags$b("Choice 1. Change Real-valued Variables into Categorical Variable")), 
+#p(tags$b("Choice 1. Change Real-valued Variables into Categorical Variable")),
 
 uiOutput("factor1"),
 
@@ -140,7 +143,7 @@ uiOutput("factor2")
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")), 
+p(tags$b("Data Preview")),
 p(br()),
 DT::DTOutput("Xdata"),
 
@@ -150,7 +153,7 @@ verbatimTextOutput("strnum"),
 p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
-hr(),   
+hr(),
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -210,10 +213,10 @@ HTML(
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
 <li> To get correlation matrix and plot
-<li> To get the results from model 
-<li> To get the factors and loadings result tables and 
-<li> To get the factors and loadings distribution plots 
-<li> To get the predicted dependent variables 
+<li> To get the results from model
+<li> To get the factors and loadings result tables and
+<li> To get the factors and loadings distribution plots
+<li> To get the predicted dependent variables
 </ul>
 
 <h4><b> 2. About your data (training set) </b></h4>
@@ -222,7 +225,7 @@ HTML(
 <li> All the data for analysis are numeric
 <li> Data used to build the model is called <b>training set</b>
 
-</ul> 
+</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "),
@@ -239,12 +242,12 @@ tags$head(tags$style("#pcr_rmsep {overflow-y:scroll;background: white};")),
 tags$head(tags$style("#pcr_msep {overflow-y:scroll; background: white};")),
 tags$head(tags$style("#tdtrace {overflow-y:scroll; height: 200px; background: white};")),
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose parameters to build the model")),    
+h4(tags$b("Step 1. Choose parameters to build the model")),
 
-uiOutput('x'), 
-uiOutput('y'), 
+uiOutput('x'),
+uiOutput('y'),
 
 numericInput("nc", "4. How many new components (a)", 4, min = 1, max = NA),
 #p("If data are complete, 'pca' uses Singular Value Decomposition; if there are some missing values, it uses the NIPALS algorithm."),
@@ -320,7 +323,7 @@ HTML("
 <li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
 </ul>
 
-<i> Click the button to show and update the result. 
+<i> Click the button to show and update the result.
 <ul>
 <li> In the plot of PC1 and PC2 (without group circle), we could find some outliers in the right. After soring PC1 in the table, we could see 70 is one of the outliers.
 </ul></i>
@@ -335,8 +338,8 @@ HTML("
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
@@ -364,7 +367,7 @@ HTML("
 ),
 hr()
 
-), 
+),
 
 ##########----------##########----------##########
 
@@ -385,7 +388,7 @@ HTML(
 <ul>
 <li> New data cover all the independent variables used in the model.
 <li> New data not used to build the model is called <b>test set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 
@@ -413,7 +416,7 @@ h4(tags$b("Use my own data (test set)")),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
 
-h4(tags$b("Step 1. Upload New Data File")),      
+h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -448,7 +451,7 @@ mainPanel(
 h4(tags$b("Output. Data Preview")),
 DT::DTOutput("newX"),
 hr(),
-actionButton("B.pcr", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+actionButton("B.pcr", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 p(br()),
 tabsetPanel(
 tabPanel("Predicted Dependent Variable",p(br()),
@@ -459,8 +462,8 @@ DT::DTOutput("pred.lp")
 tabPanel("Predicted Components",p(br()),
 DT::DTOutput("pred.comp")
 )
-) 
-) 
+)
+)
 ),
 hr()
 
@@ -477,10 +480,10 @@ HTML(
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
 <li> To get correlation matrix and plot
-<li> To get the results from model 
-<li> To get the factors and loadings result tables and 
-<li> To get the factors and loadings distribution plots 
-<li> To get the predicted dependent variables 
+<li> To get the results from model
+<li> To get the factors and loadings result tables and
+<li> To get the factors and loadings distribution plots
+<li> To get the predicted dependent variables
 </ul>
 
 <h4><b> 2. About your data (training set) </b></h4>
@@ -489,7 +492,7 @@ HTML(
 <li> All the data for analysis are numeric
 <li> Data used to build the model is called <b>training set</b>
 
-</ul> 
+</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "),
@@ -508,12 +511,12 @@ tags$head(tags$style("#pls_msep {overflow-y:scroll; background: white};")),
 tags$head(tags$style("#pls_tdtrace {overflow-y:scroll; height: 200px; background: white};")),
 
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose parameters to build the model")),    
+h4(tags$b("Step 1. Choose parameters to build the model")),
 
-uiOutput('x.r'), 
-uiOutput('y.r'), 
+uiOutput('x.r'),
+uiOutput('y.r'),
 
 numericInput("nc.r", "4. How many new components (a)", 4, min = 1, max = NA),
 
@@ -604,8 +607,8 @@ tabPanel("Loading", p(br()),
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
@@ -652,7 +655,7 @@ HTML(
 <ul>
 <li> New data cover all the independent variables used in the model.
 <li> New data not used to build the model is called <b>test set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 
@@ -679,7 +682,7 @@ h4(tags$b("Use my own data (test set)")),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
 
-h4(tags$b("Step 1. Upload New Data File")),      
+h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile.pls', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -713,7 +716,7 @@ mainPanel(
 h4(tags$b("Output. Data Preview")),
 DT::DTOutput("newX.pls"),
 hr(),
-actionButton("B.pls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+actionButton("B.pls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 p(br()),
 tabsetPanel(
 tabPanel("Predicted dependent variables",p(br()),
@@ -724,8 +727,8 @@ DT::DTOutput("pred.lp.pls")
 tabPanel("Predicted Components",p(br()),
 DT::DTOutput("pred.comp.pls")
 )
-) 
-) 
+)
+)
 ),
 hr()
 
@@ -742,10 +745,10 @@ HTML(
 <h4><b> 1. What you can do on this page  </b></h4>
 <ul>
 <li> To get correlation matrix and plot
-<li> To get the results from model 
-<li> To get the factors and loadings result tables and 
-<li> To get the factors and loadings distribution plots 
-<li> To get the predicted dependent variables 
+<li> To get the results from model
+<li> To get the factors and loadings result tables and
+<li> To get the factors and loadings distribution plots
+<li> To get the predicted dependent variables
 </ul>
 
 <h4><b> 2. About your data (training set) </b></h4>
@@ -753,7 +756,7 @@ HTML(
 <ul>
 <li> All the data for analysis are numeric
 <li> Data used to build the model is called <b>training set</b>
-</ul> 
+</ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "),
@@ -768,12 +771,12 @@ tags$head(tags$style("#spls {overflow-y:scroll; height: 300px; background: white
 tags$head(tags$style("#spls_cv {overflow-y:scroll; height: 300px; background: white};")),
 tags$head(tags$style("#tdtrace {overflow-y:scroll; height: 200px; background: white};")),
 
-h4("Example data is upload in Data tab"),      
+h4("Example data is upload in Data tab"),
 
-h4(tags$b("Step 1. Choose parameters to build the model")),    
+h4(tags$b("Step 1. Choose parameters to build the model")),
 
-uiOutput('x.s'), 
-uiOutput('y.s'), 
+uiOutput('x.s'),
+uiOutput('y.s'),
 
 numericInput("nc.s", "4. How many new components", 4, min = 1, max = NA),
 numericInput("nc.eta", "5. Parameter for selection range (larger number chooses less variables)", 0.9, min = 0, max = 1, step=0.1),
@@ -853,8 +856,8 @@ tabPanel("Loading", p(br()),
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
@@ -899,7 +902,7 @@ HTML(
 <ul>
 <li> New data cover all the independent variables used in the model.
 <li> New data not used to build the model is called <b>test set</b>
-</ul> 
+</ul>
 
 <i><h4>Case Example</h4>
 
@@ -928,7 +931,7 @@ h4(tags$b("Use my own data (test set)")),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
 
-h4(tags$b("Step 1. Upload New Data File")),      
+h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile.spls', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -964,12 +967,12 @@ mainPanel(
 h4(tags$b("Output. Data Preview")),
 DT::DTOutput("newX.spls"),
 hr(),
-actionButton("B.spls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+actionButton("B.spls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 p(br()),
 
 DT::DTOutput("pred.lp.spls")
 
-) 
+)
 ),
 hr()
 
@@ -1045,7 +1048,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0() 
+df <-DF0()
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -1066,7 +1069,7 @@ selectInput(
 })
 
 X <- reactive({
-  df <-DF1() 
+  df <-DF1()
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -1078,7 +1081,7 @@ colnames(X()[unlist(lapply(X(), is.factor))])
  output$Xdata <- DT::renderDT({
   if (ncol(X())>1000 || nrow(X())>1000) {X()[,1:1000]}
   else { X()}
-  }, 
+  },
     extensions = list(
       'Buttons'=NULL,
       'Scroller'=NULL),
@@ -1109,8 +1112,8 @@ sum <- reactive({
   return(res)
   })
 
-output$sum <- DT::renderDT({sum()}, 
-    extensions = 'Buttons', 
+output$sum <- DT::renderDT({sum()},
+    extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1136,24 +1139,24 @@ output$fsum = renderPrint({fsum()})
 
 output$tx = renderUI({
    selectInput(
-     'tx', 
+     'tx',
      tags$b('1. Choose a numeric variable for the x-axis'),
      selected=type.num3()[2],
      choices = type.num3())
    })
- 
+
  output$ty = renderUI({
    selectInput(
      'ty',
      tags$b('2. Choose a numeric variable for the y-axis'),
      selected = type.num3()[1],
      choices = type.num3())
-   
+
  })
 
  output$p1 = renderPlot({
   plot_scat(X(), varx=input$tx, vary=input$ty)
-   #ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) + 
+   #ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) +
    #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
    })
 
@@ -1163,23 +1166,23 @@ output$hx = renderUI({
   selectInput(
     'hx',
      tags$b('Choose a numeric variable'),
-     selected = type.num3()[1], 
+     selected = type.num3()[1],
      choices = type.num3())
 })
 
 output$p2 = renderPlot({
   plot_hist1(X(), input$hx, input$bin)
-   #ggplot(X(), aes(x = X()[, input$hx])) + 
-   #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") + 
+   #ggplot(X(), aes(x = X()[, input$hx])) +
+   #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") +
      #geom_density()+
    #  xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
 output$p21 = renderPlot({
   plot_density1(X(), input$hx)
-   #ggplot(X(), aes(x = X()[, input$hx])) + 
-     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") + 
-     #geom_density() + 
+   #ggplot(X(), aes(x = X()[, input$hx])) +
+     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") +
+     #geom_density() +
      #xlab("") + theme_minimal() + theme(legend.title = element_blank())
    })
 
@@ -1259,43 +1262,43 @@ load <- reactive({
   as.data.frame(pcr()$loadings[,1:input$nc])
   })
 
-output$pcr.s <- DT::renderDT({score()}, 
-  extensions = 'Buttons', 
+output$pcr.s <- DT::renderDT({score()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.s <- DT::renderDT({load()}, 
-  extensions = 'Buttons', 
+output$pcr.s <- DT::renderDT({load()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.pres <- DT::renderDT({as.data.frame(pcr()$fitted.values[,,1:pcr()$ncomp])}, 
-  extensions = 'Buttons', 
+output$pcr.pres <- DT::renderDT({as.data.frame(pcr()$fitted.values[,,1:pcr()$ncomp])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.coef <- DT::renderDT({as.data.frame(pcr()$coefficients)}, 
-  extensions = 'Buttons', 
+output$pcr.coef <- DT::renderDT({as.data.frame(pcr()$coefficients)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.resi <- DT::renderDT({as.data.frame(pcr()$residuals[,,1:pcr()$ncomp])}, 
-  extensions = 'Buttons', 
+output$pcr.resi <- DT::renderDT({as.data.frame(pcr()$residuals[,,1:pcr()$ncomp])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 
-output$pcr.s.plot  <- renderPlot({ 
+output$pcr.s.plot  <- renderPlot({
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
 plot_score(score, input$c1, input$c2)
@@ -1308,7 +1311,7 @@ plot_score(score, input$c1, input$c2)
 
   })
 
-output$pcr.l.plot  <- renderPlot({ 
+output$pcr.l.plot  <- renderPlot({
   load <- load()
   plot_load(load, input$nc)
 #ll <- as.data.frame(pcr()$loadings[,1:pcr()$ncomp])
@@ -1316,20 +1319,20 @@ output$pcr.l.plot  <- renderPlot({
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:pcr()$ncomp])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 ##  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
+#  coord_flip() + #flip the axes so the test names can be horizontal
 #  #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
+#  scale_fill_gradient2(name = "Loading",
+#                       high = "blue", mid = "white", low = "red",
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$pcr.bp   <- renderPlot({ 
+output$pcr.bp   <- renderPlot({
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
 load <- load()
@@ -1364,7 +1367,7 @@ return(as.data.frame(x))
 #prediction plot
 # prediction
 output$newX  = DT::renderDT({newX()},
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1383,7 +1386,7 @@ pred.comp = eventReactive(input$B.pcr,
 output$pred.lp = DT::renderDT({
 pred.lp()
 },
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1392,14 +1395,14 @@ scrollX = TRUE))
 output$pred.comp = DT::renderDT({
 pred.comp()
 },
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
 
-#source("plsr_server.R", local=TRUE, encoding="UTF-8") 
+#source("plsr_server.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************plsr
 
 output$x.r = renderUI({
@@ -1469,36 +1472,36 @@ load.r <- reactive({
   as.data.frame(pls()$loadings[,1:pls()$ncomp])
   })
 
-output$pls.s <- DT::renderDT({score.r()}, 
-  extensions = 'Buttons', 
+output$pls.s <- DT::renderDT({score.r()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.s <- DT::renderDT({load.r()}, 
-  extensions = 'Buttons', 
+output$pls.s <- DT::renderDT({load.r()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.pres <- DT::renderDT({as.data.frame(pls()$fitted.values[,,1:pls()$ncomp])}, 
-  extensions = 'Buttons', 
+output$pls.pres <- DT::renderDT({as.data.frame(pls()$fitted.values[,,1:pls()$ncomp])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients)}, 
-  extensions = 'Buttons', 
+output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])}, 
-  extensions = 'Buttons', 
+output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1506,7 +1509,7 @@ output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])
 
 
 
-output$pls.s.plot  <- renderPlot({ 
+output$pls.s.plot  <- renderPlot({
 validate(need(input$nc.r>=2, "The number of components must be >= 2"))
 score <- score.r()
 plot_score(score, input$c1.r, input$c2.r)
@@ -1519,7 +1522,7 @@ plot_score(score, input$c1.r, input$c2.r)
 
   })
 
-output$pls.l.plot  <- renderPlot({ 
+output$pls.l.plot  <- renderPlot({
 load <- load.r()
 plot_load(load, input$nc.r)
 #ll <- as.data.frame(pls()$loadings[,1:input$nc.r])
@@ -1527,20 +1530,20 @@ plot_load(load, input$nc.r)
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:input$nc.r])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 #  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
+#  coord_flip() + #flip the axes so the test names can be horizontal
   #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
+#  scale_fill_gradient2(name = "Loading",
+#                       high = "blue", mid = "white", low = "red",
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$pls.bp   <- renderPlot({ 
+output$pls.bp   <- renderPlot({
   validate(need(input$nc.r>=2, "The number of components must be >= 2"))
 score <- score.r()
 load <- load.r()
@@ -1575,7 +1578,7 @@ return(as.data.frame(x))
 #prediction plot
 # prediction
 output$newX.pls  = DT::renderDT({newX.pls()},
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1596,7 +1599,7 @@ pred.comp.pls = eventReactive(input$B.pls,
 output$pred.lp.pls = DT::renderDT({
 pred.lp.pls()
 },
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1605,13 +1608,13 @@ scrollX = TRUE))
 output$pred.comp.pls = DT::renderDT({
 pred.comp.pls()
 },
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
-#source("spls_server.R", local=TRUE, encoding="UTF-8") 
+#source("spls_server.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************spls
 
 output$x.s = renderUI({
@@ -1654,7 +1657,7 @@ output$spls_cv  <- renderPrint({
   validate(need(input$cv.eta>0 && input$nc.eta<1, "Please correct parameters"))
   spls::cv.spls(X,Y, eta = seq(0.1,input$cv.eta,0.1), K = c(1:input$cv.s),
     select="pls2", fit = input$method.s, plot.it = FALSE)
-  
+
   })
 
 spls <- eventReactive(input$spls1,{
@@ -1672,13 +1675,13 @@ output$spls  <- renderPrint({
   print(spls())
   })
 
-output$spls.bp   <- renderPlot({ 
+output$spls.bp   <- renderPlot({
 plot(spls())
 })
 
 score.s <- reactive({
   data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
-  }) 
+  })
 load.s <- reactive({
   as.data.frame(spls()$projection)
   })
@@ -1687,22 +1690,22 @@ output$spls.coef <- DT::renderDT({
   x<-as.data.frame(spls()$betamat)
   colnames(x) <- paste0("At comp", 1:spls()$K)
   rownames(x) <- input$x.s
-  return(x)}, 
-  extensions = 'Buttons', 
+  return(x)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.s <- DT::renderDT({score.s()}, 
-  extensions = 'Buttons', 
+output$spls.s <- DT::renderDT({score.s()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.s <- DT::renderDT({load.s()}, 
-  extensions = 'Buttons', 
+output$spls.s <- DT::renderDT({load.s()},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1711,15 +1714,15 @@ output$spls.s <- DT::renderDT({load.s()},
 output$spls.pres <- DT::renderDT({
   x <- as.data.frame(predict(spls(), type="fit"))
   colnames(x) <- input$y.s
-  return(x)}, 
-  extensions = 'Buttons', 
+  return(x)},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])}, 
-  extensions = 'Buttons', 
+output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
+  extensions = 'Buttons',
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1727,7 +1730,7 @@ output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
 
 
 
-output$spls.s.plot  <- renderPlot({ 
+output$spls.s.plot  <- renderPlot({
   validate(need(input$nc.s>=2, "The number of components must be >=2"))
     score <- score.s()
   plot_score(score, input$c1.s, input$c2.s)
@@ -1741,7 +1744,7 @@ output$spls.s.plot  <- renderPlot({
 
   })
 
-output$spls.l.plot  <- renderPlot({ 
+output$spls.l.plot  <- renderPlot({
   load <- load.s()
   plot_load(load, a=input$nc.s)
 #ll <- as.data.frame(spls()$projection)
@@ -1749,20 +1752,20 @@ output$spls.l.plot  <- renderPlot({
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:spls()$K])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 #  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
+#  coord_flip() + #flip the axes so the test names can be horizontal
   #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
+#  scale_fill_gradient2(name = "Loading",
+#                       high = "blue", mid = "white", low = "red",
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$spls.biplot<- renderPlot({ 
+output$spls.biplot<- renderPlot({
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score.s()
 load <- load.s()
@@ -1795,7 +1798,7 @@ return(as.data.frame(x))
 
 
 output$newX.spls  = DT::renderDT({newX.spls()},
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1810,7 +1813,7 @@ return(x)
 output$pred.lp.spls = DT::renderDT({
 pred.lp.spls()
 },
-extensions = 'Buttons', 
+extensions = 'Buttons',
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),

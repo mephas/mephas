@@ -17,8 +17,11 @@ MFSproptest includes test for binomial proportion of
 and (4) trend in more than two groups.
 }
 \examples{
-# mephas::MFSproptest()
-## or,
 # library(mephas)
 # MFSproptest()
+# or,
+# mephas::MFSproptest()
+# or,
+# mephasOpen("proptest")
+# Use 'Stop and Quit' Button in the top to quit the interface
 }
