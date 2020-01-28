@@ -2,7 +2,7 @@
 % Please edit documentation in R/mephasOpen.R
 \name{mephasOpen}
 \alias{mephasOpen}
-\title{MEPHAS Open Windows}
+\title{Open MEPHAS  Windows}
 \usage{
 mephasOpen(
   method = c("condist", "disdist", "ttest", "nptest", "proptest", "tabletest", "anova",
@@ -10,17 +10,30 @@ mephasOpen(
 )
 }
 \arguments{
-\item{method}{choose method from MEPHAS}
+\item{method}{choose method from MEPHAS,
+"condist" opens continuous distribution,
+"disdist" opens discrete distribution,
+"ttest" opens t test,
+"nptest" opens non-parametric test,
+"proptest" opens test methods for proportions,
+"tabletest" opens test methods contingency table,
+"anova"opens ANOVA,
+"linereg" opens linear regression,
+"logisreg" opens logistic regression,
+"surv" opens survival models,
+"pca" opens principal component analysis,
+"pls" opens partial least square methods}
 }
 \value{
-shiny interface
+shiny interface of MEPHAS
 }
 \description{
-MEPHAS open function
+Open MEPHAS interfaces
 }
 \examples{
 # mephas::mephasOpen("condist")
 ## or,
 # library(mephas)
 # mephasOpen("condist")
+
 }
