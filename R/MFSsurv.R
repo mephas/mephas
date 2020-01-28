@@ -13,7 +13,6 @@
 ##' @import survival
 ##' @import survminer
 ##'
-##' @importFrom stargazer stargazer
 ##' @importFrom utils str write.table
 ##' @importFrom stats plogis resid
 ##' @importFrom survAUC predErr AUC.cd AUC.sh AUC.uno AUC.hc
