@@ -19,7 +19,7 @@
 ### Homepage: [https://alain003.phs.osaka-u.ac.jp/mephas/](https://alain003.phs.osaka-u.ac.jp/mephas/) 
 
 <a id="source-code-at-github-mephas_web"></a>
-##### Source code at GitHub: [mephas_web](https://mephas.github.io/mephas_web/)
+##### Source code at GitHub: [check here](https://mephas.github.io/mephas_web/)
 
 ------
 
@@ -58,7 +58,7 @@ Note: `upgrade="never"`: suppress the updates of the R packages; `?install_githu
 <a id="installation-from-targz-file"></a>
 ### Installation from ".tar.gz" file 
 
-#### File: mephas_1.1.tar.gz (updated 2020-1)
+#### File: mephas_1.1.tar.gz (updated 2020-1), [download here](https://github.com/mephas/mephas.tar.gz)
 
 #### You may need to install the following packages Before or During the Installation (if there were warnings)
 
@@ -84,7 +84,7 @@ Note: `upgrade="never"`: suppress the updates of the R packages; `?install_githu
 <a id="commands-to-open-mephas-windows"></a>
 ### Commands to open mephas windows
 
-#### Load the whole package 
+#### Load the whole package, [see details](https://mephas.github.io/mephas/reference/mephasOpen.html)
 
 Before open the applications, please load the package mephas
 
@@ -100,15 +100,15 @@ Then, you can open the applications as follows.
 
 ##### 1. Probability distributions
 
-Continuous distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_1MFScondist/)
+Continuous probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_1MFScondist/)
 
     > MFScondist()
 
-Discrete distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_2MFSdisdist/)
+Discrete probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_2MFSdisdist/)
 
     > MFScondist()
     
-##### 2. Pamametric T test for means, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/2MFSttest.html)
+##### 2. Parametric T test for means, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/2MFSttest.html)
 
     > MFSttest()
 
@@ -120,15 +120,15 @@ Discrete distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_
 
     > MFSproptest()
 
-##### 5. Test for contingency Tables, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/5MFSrctabtest.html)
+##### 5. Test for contingency tables, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/5MFSrctabtest.html)
 
     > MFSrctabtest()
 
-##### 6. Analysis of Variance, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/6MFSanova.html)
+##### 6. Analysis of variance, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/6MFSanova.html)
 
     > MFSanova()
 
-##### 7. Regression Model, 
+##### 7. Statistical model, 
 
 Linear regression, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/7_1MFSlr.html)
     
