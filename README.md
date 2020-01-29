@@ -3,8 +3,7 @@
 
 - [**Web server MEPHAS**](#web-server-mephas)
 - [**R package mephas, installation**](#r-package-mephas-installation)
-  - [Required Software](#required-software)
-  - [Installation from GitHub at RStudio console](#installation-from-github-at-rstudio-console)
+  - [Installation from GitHub in RStudio console](#installation-from-github-in-rstudio-console)
   - [Installation from ".tar.gz" file](#installation-from-targz-file)
   - [Commands to open mephas windows](#commands-to-open-mephas-windows)
 - [Some differences between web server MEPHAS and R package mephas](#some-differences-between-web-server-mephas-and-r-package-mephas)
@@ -29,24 +28,25 @@ Two platforms are available: (1) web server and (2) R package.
 <a id="r-package-mephas-installation"></a>
 ## **R package mephas, installation**
 
-<a id="required-software"></a>
-### Required Software
+------
 
-#### 1. R (latest version, >=3.5.0), [download here](https://www.r-project.org/)
+#### R package needs to be installed in R console, if you have not installed R and RStudion, download R and Rstudio firstly
 
-#### 2. RStudio (Recommend), [download here](https://rstudio.com/products/rstudio/)
+* R (latest version, >=3.5.0), [download here](https://www.r-project.org/)
+
+* RStudio (Recommended editor), [download here](https://rstudio.com/products/rstudio/)
 
 ------
 
-<a id="installation-from-github-at-rstudio-console"></a>
-### Installation from GitHub at RStudio console
+<a id="installation-from-github-in-rstudio-console"></a>
+### Installation from GitHub in RStudio console
 
 #### Before installing, check the existence of R package "devtools", [see details about "devtools"](https://cran.r-project.org/web/packages/devtools/readme/README.html)
 
     > packageVersion("devtools")
 
 #### If R package "devtools" has been installed, then install "mephas" package from GitHub
-      
+
     > devtools::install_github(“mephas/mephas”,upgrade="never")
     
 #### If error message said "there is no package called ‘devtools'", then install "devtools" package firstly
