@@ -2,8 +2,7 @@
 <!-- MarkdownTOC -->
 
 - [**Web server MEPHAS**](#web-server-mephas)
-  - [Homepage: https://alain003.phs.osaka-u.ac.jp/mephas/](#homepage-httpsalain003phsosaka-uacjpmephas)
-- [**R package mephas**](#r-package-mephas)
+- [**R package mephas, installation**](#r-package-mephas-installation)
   - [Required Software](#required-software)
   - [Installation from GitHub at RStudio console](#installation-from-github-at-rstudio-console)
   - [Installation from ".tar.gz" file](#installation-from-targz-file)
@@ -12,19 +11,23 @@
 
 <!-- /MarkdownTOC -->
 
+MEPHAS is a shiny-based statistical software that was developed to support statistical data analyses for medical and pharmaceutical students, researchers, and doctors.
+
+Two platforms are available: (1) web server and (2) R package.
+
 <a id="web-server-mephas"></a>
 ## **Web server MEPHAS**
 
 <a id="homepage-httpsalain003phsosaka-uacjpmephas"></a>
-### Homepage: [https://alain003.phs.osaka-u.ac.jp/mephas/](https://alain003.phs.osaka-u.ac.jp/mephas/) 
+#### Homepage: [https://alain003.phs.osaka-u.ac.jp/mephas/](https://alain003.phs.osaka-u.ac.jp/mephas/) 
 
 <a id="source-code-at-github-mephas_web"></a>
 ##### Source code at GitHub: [check here](https://mephas.github.io/mephas_web/)
 
 ------
 
-<a id="r-package-mephas"></a>
-## **R package mephas**
+<a id="r-package-mephas-installation"></a>
+## **R package mephas, installation**
 
 <a id="required-software"></a>
 ### Required Software
@@ -38,11 +41,11 @@
 <a id="installation-from-github-at-rstudio-console"></a>
 ### Installation from GitHub at RStudio console
 
-#### Before installing, check the existence of R package `devtools` 
+#### Before installing, check the existence of R package "devtools", [see details about "devtools"](https://cran.r-project.org/web/packages/devtools/readme/README.html)
 
     > packageVersion("devtools")
 
-#### If R package `devtools` existed, then install "mephas" package from GitHub
+#### If R package "devtools" has been installed, then install "mephas" package from GitHub
       
     > devtools::install_github(“mephas/mephas”,upgrade="never")
     
@@ -51,14 +54,14 @@
     > install.packages("devtools")
     > devtools::install_github(“mephas/mephas”,upgrade="never")
 
-Note: `upgrade="never"`: suppress the updates of the R packages; `?install_github` to see the help file (in package `remotes`)
+Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "devtools" can be replaced by package "remotes", [see details about "remotes"](https://remotes.r-lib.org/)
       
 ------
 
 <a id="installation-from-targz-file"></a>
 ### Installation from ".tar.gz" file 
 
-#### File: mephas_1.1.tar.gz (updated 2020-1), [download here](https://github.com/mephas/mephas.tar.gz)
+#### File: [mephas_1.1.tar.gz](https://github.com/mephas/mephas.tar.gz) (updated 2020-1)
 
 #### You may need to install the following packages Before or During the Installation (if there were warnings)
 
@@ -84,7 +87,7 @@ Note: `upgrade="never"`: suppress the updates of the R packages; `?install_githu
 <a id="commands-to-open-mephas-windows"></a>
 ### Commands to open mephas windows
 
-#### Load the whole package, [see details](https://mephas.github.io/mephas/reference/mephasOpen.html)
+#### Load the whole package
 
 Before open the applications, please load the package mephas
 
@@ -92,7 +95,7 @@ Before open the applications, please load the package mephas
 
 Then, you can open the applications as follows. 
 
-#### All-in-one function, [reference]
+#### All-in-one function, [see details](https://mephas.github.io/mephas/reference/mephasOpen.html)
 
     > mephasOpen()
 

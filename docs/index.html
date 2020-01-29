@@ -80,14 +80,9 @@
 <a href="#mephas" class="anchor"></a>mephas</h1></div>
 <!-- MarkdownTOC -->
 <ul>
+<li><a href="#web-server-mephas"><strong>Web server MEPHAS</strong></a></li>
 <li>
-<a href="#web-server-mephas"><strong>Web server MEPHAS</strong></a>
-<ul>
-<li><a href="#homepage-httpsalain003phsosaka-uacjpmephas">Homepage: https://alain003.phs.osaka-u.ac.jp/mephas/</a></li>
-</ul>
-</li>
-<li>
-<a href="#r-package-mephas"><strong>R package mephas</strong></a>
+<a href="#r-package-mephas-installation"><strong>R package mephas, installation</strong></a>
 <ul>
 <li><a href="#required-software">Required Software</a></li>
 <li><a href="#installation-from-github-at-rstudio-console">Installation from GitHub at RStudio console</a></li>
@@ -97,29 +92,31 @@
 </li>
 <li><a href="#some-differences-between-web-server-mephas-and-r-package-mephas">Some differences between web server MEPHAS and R package mephas</a></li>
 </ul>
-<!-- /MarkdownTOC -->
+<!-- /MarkdownTOC --><p>MEPHAS is a shiny-based statistical software that was developed to support statistical data analyses for medical and pharmaceutical students, researchers, and doctors.</p>
+<p>Two platforms are available: (1) web server and (2) R package.</p>
+<p><a id="web-server-mephas"></a></p>
 <div id="web-server-mephas" class="section level2">
 <h2 class="hasAnchor">
 <a href="#web-server-mephas" class="anchor"></a><strong>Web server MEPHAS</strong>
 </h2>
 <p><a id="homepage-httpsalain003phsosaka-uacjpmephas"></a></p>
-<div id="homepage-httpsalain003-phs-osaka-u-ac-jpmephas" class="section level3">
-<h3 class="hasAnchor">
+<div id="homepage-httpsalain003-phs-osaka-u-ac-jpmephas" class="section level4">
+<h4 class="hasAnchor">
 <a href="#homepage-httpsalain003-phs-osaka-u-ac-jpmephas" class="anchor"></a>Homepage: <a href="https://alain003.phs.osaka-u.ac.jp/mephas/">https://alain003.phs.osaka-u.ac.jp/mephas/</a>
-</h3>
+</h4>
 <p><a id="source-code-at-github-mephas_web"></a></p>
 <div id="source-code-at-github-check-here" class="section level5">
 <h5 class="hasAnchor">
 <a href="#source-code-at-github-check-here" class="anchor"></a>Source code at GitHub: <a href="https://mephas.github.io/mephas_web/">check here</a>
 </h5>
 <hr>
-<p><a id="r-package-mephas"></a></p>
+<p><a id="r-package-mephas-installation"></a></p>
 </div>
 </div>
 </div>
-<div id="r-package-mephas" class="section level2">
+<div id="r-package-mephas-installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#r-package-mephas" class="anchor"></a><strong>R package mephas</strong>
+<a href="#r-package-mephas-installation" class="anchor"></a><strong>R package mephas, installation</strong>
 </h2>
 <p><a id="required-software"></a></p>
 <div id="required-software" class="section level3">
@@ -141,15 +138,15 @@
 <div id="installation-from-github-at-rstudio-console" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation-from-github-at-rstudio-console" class="anchor"></a>Installation from GitHub at RStudio console</h3>
-<div id="before-installing-check-the-existence-of-r-package-devtools" class="section level4">
+<div id="before-installing-check-the-existence-of-r-package-devtools-see-details-about-devtools" class="section level4">
 <h4 class="hasAnchor">
-<a href="#before-installing-check-the-existence-of-r-package-devtools" class="anchor"></a>Before installing, check the existence of R package <code>devtools</code>
+<a href="#before-installing-check-the-existence-of-r-package-devtools-see-details-about-devtools" class="anchor"></a>Before installing, check the existence of R package “devtools”, <a href="https://cran.r-project.org/web/packages/devtools/readme/README.html">see details about “devtools”</a>
 </h4>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/packageDescription.html">packageVersion</a></span>(<span class="st">"devtools"</span>)</a></code></pre></div>
 </div>
-<div id="if-r-package-devtools-existed-then-install-mephas-package-from-github" class="section level4">
+<div id="if-r-package-devtools-has-been-installed-then-install-mephas-package-from-github" class="section level4">
 <h4 class="hasAnchor">
-<a href="#if-r-package-devtools-existed-then-install-mephas-package-from-github" class="anchor"></a>If R package <code>devtools</code> existed, then install “mephas” package from GitHub</h4>
+<a href="#if-r-package-devtools-has-been-installed-then-install-mephas-package-from-github" class="anchor"></a>If R package “devtools” has been installed, then install “mephas” package from GitHub</h4>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(“mephas<span class="op">/</span>mephas”,<span class="dt">upgrade=</span><span class="st">"never"</span>)</a></code></pre></div>
 </div>
 <div id="if-error-message-said-there-is-no-package-called-devtools-then-install-devtools-package-firstly" class="section level4">
@@ -157,7 +154,7 @@
 <a href="#if-error-message-said-there-is-no-package-called-devtools-then-install-devtools-package-firstly" class="anchor"></a>If error message said “there is no package called ‘devtools’”, then install “devtools” package firstly</h4>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(“mephas<span class="op">/</span>mephas”,<span class="dt">upgrade=</span><span class="st">"never"</span>)</a></code></pre></div>
-<p>Note: <code>upgrade="never"</code>: suppress the updates of the R packages; <code>?install_github</code> to see the help file (in package <code>remotes</code>)</p>
+<p>Note: <code>upgrade="never"</code>: suppress the updates of the R packages, <a href="https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github">see details here</a>; package “remotes” and “devtools” shared the same <code>install_github</code> function, thus package “devtools” can be replaced by package “remotes”, <a href="https://remotes.r-lib.org/">see details about “remotes”</a></p>
 <hr>
 <p><a id="installation-from-targz-file"></a></p>
 </div>
@@ -165,10 +162,9 @@
 <div id="installation-from--tar-gz-file" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation-from--tar-gz-file" class="anchor"></a>Installation from “.tar.gz” file</h3>
-<div id="file-mephas_1-1-tar-gz-updated-2020-1-download-here" class="section level4">
+<div id="file-mephas_1-1-tar-gz-updated-2020-1" class="section level4">
 <h4 class="hasAnchor">
-<a href="#file-mephas_1-1-tar-gz-updated-2020-1-download-here" class="anchor"></a>File: mephas_1.1.tar.gz (updated 2020-1), <a href="https://github.com/mephas/mephas.tar.gz">download here</a>
-</h4>
+<a href="#file-mephas_1-1-tar-gz-updated-2020-1" class="anchor"></a>File: <a href="https://github.com/mephas/mephas.tar.gz">mephas_1.1.tar.gz</a> (updated 2020-1)</h4>
 </div>
 <div id="you-may-need-to-install-the-following-packages-before-or-during-the-installation-if-there-were-warnings" class="section level4">
 <h4 class="hasAnchor">
@@ -195,17 +191,17 @@
 <div id="commands-to-open-mephas-windows" class="section level3">
 <h3 class="hasAnchor">
 <a href="#commands-to-open-mephas-windows" class="anchor"></a>Commands to open mephas windows</h3>
-<div id="load-the-whole-package-see-details" class="section level4">
+<div id="load-the-whole-package" class="section level4">
 <h4 class="hasAnchor">
-<a href="#load-the-whole-package-see-details" class="anchor"></a>Load the whole package, <a href="https://mephas.github.io/mephas/reference/mephasOpen.html">see details</a>
-</h4>
+<a href="#load-the-whole-package" class="anchor"></a>Load the whole package</h4>
 <p>Before open the applications, please load the package mephas</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mephas)</a></code></pre></div>
 <p>Then, you can open the applications as follows.</p>
 </div>
-<div id="all-in-one-function-reference" class="section level4">
+<div id="all-in-one-function-see-details" class="section level4">
 <h4 class="hasAnchor">
-<a href="#all-in-one-function-reference" class="anchor"></a>All-in-one function, [reference]</h4>
+<a href="#all-in-one-function-see-details" class="anchor"></a>All-in-one function, <a href="https://mephas.github.io/mephas/reference/mephasOpen.html">see details</a>
+</h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/mephasOpen.html">mephasOpen</a></span>()</a></code></pre></div>
 </div>
 <div id="equivalently" class="section level4">
@@ -299,8 +295,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li><s>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mephas">https://​cloud.r-project.org/​package=mephas</a></s>
-</li>
+<!--li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mephas">https://​cloud.r-project.org/​package=mephas</a>
+</li-->
 <li>Browse source code at <br><a href="https://github.com/mephas/mephas">https://​github.com/​mephas/​mephas</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/mephas/mephas/issues">https://​github.com/​mephas/​mephas/​issues</a>
@@ -321,13 +317,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a id="web-server-mephas"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 
