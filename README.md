@@ -30,11 +30,16 @@ Two platforms are available: (1) web server and (2) R package.
 
 ------
 
-#### R package needs to be installed in R console, if you have not installed R and RStudion, download R and Rstudio firstly
+#### R package needs to be installed in R console, if you have not installed R, download R firstly:
 
 * R (latest version, >=3.5.0), [download here](https://www.r-project.org/)
 
-* RStudio (Recommended editor), [download here](https://rstudio.com/products/rstudio/)
+##### You can use RStudio console, R console, and even command line interface to open the R environment
+
+* RStudio is an integrated development environment (IDE) for R. [Download RStudio here](https://rstudio.com/products/rstudio/)
+
+
+##### The followings show how to install in Rstudio, which is the same in R console and R in command line interface
 
 ------
 
@@ -54,6 +59,7 @@ Two platforms are available: (1) web server and (2) R package.
     > install.packages("devtools")
     > devtools::install_github(“mephas/mephas”,upgrade="never")
 
+
 Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "devtools" can be replaced by package "remotes", [see details about "remotes"](https://remotes.r-lib.org/)
       
 ------
@@ -63,7 +69,7 @@ Note: `upgrade="never"`: suppress the updates of the R packages, [see details he
 
 #### File: [mephas_1.1.tar.gz](https://github.com/mephas/mephas.tar.gz) (updated 2020-1)
 
-#### You may need to install the following packages Before or During the Installation (if there were warnings)
+##### You may need to install the following packages Before or During the Installation (if there were warnings)
 
     > install.packages(c("DescTools",
                           "DT",
@@ -99,7 +105,7 @@ Then, you can open the applications as follows.
 
     > mephasOpen()
 
-#### Equivalently,
+#### Alternatively, open each interfaces using the method names
 
 ##### 1. Probability distributions
 
@@ -109,7 +115,7 @@ Continuous probability distribution, [web server](https://alain003.phs.osaka-u.a
 
 Discrete probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_2MFSdisdist/)
 
-    > MFScondist()
+    > MFSdisdist()
     
 ##### 2. Parametric T test for means, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/2MFSttest.html)
 
