@@ -2,9 +2,10 @@
 <!-- MarkdownTOC -->
 
 - [**Web server MEPHAS**](#web-server-mephas)
-- [**R package mephas, installation**](#r-package-mephas-installation)
+- [**R package mephas, installations**](#r-package-mephas-installations)
   - [Installation from GitHub in RStudio console](#installation-from-github-in-rstudio-console)
   - [Installation from ".tar.gz" file](#installation-from-targz-file)
+  - [Find a statistical methods using the flowchart](#find-a-statistical-methods-using-the-flowchart)
   - [Commands to open mephas windows](#commands-to-open-mephas-windows)
 - [Some differences between web server MEPHAS and R package mephas](#some-differences-between-web-server-mephas-and-r-package-mephas)
 
@@ -18,17 +19,12 @@ Two platforms are available: (1) web server and (2) R package.
 ## **Web server MEPHAS**
 
 <a id="homepage-httpsalain003phsosaka-uacjpmephas"></a>
-#### Homepage: [https://alain003.phs.osaka-u.ac.jp/mephas/](https://alain003.phs.osaka-u.ac.jp/mephas/) 
-
-<a id="source-code-at-github-mephas_web"></a>
-##### Source code at GitHub: [check here](https://mephas.github.io/mephas_web/)
+#### [Homepage](https://alain003.phs.osaka-u.ac.jp/mephas/) and [source code at GitHub](https://mephas.github.io/mephas_web/)
 
 ------
 
-<a id="r-package-mephas-installation"></a>
-## **R package mephas, installation**
-
-------
+<a id="r-package-mephas-installations"></a>
+## **R package mephas, installations**
 
 #### R package needs to be installed in R console, if you have not installed R, download R firstly:
 
@@ -39,7 +35,7 @@ Two platforms are available: (1) web server and (2) R package.
 * RStudio is an integrated development environment (IDE) for R. [Download RStudio here](https://rstudio.com/products/rstudio/)
 
 
-##### The followings show how to install in Rstudio, which is the same in R console and R in command line interface
+##### The followings show how to install in RStudio, which is the same in R console and R in command line interface
 
 ------
 
@@ -62,6 +58,9 @@ Two platforms are available: (1) web server and (2) R package.
 
 Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "devtools" can be replaced by package "remotes", [see details about "remotes"](https://remotes.r-lib.org/)
       
+
+[Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
+
 ------
 
 <a id="installation-from-targz-file"></a>
@@ -88,7 +87,15 @@ Note: `upgrade="never"`: suppress the updates of the R packages, [see details he
                           "spls"))
 
 
+[Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
+
+
 ------
+
+<a id="find-a-statistical-methods-using-the-flowchart"></a>
+### Find a statistical methods using the flowchart
+
+[Flowchart.pdf](https://alain003.phs.osaka-u.ac.jp/mephas/MEPHAS_flow.pdf)
 
 <a id="commands-to-open-mephas-windows"></a>
 ### Commands to open mephas windows
@@ -104,6 +111,8 @@ Then, you can open the applications as follows.
 #### All-in-one function, [see details](https://mephas.github.io/mephas/reference/mephasOpen.html)
 
     > mephasOpen()
+
+[Videos of the opening process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
 
 #### Alternatively, open each interfaces using the method names
 
@@ -167,7 +176,7 @@ More functions are under construction...
 <a id="some-differences-between-web-server-mephas-and-r-package-mephas"></a>
 ## Some differences between web server MEPHAS and R package mephas
 
-##### Web server MEPHAS employs plotly for 2D and 3D plot; R package mephas employs ggplot2 for 2D plots only
+##### Web server MEPHAS employs [plotly](https://plot.ly/) for 2D and 3D plot; R package mephas employs [ggplot2](https://ggplot2.tidyverse.org/) for 2D plots only
 
 ##### Web server MEPHAS has comparatively more explanation and interpretation than R package mephas
 

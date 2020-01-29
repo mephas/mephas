@@ -82,10 +82,11 @@
 <ul>
 <li><a href="#web-server-mephas"><strong>Web server MEPHAS</strong></a></li>
 <li>
-<a href="#r-package-mephas-installation"><strong>R package mephas, installation</strong></a>
+<a href="#r-package-mephas-installations"><strong>R package mephas, installations</strong></a>
 <ul>
 <li><a href="#installation-from-github-in-rstudio-console">Installation from GitHub in RStudio console</a></li>
 <li><a href="#installation-from-targz-file">Installation from “.tar.gz” file</a></li>
+<li><a href="#find-a-statistical-methods-using-the-flowchart">Find a statistical methods using the flowchart</a></li>
 <li><a href="#commands-to-open-mephas-windows">Commands to open mephas windows</a></li>
 </ul>
 </li>
@@ -99,25 +100,18 @@
 <a href="#web-server-mephas" class="anchor"></a><strong>Web server MEPHAS</strong>
 </h2>
 <p><a id="homepage-httpsalain003phsosaka-uacjpmephas"></a></p>
-<div id="homepage-httpsalain003-phs-osaka-u-ac-jpmephas" class="section level4">
+<div id="homepage-and-source-code-at-github" class="section level4">
 <h4 class="hasAnchor">
-<a href="#homepage-httpsalain003-phs-osaka-u-ac-jpmephas" class="anchor"></a>Homepage: <a href="https://alain003.phs.osaka-u.ac.jp/mephas/">https://alain003.phs.osaka-u.ac.jp/mephas/</a>
+<a href="#homepage-and-source-code-at-github" class="anchor"></a><a href="https://alain003.phs.osaka-u.ac.jp/mephas/">Homepage</a> and <a href="https://mephas.github.io/mephas_web/">source code at GitHub</a>
 </h4>
-<p><a id="source-code-at-github-mephas_web"></a></p>
-<div id="source-code-at-github-check-here" class="section level5">
-<h5 class="hasAnchor">
-<a href="#source-code-at-github-check-here" class="anchor"></a>Source code at GitHub: <a href="https://mephas.github.io/mephas_web/">check here</a>
-</h5>
 <hr>
-<p><a id="r-package-mephas-installation"></a></p>
+<p><a id="r-package-mephas-installations"></a></p>
 </div>
 </div>
-</div>
-<div id="r-package-mephas-installation" class="section level2">
+<div id="r-package-mephas-installations" class="section level2">
 <h2 class="hasAnchor">
-<a href="#r-package-mephas-installation" class="anchor"></a><strong>R package mephas, installation</strong>
+<a href="#r-package-mephas-installations" class="anchor"></a><strong>R package mephas, installations</strong>
 </h2>
-<hr>
 <div id="r-package-needs-to-be-installed-in-r-console-if-you-have-not-installed-r-download-r-firstly" class="section level4">
 <h4 class="hasAnchor">
 <a href="#r-package-needs-to-be-installed-in-r-console-if-you-have-not-installed-r-download-r-firstly" class="anchor"></a>R package needs to be installed in R console, if you have not installed R, download R firstly:</h4>
@@ -135,7 +129,7 @@
 </div>
 <div id="the-followings-show-how-to-install-in-rstudio-which-is-the-same-in-r-console-and-r-in-command-line-interface" class="section level5">
 <h5 class="hasAnchor">
-<a href="#the-followings-show-how-to-install-in-rstudio-which-is-the-same-in-r-console-and-r-in-command-line-interface" class="anchor"></a>The followings show how to install in Rstudio, which is the same in R console and R in command line interface</h5>
+<a href="#the-followings-show-how-to-install-in-rstudio-which-is-the-same-in-r-console-and-r-in-command-line-interface" class="anchor"></a>The followings show how to install in RStudio, which is the same in R console and R in command line interface</h5>
 <hr>
 <p><a id="installation-from-github-in-rstudio-console"></a></p>
 </div>
@@ -160,6 +154,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(“mephas<span class="op">/</span>mephas”,<span class="dt">upgrade=</span><span class="st">"never"</span>)</a></code></pre></div>
 <p>Note: <code>upgrade="never"</code>: suppress the updates of the R packages, <a href="https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github">see details here</a>; package “remotes” and “devtools” shared the same <code>install_github</code> function, thus package “devtools” can be replaced by package “remotes”, <a href="https://remotes.r-lib.org/">see details about “remotes”</a></p>
+<p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html">Videos of the installation process on windows</a></p>
 <hr>
 <p><a id="installation-from-targz-file"></a></p>
 </div>
@@ -188,10 +183,17 @@
 <a class="sourceLine" id="cb4-13" data-line-number="13">                      <span class="st">"survAUC"</span>,</a>
 <a class="sourceLine" id="cb4-14" data-line-number="14">                      <span class="st">"stargazer"</span>,</a>
 <a class="sourceLine" id="cb4-15" data-line-number="15">                      <span class="st">"spls"</span>))</a></code></pre></div>
+<p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html">Videos of the installation process on windows</a></p>
 <hr>
+<p><a id="find-a-statistical-methods-using-the-flowchart"></a></p>
+</div>
+</div>
+</div>
+<div id="find-a-statistical-methods-using-the-flowchart" class="section level3">
+<h3 class="hasAnchor">
+<a href="#find-a-statistical-methods-using-the-flowchart" class="anchor"></a>Find a statistical methods using the flowchart</h3>
+<p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/MEPHAS_flow.pdf">Flowchart.pdf</a></p>
 <p><a id="commands-to-open-mephas-windows"></a></p>
-</div>
-</div>
 </div>
 <div id="commands-to-open-mephas-windows" class="section level3">
 <h3 class="hasAnchor">
@@ -208,6 +210,7 @@
 <a href="#all-in-one-function-see-details" class="anchor"></a>All-in-one function, <a href="https://mephas.github.io/mephas/reference/mephasOpen.html">see details</a>
 </h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/mephasOpen.html">mephasOpen</a></span>()</a></code></pre></div>
+<p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html">Videos of the opening process on windows</a></p>
 </div>
 <div id="alternatively-open-each-interfaces-using-the-method-names" class="section level4">
 <h4 class="hasAnchor">
@@ -278,7 +281,7 @@
 <a href="#some-differences-between-web-server-mephas-and-r-package-mephas" class="anchor"></a>Some differences between web server MEPHAS and R package mephas</h2>
 <div id="web-server-mephas-employs-plotly-for-2d-and-3d-plot-r-package-mephas-employs-ggplot2-for-2d-plots-only" class="section level5">
 <h5 class="hasAnchor">
-<a href="#web-server-mephas-employs-plotly-for-2d-and-3d-plot-r-package-mephas-employs-ggplot2-for-2d-plots-only" class="anchor"></a>Web server MEPHAS employs plotly for 2D and 3D plot; R package mephas employs ggplot2 for 2D plots only</h5>
+<a href="#web-server-mephas-employs-plotly-for-2d-and-3d-plot-r-package-mephas-employs-ggplot2-for-2d-plots-only" class="anchor"></a>Web server MEPHAS employs <a href="https://plot.ly/">plotly</a> for 2D and 3D plot; R package mephas employs <a href="https://ggplot2.tidyverse.org/">ggplot2</a> for 2D plots only</h5>
 </div>
 <div id="web-server-mephas-has-comparatively-more-explanation-and-interpretation-than-r-package-mephas" class="section level5">
 <h5 class="hasAnchor">
