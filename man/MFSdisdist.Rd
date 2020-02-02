@@ -18,11 +18,13 @@ and (2) Poisson distribution
 MFScondist also generates random numbers draw the distribution of user data
 }
 \examples{
-# library(mephas)
-# MFSdisdist()
-# or,
-# mephas::MFSdisdist()
-# or,
-# mephasOpen("disdist")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+ MFSdisdist()
+}
+
+if (interactive()) {
+ mephasOpen("disdist")
+}
+
+
 }

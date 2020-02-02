@@ -31,10 +31,9 @@ shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.a
 Open MEPHAS interfaces
 }
 \examples{
-# library(mephas)
-# mephasOpen("condist")
-# or,
-# mephas::mephasOpen("condist")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+  mephasOpen("condist")
+}
+
 
 }

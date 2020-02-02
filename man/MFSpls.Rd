@@ -16,11 +16,12 @@ MFSpls includes
 and (3) sparse partial least squares regression
 }
 \examples{
-# library(mephas)
-# MFSpls()
-# or,
-# mephas::MFSpls()
-# or,
-# mephasOpen("pls")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+ MFSpls()
+}
+
+if (interactive()) {
+ mephasOpen("pls")
+}
+
 }

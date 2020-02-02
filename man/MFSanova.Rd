@@ -19,11 +19,11 @@ MFSanova includes
 and (6) post-hoc test for Kruskal-Wallis test
 }
 \examples{
-# library(mephas)
-# MFSanova()
-# or,
-# mephas::MFSanova()
-# or,
-# mephasOpen("anova")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+ MFSanova()
+}
+
+if (interactive()) {
+ mephasOpen("anova")
+}
 }

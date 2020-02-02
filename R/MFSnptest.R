@@ -1,3 +1,4 @@
+
 ##'
 ##' MFSnptest includes Non-parametric test of
 ##' (1) one sample,
@@ -8,42 +9,46 @@
 ##'
 ##' @return shiny interface
 ##'
-##' @import shiny
-##' @import ggplot2
-##'
-##' @importFrom reshape melt
-##' @importFrom psych describe
 ##' @importFrom stats wilcox.test
 ##'
 ##' @examples
-##' # library(mephas)
-##' # MFSnptest()
-##' # or,
-##' # mephas::MFSnptest()
-##' # or,
-##' # mephasOpen("nptest")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
-
-
+##' if (interactive()) {
+##'  MFSnptest()
+##' }
+##' 
+##' if (interactive()) {
+##'  mephasOpen("nptest")
+##' }
+##'
+##'
 ##' @export
 MFSnptest <- function(){
 
-requireNamespace("shiny", quietly = TRUE)
-requireNamespace("ggplot2", quietly = TRUE)
-requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
+#source("../0tabs/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+#source("../0tabs/onoff.R", local=TRUE)$value,
+tabof(),
 
 navbarPage(
+theme = shinythemes::shinytheme("cerulean"),
+title = a("Non-parametric Test for Medians", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+collapsible = TRUE,
+#id="navbar", 
+position="fixed-top",
 
-title = "Non-parametric Test for Medians",
+
 ##########----------##########----------##########
 
 tabPanel("One Sample",
 
 headerPanel("Wilcoxon Signed-Rank Test for One Sample"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
     "
 <p>This is an alternative to one-sample t-test, when the data cannot be assumed to be normally distributed.
@@ -73,13 +78,14 @@ We wanted to know if the DRS of patients was significantly greater than 1.
 
 
     "
-    ),
+)
+),
 
 hr(),
-#source("p1_ui.R", local=TRUE)$value,
+#source("ui_1.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.np1
 
-sidebarLayout(
+sidebarLayout(  
 
 sidebarPanel(
 
@@ -92,18 +98,20 @@ sidebarPanel(
   p(tags$b("2. Input data")),
 
   tabsetPanel(
-  ##-------input data-------##
+  ##-------input data-------## 
   tabPanel("Manual Input", p(br()),
-
-    p(tags$i("Data here was the Depression Rating Scale factor measurements of 9 patients from a certain group of patients. ")),
-
+    conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("Data here was the Depression Rating Scale factor measurements of 9 patients from a certain group of patients. "))
+    ),
+    
     p(tags$b("Please follow the example to input your data")),
   p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(id="a",
-      rows=5,
+    tags$textarea(id="a", 
+      rows=5, 
       "1.83\n0.50\n1.62\n2.48\n1.68\n1.88\n1.55\n3.06\n1.30"
       ),
-
+    
     p("Missing value is input as NA")
 
     ),
@@ -120,7 +128,7 @@ sidebarPanel(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("col", "Yes", TRUE),
 
-        radioButtons("sep",
+        radioButtons("sep", 
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -141,7 +149,10 @@ sidebarPanel(
   hr(),
   h4(tags$b("Step 2. Specify Parameter")),
   numericInput("med", HTML("Specify the median (m&#8320) that you want to compare with your data"), 1),
-  p(tags$i("In this default settings, we wanted to know if the group of patients were suffering from depression (Scale > 1).")),
+  conditionalPanel(
+    condition = "input.explain_on_off",
+  p(tags$i("In this default settings, we wanted to know if the group of patients were suffering from depression (Scale > 1)."))
+    ),
   hr(),
 
   h4(tags$b("Step 3. Choose Hypothesis")),
@@ -150,27 +161,33 @@ sidebarPanel(
   HTML("<p> m = m&#8320: the population median is equal to the specified median( m&#8320) </p>
         <p>Or, the distribution of the data set is symmetric about the specified median</p>"),
 
-  radioButtons("alt.wsr",
+  radioButtons("alt.wsr", 
     label = "Alternative hypothesis", selected = "greater",
-    choiceNames = list(
+    choiceNames = list(  
     HTML("m &#8800 m&#8320: the population median of is significantly different from the specified median"),
     HTML("m > m&#8320: the population median of is greater than the specified median"),
     HTML("m < m&#8320: the population median of is less than the specified median")
     ),
   choiceValues = list("two.sided", "greater", "less")),
   hr(),
-    p(tags$i("In this default settings, we wanted to know if the group of patients were suffering from depression (Scale > 1).")),
+  conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("In this default settings, we wanted to know if the group of patients were suffering from depression (Scale > 1)."))
+    ),
 
   h4(tags$b("Step 4. Decide P Value method")),
-  radioButtons("alt.md",
+  radioButtons("alt.md", 
     label = "What is the data like", selected = "c",
     choiceNames = list(
       HTML("Approximate normal distributed P value: sample size is large"),
       HTML("Asymptotic normal distributed P value: sample size is large"),
       HTML("Exact P value: sample size is small (< 50)")
-      ),
+      ), 
     choiceValues = list("a", "b", "c")),
+      conditionalPanel(
+    condition = "input.explain_on_off",
     p(tags$i("In this example, we had only 9 people. So we chose exact P value"))
+    )
 
   ),
 
@@ -180,20 +197,20 @@ mainPanel(
 
   tabsetPanel(
 
-    tabPanel("Data Preview", p(br()),
+    tabPanel("Data Preview", p(br()), 
       DT::DTOutput("table")
       ),
 
-    tabPanel("Basic Descriptives", p(br()),
+    tabPanel("Basic Descriptives", p(br()), 
 
         DT::DTOutput("bas")
       ),
 
-    tabPanel("Box-Plot", p(br()),
+    tabPanel("Box-Plot", p(br()), 
 
-        plotOutput("bp", width = "80%", click = "plot_click"),
+        plotly::plotlyOutput("bp", width = "80%"), #, click = "plot_click"
 
-        verbatimTextOutput("info"), hr(),
+        #verbatimTextOutput("info"), hr(),
 
           HTML(
           "<b> Explanations </b>
@@ -202,44 +219,45 @@ mainPanel(
             <li> The box measures the difference between 75th and 25th percentiles
             <li> Outliers will be in red, if existing
           </ul>"
-
+            
           )
       ),
 
-    tabPanel("Histogram", p(br()),
+    tabPanel("Histogram", p(br()), 
             HTML(
           "<b> Explanations </b>
-          <ul>
+          <ul> 
             <li> Histogram: to roughly assess the probability distribution of a given variable by depicting the frequencies of observations occurring in certain ranges of values
             <li> Density Plot: to estimate the probability density function of the data
           </ul>"
             ),
       p(tags$b("Histogram")),
-      plotOutput("makeplot", width = "80%"),
-      sliderInput("bin", "The number of bins in histogram",min = 0,max = 100,value = 0),
+      plotly::plotlyOutput("makeplot", width = "80%"),
+      sliderInput("bin","The number of bins in histogram",min = 0,max = 100,value = 0),
       p("When the number of bins is 0, plot will use the default number of bins"),
       p(tags$b("Density plot")),
-      plotOutput("makeplot.1", width = "80%")
+      plotly::plotlyOutput("makeplot.1", width = "80%")
 
       )
     ),
 hr(),
 h4(tags$b("Output 2. Test Results")),
-    p(tags$b('Results of Wilcoxon Signed-Rank Test')), p(br()),
+    p(tags$b('Results of Wilcoxon Signed-Rank Test')), p(br()), 
     DT::DTOutput("ws.test.t"),
 
     HTML(
-    "<b> Explanations </b>
-    <ul>
+    "<b> Explanations </b> 
+    <ul> 
     <li> P Value < 0.05, then the population median is significantly different from the specified median. (Accept alternative hypothesis)
     <li> P Value >= 0.05, then the population median is NOT significantly different from the specified median. (Accept null hypothesis)
     </ul>"
   ),
-
-  p(tags$i("From the default settings, we concluded that the scales was significantly greater than 1 (P=0.006), which indicated the patients were suffering from depression."))#,
+    conditionalPanel(
+    condition = "input.explain_on_off",
+  p(tags$i("From the default settings, we concluded that the scales was significantly greater than 1 (P=0.006), which indicated the patients were suffering from depression."))
+  )#,
   )
 ),
-
 hr()
 
 ),
@@ -250,7 +268,10 @@ tabPanel("Two Samples",
 
 headerPanel("Wilcoxon Rank-Sum Test (Mann&#8211;Whitney U test) for Two Independent Samples"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
+
     "
 <p>This is an alternative to two-sample t-test, when the data cannot be assumed to be normally distributed</p>
 
@@ -280,48 +301,52 @@ We wanted to know if the DRS of patients was significantly different among diffe
 
 
     "
-    ),
+ )
+),
 
 hr(),
-#source("p2_ui.R", local=TRUE)$value,
+#source("ui_2.R", local=TRUE)$value,
 #****************************************************************************************************************************************************2.np2
 
-sidebarLayout(
+sidebarLayout(  
 
 sidebarPanel(
 
   h4(tags$b("Step 1. Data Preparation")),
 
-  p(tags$b("1. Give names to your data (Required)")),
+  p(tags$b("1. Give names to your data (Required)")), 
 
   tags$textarea(id="cn2", rows=2, "Group1\nGroup2"), p(br()),
 
   p(tags$b("2. Input data")),
 
   tabsetPanel(
-  ##-------input data-------##
+  ##-------input data-------## 
   tabPanel("Manual input", p(br()),
-    p(tags$i("Example here was the Depression Rating Scale factor measurements of 19 patients from a two group of patients.")),
+        conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("Example here was the Depression Rating Scale factor measurements of 19 patients from a two group of patients."))
+      ),
 
     p(tags$b("Please follow the example to input your data")),
   p("Data point can be separated by , ; /Enter /Tab /Space"),
     p(tags$b("Group 1")),
-    tags$textarea(id="x1",
-    rows=10,
-    "1.83\n0.50\n1.62\n2.48\n1.68\n1.88\n1.55\n3.06\n1.30\nNA"
-    ),
+    tags$textarea(id="x1", 
+    rows=10, 
+    "1.83\n0.50\n1.62\n2.48\n1.68\n1.88\n1.55\n3.06\n1.30\nNA"    
+    ),  
 
     p(tags$b("Group 2")),## disable on chrome
-    tags$textarea(id="x2",
-      rows=10,
+    tags$textarea(id="x2", 
+      rows=10, 
       "0.80\n0.83\n1.89\n1.04\n1.45\n1.38\n1.91\n1.64\n0.73\n1.46"
       ),
-
+    
     p("Missing value is input as NA to ensure 2 sets have equal length; otherwise, there will be error")
     ),
 
 
-  ##-------csv file-------##
+  ##-------csv file-------##   
 tabPanel("Upload Data", p(br()),
 
         ##-------csv file-------##
@@ -330,12 +355,12 @@ tabPanel("Upload Data", p(br()),
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
         #helpText("The columns of X are not suggested greater than 500"),
         # Input: Checkbox if file has header ----
-       p(tags$b("2. Show 1st row as header?")),
+       p(tags$b("2. Show 1st row as header?")),        
       checkboxInput("header2", "Show Data Header?", TRUE),
         p(tags$b("3. Use 1st column as row names?")),
         checkboxInput("col2", "Yes", TRUE),
              # Input: Select separator ----
-        radioButtons("sep2",
+        radioButtons("sep2", 
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -361,26 +386,32 @@ tabPanel("Upload Data", p(br()),
     HTML("<p> m&#8321 = m&#8322: the medians of two group are equal </p>
           <p> Or, the distribution of values for each group are equal </p>"),
 
-radioButtons("alt.wsr2", label = "Alternative hypothesis",
+radioButtons("alt.wsr2", label = "Alternative hypothesis", 
   choiceNames = list(
     HTML("m&#8321 &#8800 m&#8322: the population medians of each group are not equal"),
     HTML("m&#8321 < m&#8322: the population median of Group 2 is greater"),
     HTML("m&#8321 > m&#8322: the population median of Group 1 is greater")),
   choiceValues = list("two.sided", "less", "greater")),
-    p(tags$i("In this default settings, we wanted to know if Depression Rating Scale from two group of patients were different.")),
+    conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("In this default settings, we wanted to know if Depression Rating Scale from two group of patients were different."))
+      ),
     hr(),
 
 
   h4(tags$b("Step 3. Decide P Value method")),
-  radioButtons("alt.md2",
+  radioButtons("alt.md2", 
     label = "What is the data like", selected = "c",
     choiceNames = list(
       HTML("Approximate normal distributed P value: sample size is large"),
       HTML("Asymptotic normal distributed P value: sample size is large"),
       HTML("Exact P value: sample size is small (< 50)")
-      ),
+      ), 
     choiceValues = list("a", "b", "c")),
+      conditionalPanel(
+    condition = "input.explain_on_off",
       p(tags$i("The sample sizes in each group were 9 and 10, so we used exact p value."))
+      )
 
   ),
 
@@ -395,18 +426,18 @@ mainPanel(
       DT::DTOutput("table2")
       ),
 
-    tabPanel("Basic Descriptives", p(br()),
+    tabPanel("Basic Descriptives", p(br()), 
 
-        DT::DTOutput("bas2")#,
+        DT::DTOutput("bas2")#, 
 
-      #p(br()),
-      #  downloadButton("download2b", "Download Results")
+      #p(br()), 
+      #  downloadButton("download2b", "Download Results") 
       ),
 
-    tabPanel("Box-Plot", p(br()),
-        plotOutput("bp2", width = "80%", click = "plot_click2"),
+    tabPanel("Box-Plot", p(br()), 
+        plotly::plotlyOutput("bp2", width = "80%"),#, click = "plot_click2"
 
-        verbatimTextOutput("info2"),
+        #verbatimTextOutput("info2"), 
         hr(),
           HTML(
           "Notes:
@@ -415,44 +446,48 @@ mainPanel(
             <li> The box measures the difference between 75th and 25th percentiles
             <li> Outliers will be in red, if existing
           </ul>"
-            )
+            )        
          ),
 
-    tabPanel("Histogram", p(br()),
+    tabPanel("Histogram", p(br()), 
       HTML(
           "Notes:
-          <ul>
+          <ul> 
             <li> Histogram: to roughly assess the probability distribution of a given variable by depicting the frequencies of observations occurring in certain ranges of values
             <li> Density Plot: to estimate the probability density function of the data
           </ul>"),
       p(tags$b("Histogram")),
-      plotOutput("makeplot2", width = "80%"),
+      plotly::plotlyOutput("makeplot2", width = "80%"),
       sliderInput("bin2", "The number of bins in histogram",min = 0,max = 100,value = 0),
       p("When the number of bins is 0, plot will use the default number of bins"),
       p(tags$b("Density plot")),
-      plotOutput("makeplot2.1", width = "80%")
+      plotly::plotlyOutput("makeplot2.1", width = "80%")
       )
     ),
   hr(),
 
   h4(tags$b("Output 2. Test Results")),
-  tags$b('Results of Wilcoxon Rank-Sum Test'), p(br()),
+  tags$b('Results of Wilcoxon Rank-Sum Test'), p(br()), 
 
   DT::DTOutput("mwu.test.t"), p(br()),
 
   HTML(
-    "<b> Explanations </b>
-    <ul>
+    "<b> Explanations </b> 
+    <ul> 
     <li> P Value < 0.05, then the population medians of 2 groups are significantly different. (Accept alternative hypothesis)
     <li> P Value >= 0.05, no significant differences between the medians of 2 groups. (Accept null hypothesis)
     </ul>"
   ),
-
+    conditionalPanel(
+    condition = "input.explain_on_off",
     p(tags$i("From the default settings, we concluded that there was no significant differences in 2 groups Rating scale (P=0.44)."))
+    )#,
 
-  )
+
+ # downloadButton("download2.1", "Download Results")
+
+  ) 
 ),
-
 hr()
 
 ),
@@ -462,6 +497,8 @@ tabPanel("Paired Samples",
 
 headerPanel("Wilcoxon Signed-Rank Test for Two Paired Samples"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
     "
 <b>In paired case, we compare the differences of 2 groups to zero. Thus, it becomes a one-sample test problem.</b>
@@ -497,18 +534,19 @@ We wanted to know if the DRS of patients before and after were significantly; or
 </h4></i>
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
-    ),
+)
+),
 
 hr(),
-#source("p3_ui.R", local=TRUE)$value,
+#source("ui_p.R", local=TRUE)$value,
 #****************************************************************************************************************************************************3.npp
 
-sidebarLayout(
+sidebarLayout(  
 
 sidebarPanel(
 
   h4(tags$b("Step 1. Data Preparation")),
-  p(tags$b("1. Give names to your data (Required)")),
+  p(tags$b("1. Give names to your data (Required)")), 
 
   tags$textarea(id="cn3", rows=3, "Before\nAfter\nAfter-Before"), p(br()),
 
@@ -518,19 +556,22 @@ sidebarPanel(
   tabsetPanel(
 
   tabPanel("Manual Input", p(br()),
-    p(tags$i("Example here was the Depression Rating Scale factor measurements of 9 patients Before and After treatment. ")),
+        conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("Example here was the Depression Rating Scale factor measurements of 9 patients Before and After treatment. "))
+      ),
 
     p(tags$b("Please follow the example to input your data")),
   p("Data point can be separated by , ; /Enter /Tab /Space"),
     p(tags$b("Before")),
-    tags$textarea(id="y1",
-      rows=10,
-    "1.83\n0.50\n1.62\n2.48\n1.68\n1.88\n1.55\n3.06\n1.30"
+    tags$textarea(id="y1", 
+      rows=10, 
+    "1.83\n0.50\n1.62\n2.48\n1.68\n1.88\n1.55\n3.06\n1.30"    
     ),
 
     p(tags$b("After")),
-    tags$textarea(id="y2",
-      rows=10,
+    tags$textarea(id="y2", 
+      rows=10, 
       "0.88\n0.65\n0.59\n2.05\n1.06\n1.29\n1.06\n3.14\n1.29"
       ),
 
@@ -538,19 +579,19 @@ sidebarPanel(
 
 ),
 
-  ##-------csv file-------##
+  ##-------csv file-------##   
   tabPanel("Upload Data", p(br()),
 
     p(tags$b("This only reads the 2 columns from your data file")),
         fileInput('file3', "Choose CSV/TXT file",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
         #helpText("The columns of X are not suggested greater than 500"),
-       p(tags$b("2. Show 1st row as header?")),
+       p(tags$b("2. Show 1st row as header?")),        
         checkboxInput("header3", "Show Data Header?", TRUE),
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("col3", "Yes", TRUE),
              # Input: Select separator ----
-        radioButtons("sep3",
+        radioButtons("sep3", 
           "Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -573,28 +614,34 @@ sidebarPanel(
   h4(tags$b("Step 2. Choose Hypothesis")),
 
   p(tags$b("Null hypothesis")),
-  HTML("<p>  m = 0: the difference of medians between X and Y is not zero </p>
+  HTML("<p>  m = 0: the difference of medians between X and Y is not zero </p> 
         <p>  Or, the distribution of the differences in paired values is symmetric around zero</p> "),
 
-  radioButtons("alt.wsr3", label = "Alternative hypothesis",
+  radioButtons("alt.wsr3", label = "Alternative hypothesis", 
     choiceNames = list(
       HTML("m &#8800 0: the difference of medians between X and Y is not zero; the distribution of the differences in paired values is not symmetric around zero"),
       HTML("m < 0: the population median of Y is greater"),
       HTML("m > 0: the population median of X is greater")),
     choiceValues = list("two.sided", "less", "greater")),
-      p(tags$i("In this example, we wanted to know if there was significant difference on the scale after the treatment. ")),
+      conditionalPanel(
+    condition = "input.explain_on_off",
+      p(tags$i("In this example, we wanted to know if there was significant difference on the scale after the treatment. "))
+        ),
 hr(),
 
 h4(tags$b("Step 3. Decide P Value method")),
-radioButtons("alt.md3",
+radioButtons("alt.md3", 
     label = "What is the data like", selected = "c",
     choiceNames = list(
       HTML("Approximate normal distributed P value: sample size is large"),
       HTML("Asymptotic normal distributed P value: sample size is large"),
       HTML("Exact P value: sample size is small (< 50)")
-      ),
+      ), 
     choiceValues = list("a", "b", "c")),
+    conditionalPanel(
+    condition = "input.explain_on_off",
     p(tags$i("In this example, we had only 9 people. So we chose exact P value"))
+    )
 
   ),
 
@@ -604,19 +651,19 @@ mainPanel(
 
   tabsetPanel(
 
-    tabPanel("Data Preview", p(br()),
+    tabPanel("Data Preview", p(br()),  
 
       DT::DTOutput("table3")
       ),
 
-    tabPanel("Basic Descriptives", p(br()),
+    tabPanel("Basic Descriptives", p(br()), 
 
-        DT::DTOutput("bas3")
+        DT::DTOutput("bas3") 
   ),
 
-    tabPanel("Box-Plot of the Difference", p(br()),
+    tabPanel("Box-Plot of the Difference", p(br()),   
 
-        plotOutput("bp3", width = "80%", click = "plot_click3"),
+        plotly::plotlyOutput("bp3", width = "80%"),#click = "plot_click3"
 
         verbatimTextOutput("info3"), hr(),
 
@@ -627,41 +674,44 @@ mainPanel(
             <li> The box measures the difference between 75th and 25th percentiles
             <li> Outliers will be in red, if existing
           </ul>"
-
+            
           )
       ),
 
-    tabPanel("Histogram", p(br()),
+    tabPanel("Histogram", p(br()), 
             HTML(
           "Notes:
-          <ul>
+          <ul> 
             <li> Histogram: to roughly assess the probability distribution of a given variable by depicting the frequencies of observations occurring in certain ranges of values
             <li> Density Plot: to estimate the probability density function of the data
           </ul>"
             ),
       p(tags$b("Histogram")),
-      plotOutput("makeplot3", width = "80%"),
+      plotly::plotlyOutput("makeplot3", width = "80%"),
       sliderInput("bin3", "The number of bins in histogram",min = 0,max = 100,value = 0),
       p("When the number of bins is 0, plot will use the default number of bins"),
       p(tags$b("Density plot")),
-      plotOutput("makeplot3.1", width = "80%")
+      plotly::plotlyOutput("makeplot3.1", width = "80%")
 
       )
     ),
 
     hr(),
 
-  h4(tags$b("Output 2. Test Results")),p(br()),
-  tags$b('Results of Wilcoxon Signed-Rank Test'),
-    DT::DTOutput("psr.test.t"),
+  h4(tags$b("Output 2. Test Results")),p(br()), 
+  tags$b('Results of Wilcoxon Signed-Rank Test'), 
+    DT::DTOutput("psr.test.t"), 
       HTML(
-    "<b> Explanations </b>
-    <ul>
+    "<b> Explanations </b> 
+    <ul> 
     <li> P Value < 0.05, then the Before and After are significantly different. (Accept alternative hypothesis)
     <li> P Value >= 0.05, then the Before and After are NOT significantly different. (Accept null hypothesis)
     </ul>"
   ),
-  p(tags$i("From the default settings, we concluded no significant difference is found after the treatment. (P=0.46)"))
+      conditionalPanel(
+    condition = "input.explain_on_off",
+    p(tags$i("From the default settings, we concluded no significant difference is found after the treatment. (P=0.46)"))
+    )
 
 
 )
@@ -669,29 +719,30 @@ mainPanel(
 hr()
 
 ),
-
 ##########----------##########----------##########
-tabPanel((a("Help Pages Online",
-            target = "_blank",
-            style = "margin-top:-30px; color:DodgerBlue",
-            href = paste0("https://mephas.github.io/helppage/")))),
-tabPanel(
-  tags$button(
-    id = 'close',
-    type = "button",
-    class = "btn action-button",
-    style = "margin-top:-8px; color:Tomato; background-color: #F8F8F8  ",
-    onclick = "setTimeout(function(){window.close();},500);",  # close browser
-    "Stop and Quit"))
+
+tabPanel(tags$button(
+            id = 'close',
+            type = "button",
+            class = "btn action-button",
+            icon("power-off"),
+            style = "background:rgba(255, 255, 255, 0); display: inline-block; padding: 0px 0px;",
+            onclick = "setTimeout(function(){window.close();},500);")),
+navbarMenu("",icon=icon("link"))
 
 ))
+
+
 
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 
 server <- function(input, output) {
 
-#source("p1_server.R", local=TRUE)$value
+#source("../func.R")
+##########----------##########----------##########
+
+#source("server_1.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.np1
 
 names1 <- reactive({
@@ -729,7 +780,7 @@ names1 <- reactive({
   x <- as.data.frame(x)
   })
 
-  #table
+  #table 
 output$table <- DT::renderDT(A(),
     extensions = list(
       'Buttons'=NULL,
@@ -749,62 +800,66 @@ output$table <- DT::renderDT(A(),
     return(res)
   })
 
-  output$bas <- DT::renderDT({
+  output$bas <- DT::renderDT({  
     res <- A.des()
     },
-
-    extensions = 'Buttons',
+  
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-   output$bp = renderPlot({
+   output$bp = plotly::renderPlotly({
     x = A()
     var <- names(x)[1]
-    plot_box1(x, var)
+    p<-plot_box1(x, var)
+    plotly::ggplotly(p)
     #ggplot(x, aes(x = 0, y = x[,1])) + geom_boxplot(width = 0.2, outlier.colour = "red", outlier.size = 2) + xlim(-1,1)+
     #ylab("") + xlab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
-    })
+    }) 
+  
+  # output$info <- renderText({
+  #   xy_str = function(e) {
+  #     if(is.null(e)) return("NULL\n")
+  #     paste0("Click to get the value: ", round(e$y, 4))
+  #   }
+  #   paste0("Y-axis position", "\n", xy_str(input$plot_click))})
 
-  output$info <- renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0("Click to get the value: ", round(e$y, 4))
-    }
-    paste0("Y-axis position", "\n", xy_str(input$plot_click))})
-
-  output$makeplot <- renderPlot({  #shinysession
+  output$makeplot <- plotly::renderPlotly({  #shinysession 
     x <- A()
     var <- names(x)[1]
-    plot_hist1(x, var, input$bin)
+    p <- plot_hist1(x, var, input$bin)
+    plotly::ggplotly(p)
+    
     #ggplot(x, aes(x = x[,1])) + geom_histogram(colour="black", fill = "grey", binwidth=input$bin, position="identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title=element_blank())
     })
-  output$makeplot.1 <- renderPlot({  #shinysession
+  output$makeplot.1 <- plotly::renderPlotly({  #shinysession 
     x <- A()
     var <- names(x)[1]
-    plot_density1(x, var)
+    p <- plot_density1(x, var)
+    plotly::ggplotly(p)
     #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title=element_blank())
     })
-
+  
 
   ws.test<- reactive({
     x <- A()
     if (input$alt.md =="a"){
-    res <- wilcox.test((x[,1]), mu = input$med,
+    res <- wilcox.test((x[,1]), mu = input$med, 
       alternative = input$alt.wsr, exact=NULL, correct=TRUE, conf.int = TRUE)
   }
     if (input$alt.md =="b") {
-    res <- wilcox.test((x[,1]),
-      mu = input$med,
+    res <- wilcox.test((x[,1]), 
+      mu = input$med, 
       alternative = input$alt.wsr, exact=NULL, correct=FALSE, conf.int = TRUE)
   }
   if (input$alt.md =="c")  {
-    res <- exactRankTests::wilcox.exact(x[,1], mu = input$med,
+    res <- exactRankTests::wilcox.exact(x[,1], mu = input$med, 
       alternative = input$alt.wsr, exact=TRUE, conf.int = TRUE)
 
   }
-
+  
     res.table <- t(data.frame(W = res$statistic,
                               P = res$p.value,
                               EM = res$estimate,
@@ -816,15 +871,15 @@ output$table <- DT::renderDT(A(),
     })
 
   output$ws.test.t <- DT::renderDT({ws.test()},
-
-    extensions = 'Buttons',
+  
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 
-#source("p2_server.R", local=TRUE)$value
+#source("server_2.R", local=TRUE)$value
 #****************************************************************************************************************************************************2.np2
 
 names2 <- reactive({
@@ -849,7 +904,7 @@ B <- reactive({
     csv <- read.csv(inFile$datapath, header = input$header2, sep = input$sep2)
     }
     else{
-    csv <- read.csv(inFile$datapath, header = input$header2, sep = input$sep2, row.names=1)
+    csv <- read.csv(inFile$datapath, header = input$header2, sep = input$sep2, row.names=1)  
     }
     validate( need(ncol(csv)>0, "Please check your data (nrow>2, ncol=1), valid row names, column names, and spectators") )
     validate( need(nrow(csv)>1, "Please check your data (nrow>2, ncol=1), valid row names, column names, and spectators") )
@@ -882,39 +937,40 @@ output$table2 <-DT::renderDT({B()},
   })
   output$bas2 <- DT::renderDT({  ## don't use renerPrint to do DT::renderDT
     res <- B.des()},
-
-    extensions = 'Buttons',
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 
-  output$bp2 = renderPlot({
+  output$bp2 = plotly::renderPlotly({
     x <- B()
-    plot_box2(x)
-
+    p<-plot_box2(x)
+    plotly::ggplotly(p)
     #mx <- melt(B(), idvar = colnames(x))
-    #ggplot(mx, aes(x =mx[,"variable"], y = mx[,"value"], fill=mx[,"variable"])) + geom_boxplot(alpha=.3, width = 0.2, outlier.color = "red", outlier.size = 2)+
-    #ylab("") + ggtitle("") + theme_minimal() + theme(legend.title=element_blank())
+    #ggplot(mx, aes(x =mx[,"variable"], y = mx[,"value"], fill=mx[,"variable"])) + geom_boxplot(alpha=.3, width = 0.2, outlier.color = "red", outlier.size = 2)+ 
+    #ylab("") + ggtitle("") + theme_minimal() + theme(legend.title=element_blank()) 
     })
 
-  output$info2 <- renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0("Click to get the value: ", round(e$y, 4))
-    }
-    paste0("Y-axis position", "\n", xy_str(input$plot_click2))})
+  # output$info2 <- renderText({
+  #   xy_str = function(e) {
+  #     if(is.null(e)) return("NULL\n")
+  #     paste0("Click to get the value: ", round(e$y, 4))
+  #   }
+  #   paste0("Y-axis position", "\n", xy_str(input$plot_click2))})
 
-  output$makeplot2 <- renderPlot({
+  output$makeplot2 <- plotly::renderPlotly({
     x <- B()
-    plot_hist2(x, input$bin2)
+    p<-plot_hist2(x, input$bin2)
+    plotly::ggplotly(p)
     #mx <- melt(B(), idvar = colnames(x))
     #ggplot(mx, aes(x=mx[,"value"], fill=mx[,"variable"])) + geom_histogram(binwidth=input$bin2, alpha=.5, position="identity") + xlab("")+ylab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
     })
-  output$makeplot2.1 <- renderPlot({
+  output$makeplot2.1 <- plotly::renderPlotly({
     x <- B()
-    plot_density2(x)
+    p<-plot_density2(x)
+    plotly::ggplotly(p)
     #mx <- melt(B(), idvar = colnames(x))
     #ggplot(mx, aes(x=mx[,"value"], colour=mx[,"variable"])) + geom_density()+ xlab("")+ ylab("") + ggtitle("") + theme_minimal()+ theme(legend.title=element_blank())
     })
@@ -922,19 +978,19 @@ output$table2 <-DT::renderDT({B()},
   mwu.test <- reactive({
     x <- B()
      if (input$alt.md2 =="a"){
-    res <- wilcox.test(x[,1], x[,2],
+    res <- wilcox.test(x[,1], x[,2], 
       alternative = input$alt.wsr2, exact=NULL, correct=TRUE, conf.int = TRUE)
   }
     if (input$alt.md2 =="b") {
-    res <- wilcox.test(x[,1], x[,2],
+    res <- wilcox.test(x[,1], x[,2], 
       alternative = input$alt.wsr2, exact=NULL, correct=FALSE, conf.int = TRUE)
   }
   if (input$alt.md2 =="c")  {
-    res <- exactRankTests::wilcox.exact(x[,1], x[,2],
+    res <- exactRankTests::wilcox.exact(x[,1], x[,2],  
       alternative = input$alt.wsr2, exact=TRUE, conf.int = TRUE)
 
   }
-
+  
     res.table <- t(data.frame(W = res$statistic,
                               P = res$p.value,
                               EM = res$estimate,
@@ -947,15 +1003,15 @@ output$table2 <-DT::renderDT({B()},
 
   output$mwu.test.t<-DT::renderDT({
     mwu.test()},
-
-    extensions = 'Buttons',
+  
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-
-#source("p3_server.R", local=TRUE)$value
+ 
+#source("server_p.R", local=TRUE)$value
 #****************************************************************************************************************************************************3.npp
 
 names3 <- reactive({
@@ -1024,31 +1080,35 @@ output$table3 <-DT::renderDT(C() ,
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-  output$bp3 = renderPlot({
+
+  output$bp3 = plotly::renderPlotly({
     x <- C()
     var <- names(C())[3]
-    plot_box1(x, var)
+    p<-plot_box1(x, var)
+    plotly::ggplotly(p)
     #ggplot(x, aes(x = 0, y = x[,3])) + geom_boxplot(width = 0.2, outlier.color = "red") + xlim(-1,1)+
     #ylab("") + ggtitle("") + theme_minimal()
     })
 
-  output$info3 <- renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0("Click to get the value: ", round(e$y, 4))
-    }
-    paste0("Y-axis position", "\n", xy_str(input$plot_click3))})
+  # output$info3 <- renderText({
+  #   xy_str = function(e) {
+  #     if(is.null(e)) return("NULL\n")
+  #     paste0("Click to get the value: ", round(e$y, 4))
+  #   }
+  #   paste0("Y-axis position", "\n", xy_str(input$plot_click3))})
 
-  output$makeplot3 <- renderPlot({
+  output$makeplot3 <- plotly::renderPlotly({
     x <- C()
     var <- colnames(x)[3]
-    plot_hist1(x, var, input$bin3)
+    p <- plot_hist1(x, var, input$bin3)
+    plotly::ggplotly(p)
     #ggplot(x, aes(x=x[,3])) + geom_histogram(colour="black", fill = "grey", binwidth=input$bin3, alpha=.5, position="identity") + ylab("Frequncy") + xlab("") +  ggtitle("") + theme_minimal() + theme(legend.title=element_blank())
     })
-  output$makeplot3.1 <- renderPlot({
+  output$makeplot3.1 <- plotly::renderPlotly({
     x <- C()
     var <- names(x)[3]
-    plot_density1(x, var)
+    p <- plot_density1(x, var)
+    plotly::ggplotly(p)
     #ggplot(x, aes(x=x[,3])) + geom_density() + ggtitle("") + theme_minimal() + ylab("Density") + xlab("") + theme(legend.title=element_blank())
     })
 
@@ -1087,12 +1147,13 @@ psr.test <- reactive({
     scrollX = TRUE))
 
 
+##########----------##########----------##########
+
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
-
+  
 }
-
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 

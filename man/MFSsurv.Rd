@@ -16,11 +16,12 @@ MFSsurv includes
 and (3) accelerated failure time model
 }
 \examples{
-# library(mephas)
-# MFSsurv()
-# or,
-# mephas::MFSsurv()
-# or,
-# mephasOpen("surv")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+ MFSsurv()
+}
+
+if (interactive()) {
+ mephasOpen("surv")
+}
+
 }

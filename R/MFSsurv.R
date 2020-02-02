@@ -1,3 +1,4 @@
+
 ##'
 ##' MFSsurv includes
 ##' (1) K-M estimation and log-rank test for survival probability curves,
@@ -8,45 +9,46 @@
 ##'
 ##' @return shiny interface
 ##'
-##' @import shiny
-##' @import ggplot2
 ##' @import survival
 ##' @import survminer
 ##'
-##' @importFrom utils str write.table
-##' @importFrom stats plogis resid
 ##' @importFrom survAUC predErr AUC.cd AUC.sh AUC.uno AUC.hc
+##' @importFrom stats resid
 ##'
 ##' @examples
-##' # library(mephas)
-##' # MFSsurv()
-##' # or,
-##' # mephas::MFSsurv()
-##' # or,
-##' # mephasOpen("surv")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
-
+##' if (interactive()) {
+##'  MFSsurv()
+##' }
+##' 
+##' if (interactive()) {
+##'  mephasOpen("surv")
+##' }
+##'
 ##' @export
 MFSsurv <- function(){
 
-requireNamespace("shiny", quietly = TRUE)
-requireNamespace("ggplot2", quietly = TRUE)
-requireNamespace("DT", quietly = TRUE)
-requireNamespace("survival", quietly = TRUE)
-requireNamespace("survminer", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
+#source("../0tabs/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+#source("../0tabs/onoff.R", local=TRUE)$value,
+tabof(),
+
 navbarPage(
-
-title = "Survival Analysis",
-
+theme = shinythemes::shinytheme("cerulean"),
+title = a("Survival Analysis", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+collapsible = TRUE,
+id="navibar", 
+position="fixed-top",
 ##########----------##########----------##########
 
 tabPanel("Data",
 
 headerPanel("Data Preparation"),
-
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
@@ -66,7 +68,7 @@ HTML(
 <li> The data used to build model is called <b>training set</b>
 </ul>
 
-<i><h4>Case Example 1: Diabetes data</h4>
+<i><h4>Case Example 1: Right-censored diabetes data</h4>
 Suppose in a study, we got some observations from a trial of laser coagulation for the treatment of diabetic retinopathy.
 Each patient had one eye randomized to laser treatment and the other eye received no treatment.
 For each eye, the event of interest was the time from initiation of treatment to the time when visual acuity dropped below 5/200 two visits in a row.
@@ -75,20 +77,22 @@ Survival times in this dataset are therefore the actual time to blindness in mon
 Censor status of 0= censored; 1 = visual loss. Treatment: 0 = no treatment, 1= laser. Age is age at diagnosis.
 
 
-<h4>Case Example 2: Nki70 data</h4>
-Suppose we wanted to explore 100 lymph node positive breast cancer patients on metastasis-free survival.
+<h4>Case Example 2: Left-truncated right-censored Nki70 data</h4>
+Suppose we wanted to explore 100 lymph node positive breast cancer patients on metastasis-free survival. But some patients enrolled in the study later than other people.
 Data contained 5 clinical risk factors: (1) Diam: diameter of the tumor; (2) N: number of affected lymph nodes; (3) ER: estrogen receptor status; (4) Grade: grade of the tumor; and (5) Age: Patient age at diagnosis (years);
 and gene expression measurements of 70 genes found to be prognostic for metastasis-free survival in an earlier study.
 Time variable is metastasis-free follow-up time (months). Censoring indicator variable: 1 = metastasis or death; 0 = censored.
-
-</h4></i>
+<br></br>
+<p>We wanted to explore the association between survival time and the independent variables.<p>
+</i>
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results. After getting data ready, please find the model in the next tabs.</h4>
 "
+)
 ),
 
 hr(),
-#source("0data_ui.R", local=TRUE, encoding="UTF-8")$value,
+#source("ui_data.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************
 
 sidebarLayout(
@@ -101,19 +105,20 @@ sidebarPanel(
   tags$head(tags$style("#strfac {overflow-y:scroll; max-height: 200px; background: white};")),
   tags$head(tags$style("#kmat1 {overflow-y:scroll; max-height: 200px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")),
-        choices =  c("Diabetes","NKI70"),
-        selected = "Diabetes"),
+h4(tags$b("Training Set Preparation")),
 
-hr(),
+tabsetPanel(
 
-h4(tags$b("Use my own data (training set)")),
-p("We suggested putting the survival time variable and censoring variable in the left side of all independent variables (X) "),
+tabPanel("Example data", p(br()),
 
-h4(tags$b("Step 1. Upload Data File")),
+selectInput("edata", tags$b("Use example data"), 
+        choices =  c("Diabetes","NKI70"), 
+        selected = "Diabetes")
+),
 
-fileInput('file', "1. Choose CSV/TXT file",
-          accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+tabPanel("Upload Data", p(br()),
+
+fileInput('file', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
 p(tags$b("2. Show 1st row as column names?")),
 checkboxInput("header", "Yes", TRUE),
@@ -139,13 +144,14 @@ selected = '"'),
 
 p("Correct separator and quote ensures data input successfully"),
 
-a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets"),
-
+a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+)),
+tags$i("Diabetes data has only time duration variable, while Nki70 data has start.time and end.time."),
 hr(),
 
-h4(tags$b("Step 2. Create a Survival Object")),
+h4(tags$b("Step 2. Create a Survival Object")), 
 
-#p(tags$b("1. Choose a Time Variable")),
+#p(tags$b("1. Choose a Time Variable")),   
 
 uiOutput('c'),
 
@@ -166,9 +172,12 @@ tabsetPanel(
     uiOutput('t2')
     )
   ),
-hr(),
-h4(tags$b("Step 3. Check the Survival Object")),
+tags$i("Diabetes data has right-censored time, while Nki70 data has left-truncated right-censored time."),
 
+hr(),
+h4(tags$b("Step 3. Check the Survival Object")),      
+p(tags$b("Valid survival object example: Surv (time, status)")),
+p(tags$b("or, Surv (time1, time2, status)")),
 verbatimTextOutput("surv", placeholder = TRUE),
 
 
@@ -177,7 +186,7 @@ hr(),
 
 h4(tags$b("(Optional) Change the types of some variable?")),
 
-#p(tags$b("Choice 1. Change Numeric Variables (Numbers) into Categorical Variable (Factors)")),
+#p(tags$b("Choice 1. Change Numeric Variables (Numbers) into Categorical Variable (Factors)")), 
 
 uiOutput("factor1"),
 
@@ -185,13 +194,21 @@ uiOutput("factor1"),
 
 uiOutput("factor2"),
 
-h4(tags$b("(Optional) Change the referential level for categorical variable?")),
+h4(tags$b("(Optional) Change the referential level for categorical variable?")), 
 
 uiOutput("lvl"),
 
 p(tags$b("2. Input the referential level, each line for one variable")),
 
-tags$textarea(id='ref', column=40, "")
+tags$textarea(id='ref', column=40, ""),
+
+hr(),
+
+h4(tags$b(actionLink("Non-Parametric Model","Build Non-Parametric Model"))),
+h4(tags$b(actionLink("Semi-Parametric Model","Build Semi-Parametric Model"))),
+h4(tags$b(actionLink("Parametric Model","Build Parametric Model")))
+#h4(tags$b("Build Model in the Next Tab"))
+
 
 
 ),
@@ -199,7 +216,7 @@ tags$textarea(id='ref', column=40, "")
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")),
+p(tags$b("Data Preview")), 
 p(br()),
 DT::DTOutput("Xdata"),
 
@@ -211,7 +228,7 @@ p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
 
-hr(),
+hr(),   
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -232,7 +249,7 @@ downloadButton("download2", "Download Results (Categorical variables)")
 ),
 
 tabPanel("Survival Curves",  p(br()),
-  radioButtons("fun1", "Choose one plot",
+  radioButtons("fun1", "Choose one plot", 
   choiceNames = list(
     HTML("1. Survival Probability"),
     HTML("2. Cumulative Events"),
@@ -255,11 +272,11 @@ tabPanel("Histogram", p(br()),
 p("This is to show the distribution of any numeric variable"),
 uiOutput('hx'),
 p(tags$b("Histogram")),
-plotOutput("p2", width = "80%"),
+plotly::plotlyOutput("p2", width = "80%"),
 sliderInput("bin", "The number of bins in the histogram", min = 0, max = 100, value = 0),
 p("When the number of bins is 0, plot will use the default number of bins "),
 p(tags$b("Density plot")),
-plotOutput("p21", width = "80%"))
+plotly::plotlyOutput("p21", width = "80%"))
 
 )
 
@@ -272,9 +289,11 @@ hr()
 ),
 
 ##########----------##########----------##########
-tabPanel("Non-parametric Model",
+tabPanel("Non-Parametric Model",
 
 headerPanel("Kaplan-Meier Estimator and Log-rank Test"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <p> <b>Kaplan&#8211;Meier estimator</b>, also known as the product limit estimator, is a non-parametric statistic used to estimate the survival function from lifetime data. </p>
@@ -297,10 +316,11 @@ HTML(
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("1km_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_km.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************km
 
 sidebarLayout(
@@ -313,19 +333,20 @@ tags$head(tags$style("#kmt {overflow-y:scroll; max-height: 350px; background: wh
 tags$head(tags$style("#kmt1 {overflow-y:scroll; max-height: 350px; background: white};")),
 tags$head(tags$style("#kmlr {overflow-y:scroll; max-height: 350px; background: white};")),
 
-h4("Example data is upload in Data tab"),
-
 h4(tags$b("Choose group variable to build the model")),
 
-p(tags$b("1. Check Surv(time, event), survival object, in the Data Tab")),
+p("Prepare the data in the Data tab"),
+hr(),          
+
+p(tags$b("1. Check survival object, Surv(time, event), in the Data Tab")), 
 
 uiOutput('g'),
-tags$i("In the example of Diabetes data, we chose 'laser' as categorical group variable.
+tags$i("In the example of Diabetes data, we chose 'laser' as categorical group variable. 
   That is to explore if the survival curves in two laser groups were different. "),
 
 hr(),
 
-h4(tags$b("Log-rank Test")),
+h4(tags$b("Log-rank Test")),      
 
 p(tags$b("Null hypothesis")),
 p("Two groups have identical hazard functions"),
@@ -340,7 +361,7 @@ radioButtons("rho", "Choose Log-rank Test Method", selected=1,
 p("See methods explanations in the Output 2. Log-rank Test tab."),
 hr(),
 
-h4(tags$b("Pairwise Log-rank Test")),
+h4(tags$b("Pairwise Log-rank Test")),      
 
 p(tags$b("Null hypothesis")),
 p("Two groups have identical hazard functions"),
@@ -352,7 +373,7 @@ radioButtons("rho2", "1. Choose Log-rank Test Method)", selected=1,
     ),
   choiceValues = list(1, 2)
   ),
-radioButtons("pm",
+radioButtons("pm", 
   "2. Choose method to adjust P value", selected="BH",
   choiceNames = list(
     HTML("Bonferroni"),
@@ -375,17 +396,18 @@ mainPanel(
 
 h4(tags$b("Output 1. Data Preview")),
  tabsetPanel(
- tabPanel("Browse",p(br()),
- p("This only shows the first several lines, please check full data in the 1st tab"),
- DT::DTOutput("Xdata2")
- ),
- tabPanel("Variables information",p(br()),
+   tabPanel("Variables information",p(br()),
  verbatimTextOutput("str")
-
+ 
+ ),
+tabPanel("First Part of Data", br(),
+p("Check full data in Data tab"),
+ DT::DTOutput("Xdata2")
  )
+
  ),
  hr(),
-
+ 
 # #h4(tags$b("Output 2. Model Results")),
 #actionButton("B1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 h4(tags$b("Output 2. Estimate and Test Results")),
@@ -396,7 +418,7 @@ tabPanel("Kaplan-Meier Survival Probability",  p(br()),
     verbatimTextOutput("kmt")
      ),
 tabPanel("Kaplan-Meier Plot by Group",  p(br()),
-    radioButtons("fun2", "Which plot do you want to see?",
+    radioButtons("fun2", "Which plot do you want to see?", 
   choiceNames = list(
     HTML("1. Survival Probability"),
     HTML("2. Cumulative Events"),
@@ -430,7 +452,7 @@ tabPanel("Pairwise Log-Rank Test",  p(br()),
      HTML(
   "<b> Explanations </b>
   <p>This implements the G-rho family of Harrington and Fleming (1982), with weights on each death of S(t)<sup>rho</sup>, where S is the Kaplan-Meier estimate of survival.</p>
-  <ul>
+  <ul> 
     <li><b>rho = 0:</b> log-rank or Mantel-Haenszel test
     <li><b>rho = 1:</b> Peto & Peto modification of the Gehan-Wilcoxon test.
     <li> <b>Bonferroni</b> correction is a generic but very conservative approach
@@ -457,6 +479,8 @@ hr()
 tabPanel("Semi-Parametric Model",
 
 headerPanel("Cox Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <p><b> Cox Regression</b>, also known as Cox proportional hazard regression assumes that if the proportional hazards assumption holds (or, is assumed to hold) then it is possible to estimate the effect parameter(s) without any consideration of the hazard function.
@@ -477,10 +501,11 @@ Cox regression assumes that the effects of the predictor variables upon survival
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("3cox_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_cox.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************cox-pred
 
 sidebarLayout(
@@ -488,24 +513,36 @@ sidebarLayout(
 sidebarPanel(
 
 tags$head(tags$style("#cox_form {height: 100px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
-tags$head(tags$style("#str4 {overflow-y:scroll; height: 350px; background: white};")),
-tags$head(tags$style("#fitcx {overflow-y:scroll; height: 400px; background: white};")),
-tags$head(tags$style("#fitcx2 {overflow-y:scroll; height: 400px; background: white};")),
-tags$head(tags$style("#zph {overflow-y:scroll; height: 150px; background: white};")),
+tags$head(tags$style("#str4 {overflow-y:scroll; max-height:: 350px; background: white};")),
+tags$head(tags$style("#fitcx {overflow-y:scroll; max-height:: 400px; background: white};")),
+tags$head(tags$style("#fitcx2 {overflow-y:scroll; max-height:: 400px; background: white};")),
+tags$head(tags$style("#zph {overflow-y:scroll; max-height:: 150px; background: white};")),
 
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the Data tab"),
+hr(),       
 
+h4(tags$b("Step 1. Choose variables to build the model")),      
 
-h4(tags$b("Step 1. Choose some variables to build the model")),
+p(tags$b("1. Check Surv(time, event), survival object, in the Data Tab")), 
 
-p(tags$b("1. Check Surv(time, event), survival object, in the Data Tab")),
-
+tabsetPanel(
+tabPanel("Basic Model", p(br()),
 uiOutput('var.cx'),
+p(br()),
+p(tags$b("3 (Optional). Add interaction term between categorical variables")),
 
-radioButtons("tie", "3. (Optional) Choose Method for Ties Handling",selected="breslow",
+p('Please input: + var1:var2'), 
+tags$textarea(id='conf.cx', " " ), 
+
+p(tags$b("If you want to consider the heterogeneity in the sample, continue with Extending Model tab"))
+  ),
+
+tabPanel("Extending Model", p(br()),
+radioButtons("tie", "4. (Optional) Choose Method for Ties Handling",selected="breslow",
   choiceNames = list(
-
+    
     HTML("1. Efron method: more accurate if there are a large number of ties"),
     HTML("2. Breslow approximation: the easiest to program and the first option coded for almost all computer routines"),
     HTML("3. Exact partial likelihood method: the Cox partial likelihood is equivalent to that for matched logistic regression")
@@ -513,7 +550,7 @@ radioButtons("tie", "3. (Optional) Choose Method for Ties Handling",selected="br
   choiceValues = list("efron","breslow","exact")
   ),
 
-radioButtons("effect.cx", "4. (Optional) Add random effect term (the effect of heterogeneity)",
+radioButtons("effect.cx", "5. (Optional) Add random effect term (the effect of heterogeneity)",
      choices = c(
       "None" = "",
       "Strata: identifies stratification variable (categorical, such as disease subtype and enrolling institutes)" = "Strata",
@@ -522,42 +559,48 @@ radioButtons("effect.cx", "4. (Optional) Add random effect term (the effect of h
       "Gaussian Frailty: allows one to add a simple Gaussian distributed random effects term" = "Gaussian Frailty"
                  ),
      selected = ""),
-p("Frailty: individuals have different frailties, and those who most frail will die earlier than others"),
-p("Cluster model is also called marginal model. It estimates the population averaged relative risk due to the independent variable.
-  Frailty model estimates the relative risk within the random effect variable"),
 uiOutput('fx.cx'),
+p("Frailty: individuals have different frailties, and those who most frail will die earlier than others. 
+  Frailty model estimates the relative risk within the random effect variable"),
+
+p("Cluster model is also called marginal model. It estimates the population averaged relative risk due to the independent variable."),
+
 tags$i("In the example of Diabetes data: 'eye' could be used as random effect of strata;
-  'id' can be used as random effect variable of cluster. " ),
-p(br()),
+  'id' can be used as random effect variable of cluster. " )
+  )
+  ),
 
-
-p(tags$b("5 (Optional). Add interaction term between categorical variables")),
-
-p('Please input: + var1:var2'),
-tags$textarea(id='conf.cx', " " ),
 hr(),
 
 h4(tags$b("Step 2. Check Cox Model")),
+p(tags$b("Valid model example: Surv(time, status) ~ X1 + X2")),
+p(tags$b("Or, Surv(time1, time2, status) ~ X1 + X2")),
+
 verbatimTextOutput("cox_form", placeholder = TRUE),
-p("'-1' in the formula indicates that intercept / constant term has been removed")
+hr(),
+
+h4(tags$b("Step 3. If data and model are ready, click the blue button to generate model results.")),
+actionButton("B2", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 ),
 
 mainPanel(
 
 h4(tags$b("Output 1. Data Preview")),
  tabsetPanel(
- tabPanel("Browse",p(br()),
- p("This only shows the first several lines, please check full data in the 1st tab"),
- DT::DTOutput("Xdata4")
- ),
  tabPanel("Variables information",p(br()),
  verbatimTextOutput("str4")
+ ),
+tabPanel("Part of Data", br(),
+p("Check full data in Data tab"),
+ DT::DTOutput("Xdata4")
  )
+
  ),
  hr(),
+ 
+#actionButton("B2", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output 2. Model Results")),
 
-actionButton("B2", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
-p(br()),
 tabsetPanel(
 
 tabPanel("Model Estimation", br(),
@@ -569,7 +612,7 @@ HTML(
 <li> The column marked 'z' gives the Wald statistic value. It corresponds to the ratio of each regression coefficient to its standard error (z = coef/se(coef)).The Wald statistic evaluates, whether the beta coefficient of a given variable is statistically significantly different from 0.
 <li> The coefficients relate to hazard; a positive coefficient indicates a worse prognosis and a negative coefficient indicates a protective effect of the variable with which it is associated.
 <li> exp(coef) = hazard ratio (HR). HR = 1: No effect; HR < 1: Reduction in the hazard; HR > 1: Increase in Hazard
-<li> The output also gives upper and lower 95% confidence intervals for the hazard ratio (exp(coef)),
+<li> The output also gives upper and lower 95% confidence intervals for the hazard ratio (exp(coef)), 
 <li> The likelihood-ratio test, Wald test, and score log-rank statistics give global statistical significance of the model. These three methods are asymptotically equivalent. For large enough N, they will give similar results. For small N, they may differ somewhat. The Likelihood ratio test has better behavior for small sample sizes, so it is generally preferred.
 </ul>
 "
@@ -623,7 +666,7 @@ DT::DTOutput("zph")
 
 
 tabPanel("Diagnostic Plot", p(br()),
-
+ 
 HTML(
      "
 <p><b> Explanations  </b></p>
@@ -653,19 +696,19 @@ Martingale residuals may present any value in the range (-INF, +1):
 "
 ),
 
-p(tags$b("1. Martingale residuals plot against continuous independent variable")),
+p(tags$b("1. Martingale residuals plot against continuous independent variable")), 
 
 uiOutput('var.mr'),
-plotOutput("diaplot1", width = "80%"),
+plotly::plotlyOutput("diaplot1", width = "80%"),
 
-#p(tags$b("2. Martingale residuals plot against observation id")),
+#p(tags$b("2. Martingale residuals plot against observation id")), 
 # plotOutput("diaplot1.2", width = "80%"),
 
  p(tags$b("2. Deviance residuals plot by observational id")),
- plotOutput("diaplot2", width = "80%"),
+ plotly::plotlyOutput("diaplot2", width = "80%"),
 
  p(tags$b("3. Cox-Snell residuals plot")),
- plotOutput("csplot.cx", width = "80%")
+ plotly::plotlyOutput("csplot.cx", width = "80%")
 )
 
 )
@@ -679,6 +722,8 @@ hr()
 tabPanel("Prediction1",
 
 headerPanel("Prediction after Cox Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 
@@ -698,19 +743,28 @@ HTML(
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("3pr_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_cox_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************cox^pred
 
 sidebarLayout(
 
 sidebarPanel(
 
-h4("Prediction is based on the accomplishment of model"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-h4(tags$b("Step 1. Upload New Data File")),
+tabsetPanel(
+
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: Diabetes / NKI70"))
+
+  ),
+tabPanel("Upload Data", p(br()),
 
 p("New data should include all the variables in the model"),
 fileInput('newfile2', "Choose CSV/TXT file",
@@ -741,12 +795,21 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensures data input successfully")
+)
+),
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B2.1", (tags$b("Show Prediction >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
-
 mainPanel(
+h4(tags$b("Output. Prediction Results")),
 
-actionButton("B2.1", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+#actionButton("B2.1", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
 p(br()),
 tabsetPanel(
 tabPanel("Prediction Table",p(br()),
@@ -756,8 +819,8 @@ DT::DTOutput("pred2")
 tabPanel("Brier Score",p(br()),
 HTML(
 "
-<p>Brier score is used to evaluate the accuracy of a predicted survival function at given time series.
-It represents the average squared distances between the observed survival status and the predicted survival probability and is always a number between 0 and 1,
+<p>Brier score is used to evaluate the accuracy of a predicted survival function at given time series. 
+It represents the average squared distances between the observed survival status and the predicted survival probability and is always a number between 0 and 1, 
 with 0 being the best possible value.<p>
 
 <p>The Integrated Brier Score (IBS) provides an overall calculation of the model performance at all available times.<p>
@@ -768,29 +831,29 @@ numericInput("ee", HTML("Set time series:end point"), value = 10, min = 1),
 numericInput("by", HTML("Set time series: sequence"), value = 1, min = 0),
 
 p(tags$b("Brier score at given time")),
-plotOutput("bsplot", width = "80%"),
+plotly::plotlyOutput("bsplot", width = "80%"),
 DT::DTOutput("bstab")
 
 ),
 
 tabPanel("AUC",p(br()),
 HTML(
-"
+" 
 <p><b> Explanations  </b></p>
 AUC here is time-dependent AUC, which gives AUC at given time series.
 <ul>
-<li>Chambless and Diao:  assumed that lp and lpnew are the predictors of a Cox proportional hazards model.
+<li>Chambless and Diao:  assumed that lp and lpnew are the predictors of a Cox proportional hazards model. 
 [Chambless, L. E. and G. Diao (2006). Estimation of time-dependent area under the ROC curve for long-term risk prediction. Statistics in Medicine 25, 3474&#8211;3486.
 
-<li>Hung and Chiang: assumed that there is a one-to-one relationship between the predictor and the expected survival times conditional on the predictor.
+<li>Hung and Chiang: assumed that there is a one-to-one relationship between the predictor and the expected survival times conditional on the predictor. 
 [Hung, H. and C.-T. Chiang (2010). Estimation methods for time-dependent AUC models with survival data. Canadian Journal of Statistics 38, 8&#8211;26.]
 
 <li>Song and Zhou: in this method, the estimators remain valid even if the censoring times depend on the values of the predictors.
 [Song, X. and X.-H. Zhou (2008). A semiparametric approach for the covariate specific ROC curve with survival outcome. Statistica Sinica 18, 947&#8211;965.]
 
 
-<li>Uno et al.: are based on inverse-probability-of-censoring weights and do not assume a specific working model for deriving the predictor lpnew.
-It is assumed that there is a one-to-one relationship between the predictor and the expected survival times conditional on the predictor.
+<li>Uno et al.: are based on inverse-probability-of-censoring weights and do not assume a specific working model for deriving the predictor lpnew. 
+It is assumed that there is a one-to-one relationship between the predictor and the expected survival times conditional on the predictor. 
 [Uno, H., T. Cai, L. Tian, and L. J. Wei (2007). Evaluating prediction rules for t-year survivors with censored regression models. Journal of the American Statistical Association 102, 527&#8211;537.]
 </ul>
 
@@ -813,13 +876,18 @@ radioButtons("auc", "Choose one AUC estimator",
   choiceValues = list("a", "b", "c", "d")
   ),
 p(tags$b("Time dependent AUC at given time")),
-plotOutput("aucplot", width = "80%"),
+plotly::plotlyOutput("aucplot", width = "80%"),
 DT::DTOutput("auctab")
 
 )
 )
-)
+
+
+) 
+
+
 ),
+
 hr()
 ),
 
@@ -828,6 +896,8 @@ hr()
 tabPanel("Parametric Model",
 
 headerPanel("Accelerated Failure Time (AFT) Model"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <p><b>Accelerated failure time (AFT) model</b> is a parametric model assumes that the effect of a covariate is to accelerate or decelerate the life course of a disease by some constant.</p>
@@ -847,10 +917,11 @@ HTML(
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("2aft_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_aft.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************aft
 
 
@@ -859,19 +930,22 @@ sidebarLayout(
 sidebarPanel(
 
 tags$head(tags$style("#aft_form {height: 100px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
-tags$head(tags$style("#str3 {overflow-y:scroll; height: 350px; background: white};")),
-tags$head(tags$style("#fit {overflow-y:scroll; height: 400px; background: white};")),
+tags$head(tags$style("#str3 {overflow-y:scroll; max-height:: 350px; background: white};")),
+tags$head(tags$style("#fit {overflow-y:scroll; max-height:: 400px; background: white};")),
 #tags$head(tags$style("#fit2 {overflow-y:scroll; height: 400px; background: white};")),
 #tags$head(tags$style("#step {overflow-y:scroll;height: 400px; background: white};")),
 
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the previous tab"),
+hr(), 
 
+h4(tags$b("Step 1. Choose variables to build the model")),    
 
-h4(tags$b("Step 1. Choose independent variables to build the model")),
+p(tags$b("1. Check survival object, Surv(time, event), in the Data Tab")), 
 
-p(tags$b("1. Check Surv(time, event), survival object, in the Data Tab")),
-
+tabsetPanel(
+tabPanel("Basic Model", p(br()),
 uiOutput('var'),
 
 radioButtons("dist", "3. Choose AFT Model",
@@ -879,18 +953,29 @@ radioButtons("dist", "3. Choose AFT Model",
     HTML("1. Log-normal regression model"),
    # HTML("2. Extreme regression model"),
     HTML("2. Weibull regression model"),
-    HTML("3. Exponential regression model"),
+    HTML("3. Exponential regression model"),  
     HTML("4. Log-logistic regression model")
     ),
   choiceValues = list("lognormal","weibull", "exponential","loglogistic")
   ),
 
-radioButtons("intercept", "4. (Optional) Keep or remove intercept / constant term", ##> intercept or not
+p(tags$b("4. (Optional) Add interaction term between categorical variables")),
+
+p('Please input: + var1:var2'), 
+tags$textarea(id='conf', " " ), 
+
+radioButtons("intercept", "5. (Optional) Keep or remove intercept / constant term", ##> intercept or not
      choices = c("Remove intercept / constant" = "-1",
                  "Keep intercept / constant term" = ""),
      selected = ""),
 
-radioButtons("effect", "5. (Optional) Add random effect term (the effect of heterogeneity)",
+p(tags$b("If you want to consider the heterogeneity in the sample, continue with Extending Model tab"))
+
+),
+
+tabPanel("Extending Model", p(br()),
+
+radioButtons("effect", "6. (Optional) Add random effect term (the effect of heterogeneity)",
      choices = c(
       "None" = "",
       "Strata: identifies stratification variable (categorical, such as disease subtype and enrolling institutes)" = "Strata",
@@ -902,35 +987,39 @@ radioButtons("effect", "5. (Optional) Add random effect term (the effect of hete
 
 uiOutput('fx.c'),
 tags$i("In the example of Diabetes data: 'eye' could be used as random effect of strata;
-  'id' can be used as random effect variable of cluster. " ),
-  p(br()),
-
-p(tags$b("6. (Optional) Add interaction term between categorical variables")),
-
-p('Please input: + var1:var2'),
-tags$textarea(id='conf', " " ),
+  'id' can be used as random effect variable of cluster. " )
+)
+),
 hr(),
 
 h4(tags$b("Step 2. Check AFT Model")),
+p(tags$b("Valid model example: Surv(time, status) ~ X1 + X2")),
+p(tags$b("Or, Surv(time1, time2, status) ~ X1 + X2")),
 verbatimTextOutput("aft_form", placeholder = TRUE),
-p("'-1' in the formula indicates that intercept / constant term has been removed")
+p("'-1' in the formula indicates that intercept / constant term has been removed"),
+hr(),
+
+h4(tags$b("Step 3. If data and model are ready, click the blue button to generate model results.")),
+actionButton("B1", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 ),
 
 mainPanel(
 
 h4(tags$b("Output 1. Data Preview")),
  tabsetPanel(
- tabPanel("Browse",p(br()),
- p("This only shows the first several lines, please check full data in the 1st tab"),
- DT::DTOutput("Xdata3")
- ),
- tabPanel("Variables information",p(br()),
+   tabPanel("Variables information",p(br()),
  verbatimTextOutput("str3")
+ ),
+tabPanel("Part of Data", br(),
+p("Check full data in Data tab"),
+ DT::DTOutput("Xdata3")
  )
+
  ),
  hr(),
-
-actionButton("B1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+ 
+#actionButton("B1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output 2. Model Results")),
 p(br()),
 tabsetPanel(
 
@@ -945,6 +1034,7 @@ HTML(
 <li> exp(Value) = hazard ratio (HR). HR = 1: No effect; HR < 1: Reduction in the hazard; HR > 1: Increase in Hazard
 <li> Scale and Log(scale) are the estimated parameters in the error term of AFT model
 <li> The log-likelihood is given in the model. When maximum likelihood estimation is used to generate the log-likelihoods, then the closer that the log-likelihood(LL) is to zero, the better is the model fit.
+<li> For left-truncated data, the time here is the differences of end-time and start-time
 </ul>
 "
 ),
@@ -990,15 +1080,15 @@ Martingale residuals may present any value in the range (-INF, +1):
 "
 ),
 
-p(tags$b("1. Martingale residuals plot against continuous independent variable")),
+p(tags$b("1. Martingale residuals plot against continuous independent variable")), 
 uiOutput('var.mr2'),
-plotOutput("mrplot", width = "80%"),
+plotly::plotlyOutput("mrplot", width = "80%"),
 
 p(tags$b("2. Deviance residuals plot by observational id")),
-plotOutput("deplot", width = "80%"),
+plotly::plotlyOutput("deplot", width = "80%"),
 
 p(tags$b("3. Cox-Snell residuals plot")),
-plotOutput("csplot", width = "80%")
+plotly::plotlyOutput("csplot", width = "80%")
 
 )
 
@@ -1013,6 +1103,8 @@ hr()
 tabPanel("Prediction2",
 
 headerPanel("Prediction after Accelerated Failure Time (AFT) model"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 
@@ -1031,10 +1123,11 @@ HTML(
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("2pr_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_aft_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************pred-aft
 
 
@@ -1042,10 +1135,17 @@ sidebarLayout(
 
 sidebarPanel(
 
-h4("Prediction is based on the accomplishment of model"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-h4(tags$b("Step 1. Upload New Data File")),
+tabsetPanel(
 
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: Diabetes / NKI70"))
+
+  ),    
+tabPanel("Upload Data", p(br()),
 p("New data should include all the variables in the model"),
 fileInput('newfile', "Choose CSV/TXT file",
           accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
@@ -1075,12 +1175,20 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensures data input successfully")
+)
 ),
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B1.1", (tags$b("Show Prediction >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 
 
+),
 mainPanel(
+h4(tags$b("Output. Prediction Results")),
 
-actionButton("B1.1", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+#actionButton("B1.1", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
 p(br()),
 tabsetPanel(
 tabPanel("Prediction Table",p(br()),
@@ -1092,40 +1200,45 @@ p("The predicted survival probability of N'th observation"),
 
 numericInput("line", HTML("Choose N'th observation (N'th row of new data)"), value = 1, min = 1),
 
-plotOutput("p.s", width = "80%"),
+plotly::plotlyOutput("p.s", width = "80%"),
 DT::DTOutput("pred.n")
 )
 )
-)
+
+
+) 
+
+
 ),
+
 hr()
 ),
 
-
 ##########----------##########----------##########
-##########----------##########----------##########
-tabPanel((a("Help Pages Online",
-            target = "_blank",
-            style = "margin-top:-30px; color:DodgerBlue",
-            href = paste0("https://mephas.github.io/helppage/")))),
-tabPanel(
-  tags$button(
-    id = 'close',
-    type = "button",
-    class = "btn action-button",
-    style = "margin-top:-8px; color:Tomato; background-color: #F8F8F8  ",
-    onclick = "setTimeout(function(){window.close();},500);",  # close browser
-    "Stop and Quit"))
 
-))
+tabPanel(tags$button(
+                    id = 'close',
+                    type = "button",
+                    class = "btn action-button",
+                    icon("power-off"),
+                    style = "background:rgba(255, 255, 255, 0); display: inline-block; padding: 0px 0px;",
+                    onclick = "setTimeout(function(){window.close();},500);")),
+navbarMenu("",icon=icon("link"))
+
+)
+##-----------------------over
+)
+
 
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
+#source("../func.R")
+##########----------##########----------##########
 
-#source("0data_server.R", local=TRUE)$value
+#source("server_data.R", local=TRUE)$value
 #****************************************************************************************************************************************************
 
 #load("Surv.RData")
@@ -1134,7 +1247,7 @@ data <- reactive({
                 switch(input$edata,
                "Diabetes" = dia.train,
                "NKI70" = nki.train
-               )
+               )  
                 })
 
 
@@ -1175,7 +1288,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0()
+df <-DF0() 
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -1198,7 +1311,7 @@ selectInput(
 
 
 DF2 <- reactive({
-  df <-DF1()
+  df <-DF1() 
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -1218,7 +1331,7 @@ multiple = TRUE
 })
 
 DF3 <- reactive({
-
+   
   if (length(input$lvl)==0 || length(unlist(strsplit(input$ref, "[\n]")))==0 ||length(input$lvl)!=length(unlist(strsplit(input$ref, "[\n]")))){
   df <- DF2()
 }
@@ -1234,7 +1347,7 @@ else{
 
 }
 return(df)
-
+  
   })
 
 type.bi3 <- reactive({
@@ -1297,22 +1410,41 @@ choices = type.bi3())
 ##3. Survival Object
 surv = reactive({
 if (input$time == "A"){
+validate(need(!("FALSE" %in% (DF0()[,input$t]>=0)), "Time should be >= 0"))
+
 y <- paste0("Surv(", input$t, ",", input$c, ")")
 }
 if (input$time == "B"){
+#validate(need(!("FALSE" %in% (input$t2>=input$t1)), "End time should be grater than the start time"))
+validate(need(!("FALSE" %in% (DF0()[,input$t2] - DF0()[,input$t1]>=0)), "End time should be grater than the start time"))
+validate(need(!("FALSE" %in% (DF0()[,input$t1]>=0)), "Time should be >= 0"))
+#validate(need(!("FALSE" %in% (DF0()[,input$t2]>=0)), "Time should be >= 0"))
+
 y <- paste0("Surv(", input$t1, ",", input$t2, ",", input$c, ")")
 }
 return(y)
 })
 
+#surv2 <- reactive({
+
+#validate(need(!("FALSE" %in% (input$t2-input$t1>=0)), "End time should be grater than the start time"))
+#validate(need(!("FALSE" %in% (input$t1>=0)), "Time should be >= 0"))
+#validate(need(!("FALSE" %in% (input$t2>=0)), "Time should be >= 0"))
+
+#if (input$time == "B"){
+#y <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")
+#}
+#return(y)
+#})
+
 output$surv = renderPrint({
-validate(need(length(levels(as.factor(DF3()[, input$c])))==2, "Please choose a binary variable as censoring information"))
+validate(need(length(levels(as.factor(DF3()[, input$c])))==2, "Please choose a binary variable as censoring information")) 
 surv()
 })
 
 
 output$Xdata <- DT::renderDT(
-DF3(),
+DF3(), 
     extensions = list(
       'Buttons'=NULL,
       'Scroller'=NULL),
@@ -1339,7 +1471,7 @@ sum <- reactive({
   })
 
 output$sum <- DT::renderDT({sum()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1351,7 +1483,7 @@ fsum = reactive({
   })
 
 output$fsum = renderPrint({fsum()})
-
+ 
  output$download2 <- downloadHandler(
      filename = function() {
        "lr.des2.txt"
@@ -1360,7 +1492,7 @@ output$fsum = renderPrint({fsum()})
        write.table(fsum(), file, row.names = TRUE)
      }
    )
-
+ 
  km.a = reactive({
   y <- paste0(surv(), "~1")
   fit <- survfit(as.formula(y), data = DF3())
@@ -1373,17 +1505,17 @@ output$km.a= renderPlot({
 y <- paste0(surv(), "~1")
 fit <- surv_fit(as.formula(y), data = DF3())
 
-ggsurvplot(fit, DF3(),
-          fun=paste0(input$fun1),
+ggsurvplot(fit, data=DF3(),
+          fun=paste0(input$fun1), 
            conf.int = TRUE,
            pval = FALSE,
            risk.table = "abs_pct",
-           #surv.median.line = "hv",
+           #surv.median.line = "hv", 
            palette = "Set1",
            ggtheme = theme_minimal(),
            legend="bottom",
            risk.table.y.text.col = TRUE, # colour risk table text annotations.
-           risk.table.y.text = FALSE)
+           risk.table.y.text = FALSE) 
   })
 
 output$kmat1= renderPrint({
@@ -1402,41 +1534,41 @@ res<- data.frame(
   cumhaz=km.a()[["cumhaz"]]
   #std.chaz=km.a()[["std.chaz"]],
   )
-colnames(res) <- c("Time", "Number of at Risk", "Number of Event", "Number of Censor",
+colnames(res) <- c("Time", "Number of at Risk", "Number of Event", "Number of Censor", 
   "Survival Probability", "95% CI lower limit", "95% CI upper limit",
   "SE of Surv. Prob.", "Cumulative Hazard Probability")
 return(res)
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE)
 )
 
-
+ 
 ## histogram
  output$hx = renderUI({
    selectInput(
      'hx',
      tags$b('Choose a numeric variable'),
-     selected = type.num3()[1],
+     selected = type.num3()[1], 
      choices = type.num3())
  })
-
-output$p2 = renderPlot({
-   plot_hist1(DF3(), input$hx, input$bin)
-
+ 
+output$p2 = plotly::renderPlotly({
+   p<-plot_hist1(DF3(), input$hx, input$bin)
+   plotly::ggplotly(p)
    })
 
-output$p21 = renderPlot({
-    plot_density1(DF3(), input$hx)
-
+output$p21 = plotly::renderPlotly({
+     p<-plot_density1(DF3(), input$hx)
+     plotly::ggplotly(p)
    })
+ 
 
 
-
-#source("1km_server.R", local=TRUE)$value
+#source("server_km.R", local=TRUE)$value
 #****************************************************************************************************************************************************km
 
 
@@ -1473,38 +1605,43 @@ output$str <- renderPrint({str(DF3())})
 
 kmfit = reactive({
   validate(need(input$g, "Please choose categorical variable"))
-  y <- paste0(surv(), "~", paste0(as.factor(input$g), collapse = "+"))
+if (input$time=="A") {surv <- surv()}
+if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")}
+
+  y <- paste0(surv, "~", paste0(as.factor(input$g), collapse = "+"))
   fit <- surv_fit(as.formula(y), data = DF3())
   fit$call <- NULL
   return(fit)
 })
 
-#
+# 
 # # residual plot
 # output$km.p= renderPlot({
-#autoplot(kmfit(), conf.int = FALSE)+ theme_minimal() + ggtitle("")
+#autoplot(kmfit(), conf.int = FALSE)+ theme_minimal() + ggtitle("") 
 #+annotate("text", x = .75, y = .25, label = paste("P value ="))
-# })
+#   })
 
 output$km.p= renderPlot({
   validate(need(input$g, "Please choose categorical variable"))
+if (input$time=="A") {surv <- surv()}
+if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")}
 
-  y <- paste0(surv(), "~", paste0(as.factor(input$g), collapse = "+"))
+  y <- paste0(surv, "~", paste0(as.factor(input$g), collapse = "+"))
   fit <- surv_fit(as.formula(y), data = DF3())
 
-ggsurvplot(fit, DF3(),
-          fun=paste0(input$fun2),
+ggsurvplot(fit, data=DF3(),
+          fun=paste0(input$fun2), 
            conf.int = FALSE,
            pval = TRUE,
            risk.table = "abs_pct",
-           #surv.median.line = "hv",
+           #surv.median.line = "hv", 
            palette = "Set1",
            ggtheme = theme_minimal(),
            legend="bottom",
            risk.table.y.text.col = TRUE, # colour risk table text annotations.
            risk.table.y.text = FALSE,
-           surv.plot.height =0.7,
-           risk.table.height =0.3)
+           surv.plot.height =0.7,        
+           risk.table.height =0.3) 
   })
 
 output$kmt1= renderPrint({
@@ -1514,11 +1651,14 @@ output$kmt1= renderPrint({
 output$kmt= renderPrint({
 summary(kmfit())
   })
-#
+# 
  LR = reactive({
   validate(need(input$g, "Please choose categorical variable"))
 
-   y <- paste0(surv(), "~", paste0(as.factor(input$g), collapse = "+"))
+ if (input$time=="A") {surv <- surv()}
+if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")}
+
+  y <- paste0(surv, "~", paste0(as.factor(input$g), collapse = "+"))
   fit <- survdiff(as.formula(y), rho=input$rho, data = DF3())
   fit$call <- NULL
   return(fit)
@@ -1530,7 +1670,10 @@ LR()})
  PLR = reactive({
   validate(need(input$g, "Please choose categorical variable"))
 
-   y <- paste0(surv(), "~", paste0(as.factor(input$g), collapse = "+"))
+  if (input$time=="A") {surv <- surv()}
+if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")}
+
+  y <- paste0(surv, "~", paste0(as.factor(input$g), collapse = "+"))
 
   if (input$pm == "B"){
   res <- pairwise_survdiff(as.formula(y), rho=input$rho2, p.adjust.method = "bonf", data = DF3())$p.value
@@ -1539,11 +1682,11 @@ LR()})
   res <- pairwise_survdiff(as.formula(y), rho=input$rho2, p.adjust.method = "holm", data = DF3())$p.value
   }
   #if (input$method == "BHG"){
-  #  res <- pairwise.t.test(x[,namesm()[1]], x[,namesm()[2]],
+  #  res <- pairwise.t.test(x[,namesm()[1]], x[,namesm()[2]], 
   #  p.adjust.method = "hochberg")$p.value
   #}
   #  if (input$method == "BHL"){
-  #  res <- pairwise.t.test(x[,namesm()[1]], x[,namesm()[2]],
+  #  res <- pairwise.t.test(x[,namesm()[1]], x[,namesm()[2]], 
   #  p.adjust.method = "hommel")$p.value
   #}
     if (input$pm == "FDR"){
@@ -1557,237 +1700,17 @@ LR()})
   return(res)
 })
 
-output$PLR = DT::renderDT({PLR()},
-extensions = 'Buttons',
+output$PLR = DT::renderDT({PLR()}, 
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
-#
+# 
 
 
-#source("2aft_server.R", local=TRUE)$value
-#****************************************************************************************************************************************************aft
-
-output$var = renderUI({
-selectInput(
-'var',
-tags$b('2. Choose some independent variables (X)'),
-selected = names(DF4())[1],
-choices = names(DF4()),
-multiple=TRUE)
-})
-
-
-output$fx.c = renderUI({
-selectInput(
-  'fx.c',
-  tags$b('Choose one random effect variable'),
-selected = names(DF4())[1],
-choices = names(DF4()),
-)
-})
-
-output$Xdata3 <- DT::renderDT(
-head(DF3()), options = list(scrollX = TRUE,dom = 't'))
-### for summary
-output$str3 <- renderPrint({str(DF3())})
-
-
-aft = reactive({
-validate(need(input$var, "Please choose some independent variable"))
-
-if (input$effect=="") {f = paste0(surv(), '~', paste0(input$var, collapse = "+"), input$conf,input$intercept)}
-if (input$effect=="Strata") {f = paste0(surv(), '~', paste0(input$var, collapse = "+"), "+strata(", input$fx.c, ")",input$conf,input$intercept)}
-if (input$effect=="Cluster") {f = paste0(surv(), '~', paste0(input$var, collapse = "+"), "+cluster(", input$fx.c, ")", input$conf,input$intercept)}
-#if (input$effect=="Gamma Frailty") {f = paste0(surv(), '~', paste0(input$var, collapse = "+"), "+frailty(", input$fx.c, ")", input$conf,input$intercept)}
-#if (input$effect=="Gaussian Frailty") {f = paste0(surv(), '~', paste0(input$var, collapse = "+"), "+frailty.gaussian(", input$fx.c, ")", input$conf,input$intercept)}
-
-  #fit <- survreg(as.formula(f), data = DF3(), dist=input$dist)
-
-  return(f)
-})
-
-output$aft_form = renderPrint({cat(aft()) })
-
-aftfit = eventReactive(input$B1, {
-  survreg(as.formula(aft()), data = DF3(), dist=input$dist)
-  })
-
-
-#gfit = eventReactive(input$B1, {
-#  glm(formula(), data = DF3())
-#})
-#
-output$fit = renderPrint({
-res <- summary(aftfit())
-res$call <- "AFT Model Result"
-return(res)
-})
-
-fit.aft <- eventReactive(input$B1, {
-
-if (input$time=="B") {y = DF3()[,input$t2]-DF3()[,input$t1]}
-else {y=DF3()[,input$t]}
-
- res <- data.frame(
-  Y = y,
-  c= DF3()[,input$c],
-  lp = aftfit()$linear.predictors,
-  fit = predict(aftfit(), type="response"),
-  Residuals = resid(aftfit(),  type="response"),
-  devres = -resid(aftfit(),  type="deviance")
- )
- res$std <- (log(res[,1])-res[,3])/aftfit()$scale
-
-  if (input$dist=="weibull") {res$csr <- -log(exp(-exp(res$std)))}
-  if (input$dist=="exponential") {res$csr <- -log(-exp(-exp(res$std)))}
-  #if (input$dist=="extreme") {res$csr <- -log(exp(-exp(res$std)))}
-  if (input$dist=="lognormal") {res$csr <- -log(1-pnorm(res$std))}
-  if (input$dist=="loglogistic") {res$csr <- -log(1-plogis(res$std))}
-
-res$mar <- res$c- res$csr
-
- colnames(res) <- c("Times", "Censor","Linear Part = bX", "Predicted Time","Residuals = Time - Predicted Time", "Deviance residuals",
-  "Standardized residuals = (log(Times)-bX)/scale", "Cox-snell Residuals", "Martingale residuals = censor - Cox-snell")
- return(res)
-  })
-#
- output$fit.aft = DT::renderDT(fit.aft(),
-    extensions = 'Buttons',
-    options = list(
-    dom = 'Bfrtip',
-    buttons = c('copy', 'csv', 'excel'),
-    scrollX = TRUE))
-
-output$csplot = renderPlot({
-
-fit = survfit(Surv(fit.aft()[,8], fit.aft()[,2]) ~ 1)
-Htilde=cumsum(fit$n.event/fit$n.risk)
-
-d = data.frame(time = fit$time, H = Htilde)
-plot_coxstep(d)
-
-#ggplot() + geom_step(data = d, mapping = aes(x = d[,"time"], y = d[,"H"])) +
-#  geom_abline(intercept =0,slope = 1, color = "red") +
-#  theme_minimal() + xlab("Cox-Snell residuals") + ylab("Estimated Cumulative Hazard Function")
-  })
-
-output$deplot = renderPlot({
-
-df <- data.frame(id=seq_len(nrow(fit.aft())), dev=fit.aft()[,6])
-
-plot_res(df, "id", "dev")+
-xlab("Observation Id") + ylab("Deviance residuals")+
-geom_point(shape = 19, size=1, color=(fit.aft()[,2]+1))
-
-#ggplot(df, aes(x=id, y=dev)) + geom_point(shape = 20) + geom_hline(yintercept = 0, color="red", linetype=2)+
-#geom_smooth(method = "loess", linetype=2) + xlab("Observation Id") + ylab("Deviance residuals") + theme_minimal()
-  })
-
-output$var.mr2 = renderUI({
-selectInput(
-'var.mr2',
-tags$b('Choose one continuous independent variable'),
-selected = type.num4()[1],
-choices = type.num4())
-})
-
-output$mrplot = renderPlot({
-
-df <- data.frame(id=DF3()[,input$var.mr2], dev=fit.aft()[,9])
-#df <- data.frame(id=seq_len(nrow(fit.aft())), dev=fit.aft()[,9])
-
-validate(need(length(levels(as.factor(DF3()[,input$var.mr2])))>2, "Please choose a continuous variable"))
-
-plot_res(df, "id", "dev")+xlab(input$var.mr2) + ylab("Martingale residuals")+geom_point(shape = 19, size=1, color=(fit.aft()[,2]+1))
-
-#ggplot(df, aes(x=id, y=dev)) + geom_point(shape = 20, color="red")+ ylim(-2,2)+
-#geom_smooth(method = "loess", se = FALSE, linetype=1, color="black", size = 0.5) + xlab(input$var.mr) + ylab("Martingale residuals") + theme_minimal()
-  })
-
-
-
-
-#source("2pr_server.R", local=TRUE)$value
-#****************************************************************************************************************************************************aft-pred
-
-newX = reactive({
-  inFile = input$newfile
-  if (is.null(inFile)){
-    if (input$edata=="Diabetes") {x <- dia.test}
-    else {x<- nki.test}
-    }
-  else{
-if(!input$newcol){
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote)
-    }
-    else{
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote, row.names=1)
-    }
-    validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
-    validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
-
-  x <- as.data.frame(csv)
-}
-return(as.data.frame(x))
-})
-
-#prediction plot
-# prediction
-pred = eventReactive(input$B1.1,
-{
-  res <- data.frame(
-  lp = predict(aftfit(), newdata = newX(), type="link"),
-  predict= predict(aftfit(), newdata = newX(), type="response"))
-  colnames(res) <- c("Linear Predictors", "Predictors")
-  res <- cbind.data.frame(res, newX())
-  return(res)
-})
-
-output$pred = DT::renderDT({
-pred()
-},
-extensions = 'Buttons',
-options = list(
-dom = 'Bfrtip',
-buttons = c('copy', 'csv', 'excel'),
-scrollX = TRUE))
-
-
-pred.n <- reactive({
-  ptime <- predict(aftfit(), newdata=pred()[input$line,], type='quantile', p=c(1:98/100), se=TRUE)
-  df <- data.frame(estimate =ptime$fit,
-                   up.band =ptime$fit + 2*ptime$se.fit,
-                   low.band=ptime$fit - 2*ptime$se.fit,
-                   ybreak=1-c(1:98/100))
-  colnames(df)=c("Estimated Times", "95% CI up band", "95% CI lower band", "Survival Probability")
-  return(df)
-})
-
-output$pred.n = DT::renderDT({
-pred.n()
-},
-extensions = 'Buttons',
-options = list(
-dom = 'Bfrtip',
-buttons = c('copy', 'csv', 'excel'),
-scrollX = TRUE))
- output$p.s = renderPlot({
-
-
- #matplot(cbind(ptime$fit, ptime$fit + 1.96*ptime$se.fit,
- #                          ptime$fit - 1.96*ptime$se.fit), 1-c(1:98/100),
- #       xlab="Time", ylab="Survival", type='l', lty=c(1,2,2), col=1)
-plot_mat(pred.n(), "Survival Probability")+xlab("Estimated Times") +ylab("Survival Probability")
-
-  })
-
-
-
-
-
-#source("3cox_server.R", local=TRUE)$value
+#source("server_cox.R", local=TRUE)$value
+#****************************************************************************************************************************************************cox-pred
 #****************************************************************************************************************************************************cox
 
 
@@ -1811,7 +1734,8 @@ choices = names(DF4())
 })
 
 output$Xdata4 <- DT::renderDT(
-head(DF3()), options = list(scrollX = TRUE,dom = 't'))
+head(DF3()),     
+options = list(scrollX = TRUE,dom = 't'))
 ### for summary
 output$str4 <- renderPrint({str(DF3())})
 
@@ -1827,7 +1751,7 @@ if (input$effect.cx=="Gamma Frailty") {f = paste0(surv(), '~', paste0(input$var.
 if (input$effect.cx=="Gaussian Frailty") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), "+frailty.gaussian(", input$fx.cx, ")", input$conf.cx)}
 
   #fit <- survreg(as.formula(f), data = DF3(), dist=input$dist)
-
+ 
   return(f)
 })
 
@@ -1841,8 +1765,8 @@ coxfit = eventReactive(input$B2, {
 #gfit = eventReactive(input$B1, {
 #  glm(formula(), data = DF3())
 #})
-#
-output$fitcx = renderPrint({
+# 
+output$fitcx = renderPrint({ 
 res <- summary(coxfit())
 res$call <- "Cox Regression Result"
 return(res)
@@ -1854,19 +1778,19 @@ output$zphplot = renderPlot({
 f<-cox.zph(coxfit())
 p <- ggcoxzph(f,
   point.col = "red", point.size = 1, point.shape = 19,
-  point.alpha = 0.7, caption = NULL,
+  point.alpha = 0.7, caption = NULL, 
   ggtheme = theme_minimal(), palette = "Set1",
   font.x = 12,font.y = 12,font.main = 12)
 p[input$num]
   })
 
-output$zph = DT::renderDT({
+output$zph = DT::renderDT({ 
 res <- cox.zph(coxfit())
 res.tab<- as.data.frame(res[["table"]])
 colnames(res.tab) <- c("Chi-squared", "Degree of Freedom", "P Value")
 return(res.tab)
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1888,14 +1812,14 @@ else {y=DF3()[,input$t]}
   Residuals3 = DF3()[,input$c]-resid(coxfit(), type="martingale")
  )
 
- colnames(res) <- c("Time", "Censor", "Linear Part = bX", "Risk Score = exp(bX)",
+ colnames(res) <- c("Time", "Censor", "Linear Part = bX", "Risk Score = exp(bX)", 
   #"Expected number of events", "survival Prob. = exp(-Expected number of events)",
   "Martingale Residuals", "Deviance Residuals", "Cox-Snell Residuals")
  return(res)
   })
-#
+# 
  output$fit.cox = DT::renderDT(fit.cox(),
-    extensions = 'Buttons',
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1903,20 +1827,20 @@ else {y=DF3()[,input$t]}
 
 output$splot = renderPlot({
 validate(need((input$effect.cx =="" || input$effect.cx=="Strata" ||input$effect.cx=="Cluster"), "Frailty models can not be used in this plot."))
-survminer::ggadjustedcurves(coxfit(), data=DF3(),
+ggadjustedcurves(coxfit(), data=DF3(),
   ggtheme = theme_minimal(), palette = "Set1",
   font.x = 12,font.y = 12,font.main = 12)
   })
 
-output$csplot.cx = renderPlot({
+output$csplot.cx = plotly::renderPlotly({
 
 fit=survfit(Surv(fit.cox()[,7],fit.cox()[,2])~1)
 Htilde=cumsum(fit$n.event/fit$n.risk)
 
 d = data.frame(time = fit$time, H = Htilde)
-plot_coxstep(d)
-
-#ggplot() + geom_step(data = d, mapping = aes(x = d[,"time"], y = d[,"H"])) +
+p<-plot_coxstep(d)
+plotly::ggplotly(p)
+#ggplot() + geom_step(data = d, mapping = aes(x = d[,"time"], y = d[,"H"])) + 
 #  geom_abline(intercept =0,slope = 1, color = "red") +
 #  theme_minimal() + xlab("Cox-Snell residuals") + ylab("Estimated Cumulative Hazard Function")
   })
@@ -1933,15 +1857,15 @@ selected = type.num4()[1],
 choices = type.num4())
 })
 
-output$diaplot1 = renderPlot({
+output$diaplot1 = plotly::renderPlotly({
 
 df <- data.frame(id=DF3()[,input$var.mr], dev=fit.cox()[,5])
 
 validate(need(length(levels(as.factor(DF3()[,input$var.mr])))>2, "Please choose a continuous variable"))
 
-plot_res(df, "id", "dev")+xlab(input$var.mr) + ylab("Martingale residuals")+
+p<-plot_res(df, "id", "dev")+xlab(input$var.mr) + ylab("Martingale residuals")+
 geom_point(shape = 19, size=1, color=(fit.cox()[,2]+1))
-
+plotly::ggplotly(p)
 
 #ggcoxdiagnostics(coxfit(), ox.scale ="observation.id",
 #  type = "martingale", hline.size = 0.5,point.size = 0.5, point.shape = 10,
@@ -1964,23 +1888,22 @@ geom_point(shape = 19, size=1, color=(fit.cox()[,2]+1))
 #  ggtheme = theme_minimal(),font.x = 12,font.y = 12,font.main = 12)
 #  })
 
-output$diaplot2 = renderPlot({
+output$diaplot2 = plotly::renderPlotly({
 
 df <- data.frame(id=seq_len(nrow(fit.cox())), dev=fit.cox()[,6])
 
-plot_res(df, "id", "dev")+
+p<-plot_res(df, "id", "dev")+
 xlab("Observation Id") + ylab("Deviance residuals")+
 geom_point(shape = 19, size=1, color=(fit.cox()[,2]+1))
-
+plotly::ggplotly(p)
 #ggcoxdiagnostics(coxfit(), ox.scale ="observation.id",
 #  type = "deviance", hline.size = 0.5,point.size = 1, point.shape = 19,
 #  ggtheme = theme_minimal(), palette = "Set1",
-#  font.x = 12,font.y = 12,font.main = 12)
+#  font.x = 12,font.y = 12,font.main = 12) 
   })
 
 
-
-#source("3pr_server.R", local=TRUE)$value
+#source("server_cox_pr.R", local=TRUE)$value
 #****************************************************************************************************************************************************cox-pred
 
 newX2 = reactive({
@@ -2018,7 +1941,7 @@ pred2 = eventReactive(input$B2.1,
 output$pred2 = DT::renderDT({
 pred2()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -2032,15 +1955,15 @@ Surv.rsp.new <- Surv(pred2()[,input$t1], pred2()[,input$t2], pred2()[,input$c])
 }
 else {
 Surv.rsp <- Surv(DF3()[,input$t], DF3()[,input$c])
-Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])  
 }
 
 lp <- predict(coxfit())
 lpnew <- predict(coxfit(), newdata=pred2())
 
-times <- seq(input$ss,input$ee, input$by)
+times <- seq(input$ss,input$ee, input$by)                  
 
-BrierScore <- survAUC::predErr(Surv.rsp, Surv.rsp.new, lp, lpnew, times,
+BrierScore <- survAUC::predErr(Surv.rsp, Surv.rsp.new, lp, lpnew, times, 
                       type = "brier", int.type = "weighted")
 
 df <- data.frame(Times=BrierScore$times, BrierScore=BrierScore$error, IBS=rep(BrierScore$ierror, length(times)))
@@ -2050,15 +1973,15 @@ return(df)
 
 output$bstab = DT::renderDT({
 BStab()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
-output$bsplot = renderPlot({
-plot_line1(BStab(), "Times", "BrierScore")
-
+output$bsplot = plotly::renderPlotly({
+p<-plot_line1(BStab(), "Times", "BrierScore")
+plotly::ggplotly(p)
 #gplot(BStab(), aes(x=Times, y=BrierScore)) + geom_line() +ylim(0,1) + theme_minimal()
 
   })
@@ -2072,13 +1995,13 @@ Surv.rsp.new <- Surv(pred2()[,input$t1], pred2()[,input$t2], pred2()[,input$c])
 }
 else {
 Surv.rsp <- Surv(DF3()[,input$t], DF3()[,input$c])
-Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])  
 }
 
 lp <- predict(coxfit())
 lpnew <- predict(coxfit(), newdata=pred2())
 
-times <- seq(input$ss1,input$ee1, input$by1)
+times <- seq(input$ss1,input$ee1, input$by1)                  
 
 if (input$auc=="a") {AUC <- survAUC::AUC.cd(Surv.rsp, Surv.rsp.new, lp, lpnew, times)}
 if (input$auc=="b") {AUC <- survAUC::AUC.hc(Surv.rsp, Surv.rsp.new, lpnew, times)}
@@ -2093,22 +2016,344 @@ return(df)
 
 output$auctab = DT::renderDT({
 AUCtab()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
-output$aucplot = renderPlot({
-plot_line1(AUCtab(), "Times", "AUC")
+output$aucplot = plotly::renderPlotly({
+p<-plot_line1(AUCtab(), "Times", "AUC")
+plotly::ggplotly(p)
+  })
 
+#source("server_cox_pr.R", local=TRUE)$value
+#****************************************************************************************************************************************************cox
+
+
+output$var.cx = renderUI({
+selectInput(
+'var.cx',
+tags$b('2. Choose some independent variables (X)'),
+selected = names(DF4())[1],
+choices = names(DF4()),
+multiple=TRUE)
+})
+
+
+output$fx.cx = renderUI({
+selectInput(
+  'fx.cx',
+  tags$b('Choose one random effect variable'),
+selected = names(DF4())[2],
+choices = names(DF4())
+)
+})
+
+output$Xdata4 <- DT::renderDT(
+head(DF3()),     
+options = list(scrollX = TRUE,dom = 't'))
+### for summary
+output$str4 <- renderPrint({str(DF3())})
+
+
+cox = reactive({
+
+validate(need(input$var.cx, "Please choose some independent variable"))
+
+if (input$effect.cx=="") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), input$conf.cx)}
+if (input$effect.cx=="Strata") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), "+strata(", input$fx.cx, ")",input$conf.cx)}
+if (input$effect.cx=="Cluster") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), "+cluster(", input$fx.cx, ")", input$conf.cx)}
+if (input$effect.cx=="Gamma Frailty") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), "+frailty(", input$fx.cx, ")", input$conf.cx)}
+if (input$effect.cx=="Gaussian Frailty") {f = paste0(surv(), '~', paste0(input$var.cx, collapse = "+"), "+frailty.gaussian(", input$fx.cx, ")", input$conf.cx)}
+
+  #fit <- survreg(as.formula(f), data = DF3(), dist=input$dist)
+ 
+  return(f)
+})
+
+output$cox_form = renderPrint({cat(cox()) })
+
+coxfit = eventReactive(input$B2, {
+  coxph(as.formula(cox()), data = DF3(), ties=input$tie)
   })
 
 
+#gfit = eventReactive(input$B1, {
+#  glm(formula(), data = DF3())
+#})
+# 
+output$fitcx = renderPrint({ 
+res <- summary(coxfit())
+res$call <- "Cox Regression Result"
+return(res)
+})
+
+output$zphplot = renderPlot({
+  validate(need((input$effect.cx =="" ), "Models with random effect terms can not be used in this plot."))
+
+f<-cox.zph(coxfit())
+p <- ggcoxzph(f,
+  point.col = "red", point.size = 1, point.shape = 19,
+  point.alpha = 0.7, caption = NULL, 
+  ggtheme = theme_minimal(), palette = "Set1",
+  font.x = 12,font.y = 12,font.main = 12)
+p[input$num]
+  })
+
+output$zph = DT::renderDT({ 
+res <- cox.zph(coxfit())
+res.tab<- as.data.frame(res[["table"]])
+colnames(res.tab) <- c("Chi-squared", "Degree of Freedom", "P Value")
+return(res.tab)
+},
+extensions = 'Buttons', 
+options = list(
+dom = 'Bfrtip',
+buttons = c('copy', 'csv', 'excel'),
+scrollX = TRUE))
+
+
+fit.cox <- reactive({
+if (input$time=="B") {y = DF3()[,input$t2]-DF3()[,input$t1]}
+else {y=DF3()[,input$t]}
+ res <- data.frame(
+  Y = y,
+  E = DF3()[,input$c],
+  lp = coxfit()$linear.predictors,
+  risk=exp(coxfit()$linear.predictors),
+  #expected=predict(coxfit(),type="expected"),
+  #survival=predict(coxfit(),type="survival"),
+  Residuals = resid(coxfit(), type="martingale"),
+  Residuals2 = resid(coxfit(), type="deviance"),
+  Residuals3 = DF3()[,input$c]-resid(coxfit(), type="martingale")
+ )
+
+ colnames(res) <- c("Time", "Censor", "Linear Part = bX", "Risk Score = exp(bX)", 
+  #"Expected number of events", "survival Prob. = exp(-Expected number of events)",
+  "Martingale Residuals", "Deviance Residuals", "Cox-Snell Residuals")
+ return(res)
+  })
+# 
+ output$fit.cox = DT::renderDT(fit.cox(),
+    extensions = 'Buttons', 
+    options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel'),
+    scrollX = TRUE))
+
+output$splot = renderPlot({
+validate(need((input$effect.cx =="" || input$effect.cx=="Strata" ||input$effect.cx=="Cluster"), "Frailty models can not be used in this plot."))
+ggadjustedcurves(coxfit(), data=DF3(),
+  ggtheme = theme_minimal(), palette = "Set1",
+  font.x = 12,font.y = 12,font.main = 12)
+  })
+
+output$csplot.cx = plotly::renderPlotly({
+
+fit=survfit(Surv(fit.cox()[,7],fit.cox()[,2])~1)
+Htilde=cumsum(fit$n.event/fit$n.risk)
+
+d = data.frame(time = fit$time, H = Htilde)
+p<-plot_coxstep(d)
+plotly::ggplotly(p)
+#ggplot() + geom_step(data = d, mapping = aes(x = d[,"time"], y = d[,"H"])) + 
+#  geom_abline(intercept =0,slope = 1, color = "red") +
+#  theme_minimal() + xlab("Cox-Snell residuals") + ylab("Estimated Cumulative Hazard Function")
+  })
+
+type.num4 <- reactive({
+colnames(DF4()[unlist(lapply(DF4(), is.numeric))])
+})
+
+output$var.mr = renderUI({
+selectInput(
+'var.mr',
+tags$b('Choose one continuous independent variable'),
+selected = type.num4()[1],
+choices = type.num4())
+})
+
+output$diaplot1 = plotly::renderPlotly({
+
+df <- data.frame(id=DF3()[,input$var.mr], dev=fit.cox()[,5])
+
+validate(need(length(levels(as.factor(DF3()[,input$var.mr])))>2, "Please choose a continuous variable"))
+
+p<-plot_res(df, "id", "dev")+xlab(input$var.mr) + ylab("Martingale residuals")+
+geom_point(shape = 19, size=1, color=(fit.cox()[,2]+1))
+plotly::ggplotly(p)
+
+#ggcoxdiagnostics(coxfit(), ox.scale ="observation.id",
+#  type = "martingale", hline.size = 0.5,point.size = 0.5, point.shape = 10,
+#  ggtheme = theme_minimal(),font.x = 12,font.y = 12,font.main = 12)
+#validate(need(length(levels(as.factor(DF3()[,input$var.mr])))>2, "Please choose a continuous variable"))
+
+#f = paste0(surv(), '~', paste0(input$var.mr))
+
+#fit<-coxph(as.formula(f), data = DF3(), ties=input$tie)
+#ggcoxfunctional(fit, data = DF3(), ylim=c(-2,2),
+#  point.size = 1, point.shape = 19,
+#  ggtheme = theme_minimal(), palette = "Set1",
+#  font.x = 12,font.y = 12,font.main = 12)
+
+  })
+
+#output$diaplot1.2 = renderPlot({
+#ggcoxdiagnostics(coxfit(), ox.scale ="observation.id",
+#  type = "martingale", hline.size = 0.5,point.size = 0.5, point.shape = 10,
+#  ggtheme = theme_minimal(),font.x = 12,font.y = 12,font.main = 12)
+#  })
+
+output$diaplot2 = plotly::renderPlotly({
+
+df <- data.frame(id=seq_len(nrow(fit.cox())), dev=fit.cox()[,6])
+
+p<-plot_res(df, "id", "dev")+
+xlab("Observation Id") + ylab("Deviance residuals")+
+geom_point(shape = 19, size=1, color=(fit.cox()[,2]+1))
+plotly::ggplotly(p)
+#ggcoxdiagnostics(coxfit(), ox.scale ="observation.id",
+#  type = "deviance", hline.size = 0.5,point.size = 1, point.shape = 19,
+#  ggtheme = theme_minimal(), palette = "Set1",
+#  font.x = 12,font.y = 12,font.main = 12) 
+  })
+
+
+#source("server_cox_pr.R", local=TRUE)$value
+#****************************************************************************************************************************************************cox-pred
+
+newX2 = reactive({
+  inFile = input$newfile2
+  if (is.null(inFile)){
+    if (input$edata=="Diabetes") {x <- dia.test}
+    else {x<- nki.test}
+    }
+  else{
+if(!input$newcol2){
+    csv <- read.csv(inFile$datapath, header = input$newheader2, sep = input$newsep2, quote=input$newquote2)
+    }
+    else{
+    csv <- read.csv(inFile$datapath, header = input$newheader2, sep = input$newsep2, quote=input$newquote2, row.names=1)
+    }
+    validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
+    validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
+
+  x <- as.data.frame(csv)
+}
+return(as.data.frame(x))
+})
+#prediction plot
+# prediction
+pred2 = eventReactive(input$B2.1,
+{
+  res <- data.frame(
+  lp = predict(coxfit(), newdata = newX2(), type="lp"),
+  risk= predict(coxfit(), newdata = newX2(), type="risk"))
+  colnames(res) <- c("Linear Predictors = bX", "Risk score = exp(bX)")
+  res <- cbind.data.frame(res, newX2())
+  return(res)
+})
+
+output$pred2 = DT::renderDT({
+pred2()
+},
+extensions = 'Buttons', 
+options = list(
+dom = 'Bfrtip',
+buttons = c('copy', 'csv', 'excel'),
+scrollX = TRUE))
+
+BStab <- reactive(
+{
+if (input$time=="B") {
+Surv.rsp <- Surv(DF3()[,input$t1], DF3()[,input$t2], DF3()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t1], pred2()[,input$t2], pred2()[,input$c])
+}
+else {
+Surv.rsp <- Surv(DF3()[,input$t], DF3()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])  
+}
+
+lp <- predict(coxfit())
+lpnew <- predict(coxfit(), newdata=pred2())
+
+times <- seq(input$ss,input$ee, input$by)                  
+
+BrierScore <- survAUC::predErr(Surv.rsp, Surv.rsp.new, lp, lpnew, times, 
+                      type = "brier", int.type = "weighted")
+
+df <- data.frame(Times=BrierScore$times, BrierScore=BrierScore$error, IBS=rep(BrierScore$ierror, length(times)))
+colnames(df) <- c("Times", "BrierScore", "Integrated Brier Score")
+return(df)
+})
+
+output$bstab = DT::renderDT({
+BStab()},
+extensions = 'Buttons', 
+options = list(
+dom = 'Bfrtip',
+buttons = c('copy', 'csv', 'excel'),
+scrollX = TRUE))
+
+output$bsplot = plotly::renderPlotly({
+p<-plot_line1(BStab(), "Times", "BrierScore")
+plotly::ggplotly(p)
+#gplot(BStab(), aes(x=Times, y=BrierScore)) + geom_line() +ylim(0,1) + theme_minimal()
+
+  })
+
+#AUCtab <- eventReactive(input$B2.1,
+AUCtab <- reactive(
+{
+if (input$time=="B") {
+Surv.rsp <- Surv(DF3()[,input$t1], DF3()[,input$t2], DF3()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t1], pred2()[,input$t2], pred2()[,input$c])
+}
+else {
+Surv.rsp <- Surv(DF3()[,input$t], DF3()[,input$c])
+Surv.rsp.new <- Surv(pred2()[,input$t], pred2()[,input$c])  
+}
+
+lp <- predict(coxfit())
+lpnew <- predict(coxfit(), newdata=pred2())
+
+times <- seq(input$ss1,input$ee1, input$by1)                  
+
+if (input$auc=="a") {AUC <- survAUC::AUC.cd(Surv.rsp, Surv.rsp.new, lp, lpnew, times)}
+if (input$auc=="b") {AUC <- survAUC::AUC.hc(Surv.rsp, Surv.rsp.new, lpnew, times)}
+if (input$auc=="c") {AUC <- survAUC::AUC.sh(Surv.rsp, Surv.rsp.new, lp, lpnew, times)}
+if (input$auc=="d") {AUC <- survAUC::AUC.uno(Surv.rsp, Surv.rsp.new, lpnew, times)}
+
+
+df <- data.frame(Times=AUC$times, AUC=AUC$auc, IAUC=rep(AUC$iauc, length(times)))
+colnames(df) <- c("Times", "AUC", "Integrated AUC")
+return(df)
+})
+
+output$auctab = DT::renderDT({
+AUCtab()},
+extensions = 'Buttons', 
+options = list(
+dom = 'Bfrtip',
+buttons = c('copy', 'csv', 'excel'),
+scrollX = TRUE))
+
+output$aucplot = plotly::renderPlotly({
+p<-plot_line1(AUCtab(), "Times", "AUC")
+plotly::ggplotly(p)
+  })
+
+
+##########----------##########----------##########
 
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
+
+observeEvent(input$"Non-Parametric Model", showTab("navibar", target = "Non-Parametric Model", select = TRUE))
+observeEvent(input$"Semi-Parametric Model", showTab("navibar", target = "Semi-Parametric Model", select = TRUE))
+observeEvent(input$"Parametric Model", showTab("navibar", target = "Parametric Model", select = TRUE))
 
 }
 

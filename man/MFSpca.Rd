@@ -15,11 +15,12 @@ MFSpca includes
 and (2) factor analysis
 }
 \examples{
-# library(mephas)
-# MFSpca()
-# or,
-# mephas::MFSpca()
-# or,
-# mephasOpen("pca")
-# Use 'Stop and Quit' Button in the top to quit the interface
+if (interactive()) {
+ MFSpca()
+}
+
+if (interactive()) {
+ mephasOpen("pca")
+}
+
 }

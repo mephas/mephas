@@ -6,11 +6,10 @@
 ##' @return shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)
 ##'
 ##' @examples
-##' # library(mephas)
-##' # mephasOpen("condist")
-##' # or,
-##' # mephas::mephasOpen("condist")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
+##' if (interactive()) {
+##'   mephasOpen("condist")
+##'}
+##'
 ##'
 ##' @param method choose method from MEPHAS,
 ##' "condist" opens continuous distribution,
@@ -27,7 +26,18 @@
 ##' "pls" opens partial least square methods
 ##'
 ##' @export
-mephasOpen <- function(method=c("condist","disdist","ttest","nptest","proptest","tabletest","anova","linereg","logisreg","surv","pca","pls")){
+mephasOpen <- function(method=c("condist",
+                                "disdist",
+                                "ttest",
+                                "nptest",
+                                "proptest",
+                                "tabletest",
+                                "anova",
+                                "linereg",
+                                "logisreg",
+                                "surv",
+                                "pca",
+                                "pls")){
 
 method <- match.arg(method)
 

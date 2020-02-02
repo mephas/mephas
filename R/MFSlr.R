@@ -6,35 +6,37 @@
 ##'
 ##' @return shiny interface
 ##'
-##' @import shiny
-##' @import ggplot2
 ##'
-##' @importFrom stargazer stargazer
 ##' @importFrom stats anova as.formula lm predict residuals step relevel
 ##' @importFrom utils str write.table
 ##'
 ##' @examples
-##' # library(mephas)
-##' # MFSlr()
-##' # or,
-##' # mephas::MFSlr()
-##' # or,
-##' # mephasOpen("linereg")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
-
+##' if (interactive()) {
+##'  MFSlr()
+##' }
+##' 
+##' if (interactive()) {
+##'  mephasOpen("linereg")
+##' }
+##'
 ##' @export
 MFSlr <- function(){
 
-requireNamespace("shiny", quietly = TRUE)
-requireNamespace("ggplot2", quietly = TRUE)
-requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
+  
+#source("../0tabs/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+#source("../0tabs/onoff.R", local=TRUE)$value,
+tabof(),
 
 navbarPage(
-
-title = "Linear Regression",
-
+theme = shinythemes::shinytheme("cerulean"),
+title = a("Linear Regression", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+collapsible = TRUE,
+id="navibar", 
+position="fixed-top",
 ##########----------##########----------##########
 
 
@@ -42,6 +44,8 @@ tabPanel("Data",
 
 headerPanel("Data Preparation"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <b>Linear regression</b> is a linear approach to modeling the relationship between a dependent variable and one or more independent variables.
@@ -75,36 +79,42 @@ and (2) find the relations between birth weight and the other variables, that is
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results. After getting data ready, please build the model in the next tab.</h4>
 "
+)
 ),
 
 hr(),
-#source("0data_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_data.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************
 
 sidebarLayout(
 
 sidebarPanel(
 
-  tags$head(tags$style("#strnum {overflow-y:scroll; height: 200px; background: white};")),
-  tags$head(tags$style("#strfac {overflow-y:scroll; height: 100px; background: white};")),
-  tags$head(tags$style("#fsum {overflow-y:scroll; height: 100px; background: white};")),
+  tags$head(tags$style("#strnum {overflow-y:scroll; max-height: 200px; background: white};")),
+  tags$head(tags$style("#strfac {overflow-y:scroll; max-height: 100px; background: white};")),
+  tags$head(tags$style("#fsum {overflow-y:scroll; max-height: 100px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")),
-        choices =  c("Birth weight"),
-        selected = "Birth weight"),
-hr(),
+h4(tags$b("Training Set Preparation")),
 
-h4(tags$b("Use my own data (training set)")),
+tabsetPanel(
+
+tabPanel("Example data", p(br()),
+
+  selectInput("edata", tags$b("Use example data"), 
+        choices =  c("Birth weight"), 
+        selected = "Birth weight")
+  ),
+
+tabPanel("Upload Data", p(br()),
+
 p("We suggested putting the dependent variable (Y) in the left side of all independent variables (X) "),
-
-h4(tags$b("Step 1. Upload Data File")),
 
 fileInput('file', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-p(tags$b("2. Show 1st row as column names?")),
+p(tags$b("2. Show 1st row as column names?")), 
 checkboxInput("header", "Yes", TRUE),
 
-p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+p(tags$b("3. Use 1st column as row names? (No duplicates)")), 
 checkboxInput("col", "Yes", TRUE),
 
 radioButtons("sep", "4. Which separator for data?",
@@ -125,13 +135,15 @@ selected = '"'),
 
 p("Correct separator and quote ensure the successful data input"),
 
-a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets"),
+a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+  )
+  ),
 
 hr(),
 
 h4(tags$b("(Optional) Change the types of some variable?")),
 
-#p(tags$b("Choice 1. Change Real-valued Variables into Categorical Variable")),
+#p(tags$b("Choice 1. Change Real-valued Variables into Categorical Variable")), 
 
 uiOutput("factor1"),
 
@@ -139,22 +151,24 @@ uiOutput("factor1"),
 
 uiOutput("factor2"),
 
-h4(tags$b("(Optional) Change the referential level for categorical variable?")),
+h4(tags$b("(Optional) Change the referential level for categorical variable?")), 
 
 uiOutput("lvl"),
 
 p(tags$b("2. Input the referential level, each line for one variable")),
 
-tags$textarea(id='ref',"")
+tags$textarea(id='ref',""),
+hr(),
 
+h4(tags$b(actionLink("Model","Build Model")))
+#h4(tags$b("Build Model in the Next Tab"))
 
 ),
 
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")),
-p(br()),
+p(tags$b("Data Preview")), 
 DT::DTOutput("Xdata"),
 
 p(tags$b("1. Numeric variable information list")),
@@ -163,7 +177,7 @@ verbatimTextOutput("strnum"),
 p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
-hr(),
+hr(),   
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -188,7 +202,7 @@ HTML("<p><b>Linear fitting plot</b>: to roughly show the linear relation between
 uiOutput('tx'),
 uiOutput('ty'),
 
-plotOutput("p1", width = "80%")
+plotly::plotlyOutput("p1", width = "80%")
 ),
 
 tabPanel("Histogram", p(br()),
@@ -196,17 +210,13 @@ tabPanel("Histogram", p(br()),
 HTML("<p><b>Histogram</b>: to roughly assess the probability distribution of a given variable by depicting the frequencies of observations occurring in certain ranges of values.</p>"),
 uiOutput('hx'),
 p(tags$b("Histogram")),
-plotOutput("p2", width = "80%"),
+plotly::plotlyOutput("p2", width = "80%"),
 sliderInput("bin", "The number of bins in the histogram", min = 0, max = 100, value = 0),
 p("When the number of bins is 0, plot will use the default number of bins "),
 p(tags$b("Density plot")),
-plotOutput("p21", width = "80%"))
+plotly::plotlyOutput("p21", width = "80%"))
 
-)
-
-)
-
-),
+))),
 hr()
 
 
@@ -217,6 +227,8 @@ tabPanel("Model",
 
 headerPanel("Linear Regression"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 
@@ -236,26 +248,28 @@ HTML(
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("1lm_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_model.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************model
 sidebarLayout(
 
 sidebarPanel(
 
-tags$head(tags$style("#formula {height: 100px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
-tags$head(tags$style("#str {overflow-y:scroll; height: 350px; background: white};")),
-tags$head(tags$style("#fit {overflow-y:scroll; height: 400px; background: white};")),
-tags$head(tags$style("#step {overflow-y:scroll;height: 400px; background: white};")),
+tags$head(tags$style("#formula {height: 50px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
+tags$head(tags$style("#str {overflow-y:scroll; max-height: 350px; background: white};")),
+tags$head(tags$style("#fit {overflow-y:scroll; max-height: 400px; background: white};")),
+tags$head(tags$style("#step {overflow-y:scroll;max-height: 400px; background: white};")),
 
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the previous tab"),
+hr(),      
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Step 1. Choose variables to build the model")),      
 
-h4(tags$b("Step 1. Choose variables to build the model")),
-
-uiOutput('y'),
+uiOutput('y'),    
 uiOutput('x'),
 #uiOutput('fx'),
 
@@ -263,37 +277,43 @@ radioButtons("intercept", "3. (Optional) Keep or remove intercept / constant ter
      choices = c("Remove intercept / constant term" = "-1",
                  "Keep intercept / constant term" = ""),
      selected = ""),
-p(tags$b("4. (Optional) Add interaction term between categorical variables")),
-p('Please input: + var1:var2'),
-tags$textarea(id='conf', " " ),
+p(tags$b("4. (Optional) Add interaction term between categorical variables")), 
+p('Please input: + var1:var2'), 
+tags$textarea(id='conf', " " ), 
 hr(),
-h4(tags$b("Step 2. Check the model")),
+h4(tags$b("Step 2. Check the model and generate results")),
+tags$b("Valid model example: Y ~ X1 + X2"),
 verbatimTextOutput("formula"),
-p("'-1' in the formula indicates that intercept / constant term has been removed")
+p("'-1' in the formula indicates that intercept / constant term has been removed"),
+hr(),
+
+h4(tags$b("Step 3. If data and model are ready, click the blue button to generate model results.")),
+actionButton("B1", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
 mainPanel(
 
 h4(tags$b("Output 1. Data Preview")),
 tabsetPanel(
-tabPanel("Browse", br(),
-p("This only shows the first several lines, please check full data in the 1st tab"),
-DT::DTOutput("Xdata2")
-),
-tabPanel("Variables information", br(),
+  tabPanel("Variables Information", br(),
 verbatimTextOutput("str")
-
+),
+tabPanel("Part of Data", br(),
+ p("Please edit data in Data tab"),
+DT::DTOutput("Xdata2")
 )
 ),
 hr(),
 
-#h4(tags$b("Output 2. Model Results")),
-actionButton("B1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
- p(br()),
+h4(tags$b("Output 2. Model Results")),
+#actionButton("B1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+
 tabsetPanel(
 
 tabPanel("Model Estimation",  br(),
-
+    
 HTML(
 "
 <b> Explanations  </b>
@@ -304,7 +324,7 @@ HTML(
 <li> R2 (R<sup>2</sup>) is a goodness-of-fit measure for linear regression models, and indicates the percentage of the variance in the dependent variable that the independent variables explain collectively.
 Suppose R2 = 0.49. This implies that 49% of the variability of the dependent variable has been accounted for, and the remaining 51% of the variability is still unaccounted for.
 <li> Adjusted R2 (adjusted R<sup>2</sup>) is used to compare the goodness-of-fit for regression models that contain differing numbers of independent variables.
-<li> F statistic (F-Test for overall significance in regression) judges on multiple coefficients taken together at the same time.
+<li> F statistic (F-Test for overall significance in regression) judges on multiple coefficients taken together at the same time. 
      F=(R^2/(k-1))/(1-R^2)/(n-k); n is sample size; k is number of variable + constant term
 </ul>
 "
@@ -322,23 +342,23 @@ tabPanel("ANOVA",  br(),
 
 HTML(
 "<b> Explanations </b>
-<ul>
+<ul> 
 <li> DF<sub>variable</sub> = 1
 <li> DF<sub>residual</sub> = [number of sample values] - [number of variables] -1
 <li> MS = SS/DF
-<li> F = MS<sub>variable</sub> / MS<sub>residual</sub>
+<li> F = MS<sub>variable</sub> / MS<sub>residual</sub> 
 <li> P Value < 0.05:  the variable is significant to the model.
 </ul>"
     ),
-    p(tags$b("ANOVA Table")),
+    p(tags$b("ANOVA Table")),  
     DT::DTOutput("anova")),
 
 tabPanel("AIC-based Selection",  br(),
     HTML(
     "<b> Explanations </b>
-  <ul>
-    <li> The Akaike Information Criterion (AIC) is a way of selecting a model from a set of models.
-    <li> Model fits are ranked according to their AIC values, and the model with the lowest AIC value is sometime considered the 'best'
+  <ul> 
+    <li> The Akaike Information Criterion (AIC) is a way of selecting a model from a set of models. 
+    <li> Model fits are ranked according to their AIC values, and the model with the lowest AIC value is sometime considered the 'best'. 
     <li> This selection is just for your reference.
   </ul>"
     ),
@@ -351,17 +371,19 @@ tabPanel("AIC-based Selection",  br(),
 tabPanel("Diagnostics Plot",   br(),
 HTML(
 "<b> Explanations </b>
-<ul>
-<li> QQ normal plot of residuals checks the normality of residuals. The linearity of the points suggests that the data are normally distributed.
+<ul> 
+<li> Q-Q normal plot of residuals checks the normality of residuals. The linearity of the points suggests that the data are normally distributed.
 <li> Residuals vs fitting plot finds the outliers
 </ul>"
 ),
-p(tags$b("1. QQ normal plot of residuals")),
-plotOutput("p.lm1", width = "80%"),
+p(tags$b("1. Q-Q normal plot of residuals")),
+plotly::plotlyOutput("p.lm1", width = "80%"),
 p(tags$b("2. Residuals vs Fitting plot")),
-plotOutput("p.lm2", width = "80%")
+plotly::plotlyOutput("p.lm2", width = "80%")
 
     )
+
+
 
 )
 )
@@ -375,6 +397,8 @@ tabPanel("Prediction",
 
 headerPanel("Prediction from Model"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 
@@ -399,26 +423,32 @@ Suppose in the same study, the doctors got another 6 infants data, and wanted to
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
 "
+)
 ),
 
 hr(),
-#source("2pr_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************pred
 
 sidebarLayout(
 
 sidebarPanel(
 
-h4(tags$b("Use example data (test set)")),
-h4("Click the Output"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-hr(),
+tabsetPanel(
 
-h4(tags$b("Use my own data (test set)")),
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: Birth Weight"))
+
+  ),
+
+tabPanel("Upload Data", p(br()),
+
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
-
-h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 #helpText("The columns of X are not suggested greater than 500"),
@@ -447,12 +477,23 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensure the successful data input")
+
+)
+),
+
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B2", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
 
 mainPanel(
-
-actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output. Prediction Results")),
+#actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
 p(br()),
 tabsetPanel(
 tabPanel("Prediction",p(br()),
@@ -464,45 +505,44 @@ tabPanel("Evaluation Plot",p(br()),
 p(tags$b("Prediction vs True Dependent Variable Plot")),
 p("This plot is shown when new dependent variable is provided in the test data."),
 p("This plot shows the relation between predicted dependent variable and new dependent variable, using linear smooth. Grey area is confidence interval."),
-plotOutput("p.s", width = "80%")
+plotly::plotlyOutput("p.s", width = "80%")
 )
-)
-)
+) 
+) 
 ),
+
 hr()
 ),
-
-
 ##########----------##########----------##########
-##########----------##########----------##########
-tabPanel((a("Help Pages Online",
-            target = "_blank",
-            style = "margin-top:-30px; color:DodgerBlue",
-            href = paste0("https://mephas.github.io/helppage/")))),
-tabPanel(
-  tags$button(
-    id = 'close',
-    type = "button",
-    class = "btn action-button",
-    style = "margin-top:-8px; color:Tomato; background-color: #F8F8F8  ",
-    onclick = "setTimeout(function(){window.close();},500);",  # close browser
-    "Stop and Quit"))
+tabPanel(tags$button(
+            id = 'close',
+            type = "button",
+            class = "btn action-button",
+            icon("power-off"),
+            style = "background:rgba(255, 255, 255, 0); display: inline-block; padding: 0px 0px;",
+            onclick = "setTimeout(function(){window.close();},500);")),
+navbarMenu("",icon=icon("link"))
 
-))
+)
+)
+
 
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-#source("0data_server.R", local=TRUE)$value
+#source("../func.R")
+##########----------##########----------##########
+
+#source("server_data.R", local=TRUE)$value
 #****************************************************************************************************************************************************
 
 #load("LR.RData")
 
 data <- reactive({
                 switch(input$edata,
-               "Birth weight" = LR)
+               "Birth weight" = LR)  
                 })
 
 
@@ -542,7 +582,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0()
+df <-DF0() 
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -565,7 +605,7 @@ selectInput(
 
 
 DF2 <- reactive({
-  df <-DF1()
+  df <-DF1() 
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -585,7 +625,7 @@ multiple = TRUE
 })
 
 DF3 <- reactive({
-
+   
   if (length(input$lvl)==0 || length(unlist(strsplit(input$ref, "[\n]")))==0 ||length(input$lvl)!=length(unlist(strsplit(input$ref, "[\n]")))){
   df <- DF2()
 }
@@ -601,10 +641,10 @@ else{
 
 }
 return(df)
-
+  
   })
 
-output$Xdata <- DT::renderDT(DF3(),
+output$Xdata <- DT::renderDT(DF3(),   
     extensions = list(
       'Buttons'=NULL,
       'Scroller'=NULL),
@@ -635,8 +675,8 @@ sum <- reactive({
   return(res)
   })
 
-output$sum <- DT::renderDT({sum()},
-    extensions = 'Buttons',
+output$sum <- DT::renderDT({sum()}, 
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -649,7 +689,7 @@ fsum = reactive({
 
 output$fsum = renderPrint({fsum()})
 
-
+ 
  output$download2 <- downloadHandler(
      filename = function() {
        "lr.des2.txt"
@@ -658,67 +698,60 @@ output$fsum = renderPrint({fsum()})
        write.table(fsum(), file, row.names = TRUE)
      }
    )
-#
+# 
 # # First Exploration of Variables
-#
+# 
 output$tx = renderUI({
    selectInput(
-     'tx',
+     'tx', 
      tags$b('1. Choose a numeric variable for the x-axis'),
      selected=type.num3()[2],
      choices = type.num3())
    })
-
+ 
  output$ty = renderUI({
    selectInput(
      'ty',
      tags$b('2. Choose a numeric variable for the y-axis'),
      selected = type.num3()[1],
      choices = type.num3())
-
+   
  })
-
+ 
  ## scatter plot
- output$p1 = renderPlot({
-
-plot_scat(DF3(),input$tx, input$ty)
-   #ggplot(DF3(), aes(x = DF3()[, input$tx], y = DF3()[, input$ty])) + geom_point(shape = 1) +
-   #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
+ output$p1 = plotly::renderPlotly({
+   p<- plot_scat(DF3(), input$tx, input$ty)
+   plotly::ggplotly(p)
    })
-
+ 
 ## histogram
  output$hx = renderUI({
    selectInput(
      'hx',
      tags$b('Choose a numeric variable'),
-     selected = type.num3()[1],
+     selected = type.num3()[1], 
      choices = type.num3())
  })
-
-output$p2 = renderPlot({
-  plot_hist1(DF3(), input$hx, input$bin)
-   #ggplot(DF3(), aes(x = DF3()[, input$hx])) +
-   #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") +
-   #  #geom_density()+
-   #  xlab("") + theme_minimal() + theme(legend.title = element_blank())
+ 
+output$p2 = plotly::renderPlotly({
+   p<-plot_hist1(DF3(), input$hx, input$bin)
+   plotly::ggplotly(p)
    })
 
-output$p21 = renderPlot({
-  plot_density1(DF3(), input$hx)
-   #ggplot(DF3(), aes(x = DF3()[, input$hx])) +
-     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") +
-   #  geom_density() +
-   #  xlab("") + theme_minimal() + theme(legend.title = element_blank())
+output$p21 = plotly::renderPlotly({
+     p<-plot_density1(DF3(), input$hx)
+     plotly::ggplotly(p)
    })
+ 
 
 
-#source("1lm_server.R", local=TRUE)$value
+#source("server_model.R", local=TRUE)$value
 #****************************************************************************************************************************************************model
 
 output$y = renderUI({
 selectInput(
 'y',
-tags$b('1. Choose one dependent variable (Y), real-valued numeric'),
+tags$b('1. Choose one dependent variable (Y), real-valued numeric type'),
 selected = type.num3()[1],
 choices = type.num3()
 )
@@ -732,7 +765,7 @@ return(df)
 output$x = renderUI({
 selectInput(
 'x',
-tags$b('2. Choose some independent variables (X)'),
+tags$b('2. Add / Remove independent variables (X)'),
 selected = names(DF4()),
 choices = names(DF4()),
 multiple = TRUE
@@ -740,16 +773,16 @@ multiple = TRUE
 })
 
 output$Xdata2 <- DT::renderDT(
-head(DF3()),
-options = list(scrollX = TRUE, dom = 't'))
+head(DF3()), 
+options = list(scrollX = TRUE,dom = 't'))
 ### for summary
 output$str <- renderPrint({str(DF3())})
 
 ##3. regression formula
 formula = reactive({
 validate(need(input$x, "Please choose some independent variable"))
-as.formula(paste0(input$y,' ~ ',paste0(input$x, collapse = "+"),
-    input$conf,
+as.formula(paste0(input$y,' ~ ',paste0(input$x, collapse = "+"), 
+  input$conf, 
   input$intercept)
 )
 
@@ -757,8 +790,8 @@ as.formula(paste0(input$y,' ~ ',paste0(input$x, collapse = "+"),
 
 output$formula = renderPrint({
 validate(need(input$x, "Please choose some independent variable"))
-cat(paste0(input$y,' ~ ',paste0(input$x, collapse = " + "),
-  input$conf,
+cat(paste0(input$y,' ~ ',paste0(input$x, collapse = " + "), 
+  input$conf, 
   input$intercept))
   })
 
@@ -784,7 +817,7 @@ lm(formula(), data = DF3())
  #no.space=TRUE,
  title=paste(Sys.time()),
  model.names =FALSE)
-
+ 
  })
 
 afit = reactive( {
@@ -794,7 +827,7 @@ afit = reactive( {
   })
 
 output$anova = DT::renderDT({(afit())},
-    extensions = 'Buttons',
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -803,30 +836,31 @@ output$anova = DT::renderDT({(afit())},
 #sp = reactive({step(fit())})
 output$step = renderPrint({step(fit())})
 
-#
+# 
 # # residual plot
-output$p.lm1 = renderPlot({
-
+output$p.lm1 = plotly::renderPlotly({
 x <-data.frame(res=fit()$residuals)
-plot_qq1(x, "res")
-#ggplot(x, aes(sample = res)) +
-#stat_qq() +
-#ggtitle("") +
-#xlab("") +
+p <- plot_qq1(data=x, varx="res")
+plotly::ggplotly(p)
+#ggplot(x, aes(sample = res)) + 
+#stat_qq() + stat_qq_line()+
+#ggtitle("") + 
+#xlab("") + 
 #theme_minimal()  ## add line,
-    })
+  })
 
-output$p.lm2 = renderPlot({
+output$p.lm2 = plotly::renderPlotly({
 x <- data.frame(fit=fit()$fitted.values, res=fit()$residuals)
-plot_res(x, "fit", "res")
+p <- plot_res(x, "fit", "res")
+plotly::ggplotly(p)
 #ggplot(x, aes(fit, res))+
-##geom_point()+
+#geom_point()+
 #stat_smooth(method="loess")+
 #geom_hline(yintercept=0, col="red", linetype="dashed")+
 #xlab("Fitted values")+ylab("Residuals")+
 #ggtitle("")+theme_minimal()
   })
-#
+# 
  fit.lm <- reactive({
  res <- data.frame(Y=DF3()[,input$y],
  Fittings = fit()[["fitted.values"]],
@@ -834,73 +868,106 @@ plot_res(x, "fit", "res")
  )
  colnames(res) <- c("Dependent Variable = Y", "Fittings = Predicted Y", "Residuals = Y - Predicted Y")
  return(res)
-    })
-#
+  })
+# 
 output$fitdt0 = DT::renderDT(fit.lm(),
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
-#source("2pr_server.R", local=TRUE)$value
+#source("server_pr.R", local=TRUE)$value
 #****************************************************************************************************************************************************pred
 
-newX = reactive({
-  inFile = input$newfile
-  if (is.null(inFile)){
-    x<-LR.new
-    }
-  else{
-if(!input$newcol){
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote)
-    }
-    else{
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote, row.names=1)
-    }
-    validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
-    validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
+sidebarLayout(
 
-  x <- as.data.frame(csv)
-}
-return(as.data.frame(x))
-})
-#prediction plot
-# prediction
-pred = eventReactive(input$B2,
-{predict(fit(), newdata = newX())
-})
+sidebarPanel(
 
-pred.lm <- reactive({
-    cbind.data.frame("Predicted Y"=(pred()),newX())
-    })
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-output$pred = DT::renderDT({
-pred.lm()
-},
-extensions = 'Buttons',
-options = list(
-dom = 'Bfrtip',
-buttons = c('copy', 'csv', 'excel'),
-scrollX = TRUE))
+tabsetPanel(
 
- output$p.s = renderPlot({
-  validate(need((pred.lm()[, input$y]), "This evaluation plot will not show unless dependent variable Y is given in the new data"))
-  x <- pred.lm()
-  vx <- input$y
-  vy <- names(x)[1]
-  plot_scat(x, vx, vy)
-  #min = min(c(pred.lm()[, input$y], pred.lm()[, 1]))
-  #max = max(c(pred.lm()[, input$y], pred.lm()[, 1]))
-  #ggplot(pred.lm(), aes(x = pred.lm()[, input$y], y = pred.lm()[, 1])) + geom_point(shape = 1) +
-  #   geom_smooth(method = "lm") + xlab(input$y) + ylab("Prediction") + xlim(min, max)+ ylim(min, max)+ theme_minimal()
-   })
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: Birth Weight"))
+
+  ),
+
+tabPanel("Upload Data", p(br()),
+
+p("New data should include all the variables in the model"),
+p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
+
+fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+#helpText("The columns of X are not suggested greater than 500"),
+# Input: Checkbox if file has header ----
+p(tags$b("2. Show 1st row as column names?")),
+checkboxInput("newheader", "Yes", TRUE),
+
+p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+checkboxInput("newcol", "Yes", TRUE),
+
+     # Input: Select separator ----
+radioButtons("newsep", "4. Which separator for data?",
+  choiceNames = list(
+    HTML("Comma (,): CSV often use this"),
+    HTML("One Tab (->|): TXT often use this"),
+    HTML("Semicolon (;)"),
+    HTML("One Space (_)")
+    ),
+  choiceValues = list(",", "\t", ";", " ")
+  ),
+
+radioButtons("newquote", "5. Which quote for characters?",
+choices = c("None" = "",
+           "Double Quote" = '"',
+           "Single Quote" = "'"),
+selected = '"'),
+
+p("Correct separator and quote ensure the successful data input")
+
+)
+),
+
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B2", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 
 
+),
+
+
+mainPanel(
+h4(tags$b("Output. Prediction Results")),
+#actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+p(br()),
+tabsetPanel(
+tabPanel("Prediction",p(br()),
+p("Predicted dependent variable is shown in the 1st column"),
+DT::DTOutput("pred")
+),
+
+tabPanel("Evaluation Plot",p(br()),
+p(tags$b("Prediction vs True Dependent Variable Plot")),
+p("This plot is shown when new dependent variable is provided in the test data."),
+p("This plot shows the relation between predicted dependent variable and new dependent variable, using linear smooth. Grey area is confidence interval."),
+plotly::plotlyOutput("p.s", width = "80%")
+)
+) 
+) 
+)
+
+##########----------##########----------##########
 
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
+
+observeEvent(input$Model, showTab("navibar", target = "Model", select = TRUE))
 
 }
 

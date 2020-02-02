@@ -8,41 +8,46 @@
 ##'
 ##' @return The web-based GUI and interactive interfaces
 ##'
-##' @import shiny
-##' @import ggplot2
 ##'
 ##' @importFrom pls mvr R2 MSEP RMSEP
 ##' @importFrom spls cv.spls spls
+##' @importFrom graphics plot
 ##'
 ##' @examples
-##' # library(mephas)
-##' # MFSpls()
-##' # or,
-##' # mephas::MFSpls()
-##' # or,
-##' # mephasOpen("pls")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
-
+##' if (interactive()) {
+##'  MFSpls()
+##' }
+##' 
+##' if (interactive()) {
+##'  mephasOpen("pls")
+##' }
+##'
 ##' @export
 MFSpls <- function(){
 
-requireNamespace("shiny", quietly = TRUE)
-requireNamespace("ggplot2", quietly = TRUE)
-requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
+#source("../0tabs/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+#source("../0tabs/onoff.R", local=TRUE)$value,
+tabof(),
+
 navbarPage(
-
-
-title = "Dimensional Analysis 2",
-
+theme = shinythemes::shinytheme("cerulean"),
+title = a("Dimensional Analysis 2", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+collapsible = TRUE,
+id="navibar", 
+position="fixed-top",
 ##########----------##########----------##########
 
-tabPanel("Dataset",
+tabPanel("Data",
 
 titlePanel("Data Preparation"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
@@ -59,27 +64,22 @@ HTML(
 <li> The data used to build model is called <b>training set</b>
 </ul>
 
-<i><h4>Case Example 1: NKI data</h4>
+<i><h4>Case Example: NKI data</h4>
 
-Suppose we wanted to explore 100 lymph node positive breast cancer patients on metastasis-free survival.
+Suppose in one study, we wanted to explore some lymph node positive breast cancer patients on metastasis-free survival.
 Data contained the clinical risk factors: (1) Age: Patient age at diagnosis (years) and (2) the year until relapse;
 and gene expression measurements of 70 genes found to be prognostic for metastasis-free survival in an earlier study.
-In this example, we wanted to create a model that could find the relations between risk factors and gene expression measurements.
-
-</i>
-
-<i><h4>Case Example 2 Liver toxicity data</h4>
-
-This data set contains the expression measure of 3116 genes and 10 clinical measurements for 64 subjects (rats) that were exposed to non-toxic, moderately toxic or severely toxic doses of acetaminophen in a controlled experiment.
+In this example, we wanted to create a model that could find the relations between age, year until release, and gene expression measurements.
 
 </i>
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results. After getting data ready, please find the model in the next tabs.</h4>
 "
+)
 ),
 
 hr(),
-#source("0data_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_data.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************
 
 sidebarLayout(
@@ -90,22 +90,25 @@ sidebarPanel(
   tags$head(tags$style("#strfac {overflow-y:scroll; height: 100px; background: white};")),
   tags$head(tags$style("#fsum {overflow-y:scroll; height: 100px; background: white};")),
 
-selectInput("edata", h4(tags$b("Use example data (training set)")),
-        choices =  c("NKI", "Liver"),
-        selected = "NKI"),
-hr(),
+h4(tags$b("Training Set Preparation")),
 
-h4(tags$b("Use my own data (training set)")),
+tabsetPanel(
+
+tabPanel("Example data", p(br()),
+selectInput("edata", h4(tags$b("Use example data (training set)")), 
+        choices =  c("NKI"), 
+        selected = "NKI")
+  ),
+
+tabPanel("Upload Data", p(br()),
 p("We suggested putting the dependent variable (Y) in the left side of all independent variables (X) "),
-
-h4(tags$b("Step 1. Upload Data File")),
 
 fileInput('file', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-p(tags$b("2. Show 1st row as column names?")),
+p(tags$b("2. Show 1st row as column names?")), 
 checkboxInput("header", "Yes", TRUE),
 
-p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+p(tags$b("3. Use 1st column as row names? (No duplicates)")), 
 checkboxInput("col", "Yes", TRUE),
 
 radioButtons("sep", "4. Which separator for data?",
@@ -126,24 +129,27 @@ selected = '"'),
 
 p("Correct separator and quote ensure the successful data input"),
 
-a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets"),
-
+a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+  )
+  ),
+hr(),
 h4(tags$b("(Optional) Change the types of some variable?")),
 
-#p(tags$b("Choice 1. Change Real-valued Variables into Categorical Variable")),
-
 uiOutput("factor1"),
+uiOutput("factor2"),
+hr(),
 
-#p(tags$b("Choice 2. Change Categorical Variable (Numeric Factors) into Numeric Variables (Numbers)")),
-
-uiOutput("factor2")
+h4(tags$b(actionLink("ModelPCR","Build PCR Model"))),
+h4(tags$b(actionLink("ModelPLSR","Build PLSR Model"))),
+h4(tags$b(actionLink("ModelSPLSR","Build SPLSR Model")))
+#h4(tags$b("Build Model in the Next Tab"))
 
 ),
 
 
 mainPanel(
 h4(tags$b("Output 1. Data Information")),
-p(tags$b("Data Preview")),
+p(tags$b("Data Preview")), 
 p(br()),
 DT::DTOutput("Xdata"),
 
@@ -153,7 +159,7 @@ verbatimTextOutput("strnum"),
 p(tags$b("2. Categorical variable information list")),
 verbatimTextOutput("strfac"),
 
-hr(),
+hr(),   
 h4(tags$b("Output 2. Basic Descriptives")),
 
 tabsetPanel(
@@ -178,7 +184,7 @@ HTML("<p><b>Linear fitting plot</b>: to roughly show the linear relation between
 uiOutput('tx'),
 uiOutput('ty'),
 
-plotOutput("p1", width = "80%")
+plotly::plotlyOutput("p1", width = "80%")
 ),
 
 tabPanel("Histogram", p(br()),
@@ -186,11 +192,11 @@ tabPanel("Histogram", p(br()),
 HTML("<p><b>Histogram</b>: to roughly assess the probability distribution of a given variable by depicting the frequencies of observations occurring in certain ranges of values.</p>"),
 uiOutput('hx'),
 p(tags$b("Histogram")),
-plotOutput("p2", width = "80%"),
+plotly::plotlyOutput("p2", width = "80%"),
 sliderInput("bin", "The number of bins in the histogram", min = 0, max = 100, value = 0),
 p("When the number of bins is 0, plot will use the default number of bins "),
 p(tags$b("Density plot")),
-plotOutput("p21", width = "80%"))
+plotly::plotlyOutput("p21", width = "80%"))
 
 )
 
@@ -206,6 +212,8 @@ hr()
 tabPanel("PCR",
 
 titlePanel("Principal Component Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <b>Principal component regression (PCR)</b> is a regression analysis technique that is based on principal component analysis (PCA). It finds hyperplanes of maximum variance between the response and independent variables.
@@ -215,7 +223,7 @@ HTML(
 <li> To get correlation matrix and plot
 <li> To get the results from model
 <li> To get the factors and loadings result tables and
-<li> To get the factors and loadings distribution plots
+<li> To get the factors and loadings distribution plots in 2D and 3D
 <li> To get the predicted dependent variables
 </ul>
 
@@ -228,9 +236,10 @@ HTML(
 </ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 hr(),
-#source("pcr_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_pcr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************pcr
 sidebarLayout(
 
@@ -242,21 +251,26 @@ tags$head(tags$style("#pcr_rmsep {overflow-y:scroll;background: white};")),
 tags$head(tags$style("#pcr_msep {overflow-y:scroll; background: white};")),
 tags$head(tags$style("#tdtrace {overflow-y:scroll; height: 200px; background: white};")),
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the Data tab"),
+hr(),    
 
-h4(tags$b("Step 1. Choose parameters to build the model")),
+h4(tags$b("Step 1. Choose parameters to build the model")),    
 
-uiOutput('x'),
-uiOutput('y'),
+uiOutput('x'), 
+uiOutput('y'), 
 
 numericInput("nc", "4. How many new components (a)", 4, min = 1, max = NA),
 #p("If data are complete, 'pca' uses Singular Value Decomposition; if there are some missing values, it uses the NIPALS algorithm."),
-
+radioButtons("val", "5. Whether to do cross-validation",
+choices = c("No" = 'none',
+           "10-fold cross-validation" = "CV",
+           "Leave-one-out cross-validation" = "LOO"),
+selected = 'none'),
 hr(),
-h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
-numericInput("c1", "1. Component at x-axis", 1, min = 1, max = NA),
-numericInput("c2", "2. Component at y-axis", 2, min = 1, max = NA),
-p("x and y must be different")
+
+h4(tags$b("Step 2. If data and model are ready, click the blue button to generate model results.")),
+actionButton("pcr1", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 
 ),
 
@@ -264,35 +278,21 @@ mainPanel(
 
 h4(tags$b("Output 1. Data Preview")),
 p(br()),
-p(tags$b("Browse")),
-p("This only shows the first several lines, please check full data in the 1st tab"),
+p(tags$b("Part of Data")),
+ p("Please edit data in Data tab"),
 DT::DTOutput("pcr.x"),
 
 hr(),
 #p("Please make sure both X and Y have been prepared. If Error happened, please check your X and Y data."),
-actionButton("pcr1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
- p(br()),
+#sactionButton("pcr1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output 2. Model Results")),
 
 tabsetPanel(
+
 tabPanel("Result",p(br()),
-radioButtons("val", "Whether to do cross-validation",
-choices = c("No" = 'none',
-           "10-fold cross-validation" = "CV",
-           "Leave-one-out cross-validation" = "LOO"),
-selected = 'none'),
-p("10-fold cross-validation randomly split the data into 10 fold every time, so the results will not be exactly the same after refresh."),
-
-verbatimTextOutput("pcr"),
-p(tags$b("R^2")),
-verbatimTextOutput("pcr_r"),
-p(tags$b("Mean square error of prediction (MSEP)")),
-verbatimTextOutput("pcr_msep"),
-p(tags$b("Root mean square error of prediction (RMSEP)")),
-verbatimTextOutput("pcr_rmsep"),
-
 HTML(
 "
-Explanations
+<b>Explanations</b>
 
 <ul>
 <li> The results from 1 component, 2 component, ... n components are given
@@ -302,7 +302,17 @@ Explanations
 <li> The number of components are recommended with high R^2 and low MSEP / RSMEP
 </ul>
 "
-)
+),
+p("10-fold cross-validation randomly split the data into 10 fold every time, so the results will not be exactly the same after refresh."),
+
+verbatimTextOutput("pcr"),
+p(tags$b("R^2")),
+verbatimTextOutput("pcr_r"),
+p(tags$b("Mean square error of prediction (MSEP)")),
+verbatimTextOutput("pcr_msep"),
+p(tags$b("Root mean square error of prediction (RMSEP)")),
+verbatimTextOutput("pcr_rmsep")
+
 ),
 
 tabPanel("Data Fitting",p(br()),
@@ -323,12 +333,17 @@ HTML("
 <li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
 </ul>
 
-<i> Click the button to show and update the result.
+<i> Click the button to show and update the result. 
 <ul>
 <li> In the plot of PC1 and PC2 (without group circle), we could find some outliers in the right. After soring PC1 in the table, we could see 70 is one of the outliers.
 </ul></i>
   "),
-  plotOutput("pcr.s.plot", width = "80%"),
+hr(),
+p(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c1", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c2", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+  plotly::plotlyOutput("pcr.s.plot", width = "80%"),
   DT::DTOutput("pcr.s")
   ),
 
@@ -338,12 +353,12 @@ HTML("
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
-  plotOutput("pcr.l.plot", width = "80%"),
+  plotly::plotlyOutput("pcr.l.plot", width = "80%"),
   DT::DTOutput("pcr.l")
   ),
 
@@ -358,8 +373,39 @@ HTML("
 </ul>
 
   "),
-  plotOutput("pcr.bp", width = "80%")
-  )
+hr(),
+p(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c11", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c22", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+  plotly::plotlyOutput("pcr.bp", width = "80%")
+  ),
+
+tabPanel("Component and Loading 3D Plot" ,p(br()),
+HTML("
+<b>Explanations</b>
+<ul>
+<li> This is the extension for 2D plot. This plot overlays the components and the loadings for 3 PCs (choose PCs and the length of lines in the left panel)
+<li> We can find the outliers in the plot. 
+<li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
+<li> Loadings identify which variables have the largest effect on each component
+<li> Loadings can range from -1 to 1. Loadings close to -1 or 1 indicate that the variable strongly influences the component. Loadings close to 0 indicate that the variable has a weak influence on the component.
+</ul>
+  "),
+hr(),
+
+p(tags$b("This plot needs some time to load for the first time")),
+p(tags$b("When #comp >=3, choose components to show factor and loading 3D plot")),
+numericInput("td1", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("td2", "2. Component at y-axis", 2, min = 1, max = NA),
+numericInput("td3", "3. Component at z-axis", 3, min = 1, max = NA),
+p("x y z must be different"),
+
+numericInput("lines", "4. (Optional) Change line scale (length)", 20, min = 1, max = NA),
+plotly::plotlyOutput("tdplot"),
+p(tags$b("Trace legend")),
+verbatimTextOutput("tdtrace")
+)
 )
 
 )
@@ -376,6 +422,8 @@ tabPanel("Prediction1",
 
 titlePanel("Prediction after Principal Component Regression"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
@@ -397,26 +445,31 @@ Suppose in the same study, we got more measurements and wanted to predict the ou
 </h4></i>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 
 hr(),
-#source("pr1_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_pcr_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************pcr-pred
 
 sidebarLayout(
 
 sidebarPanel(
 
-h4(tags$b("Use example data (test set)")),
-h4("Click the Output"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-hr(),
+tabsetPanel(
 
-h4(tags$b("Use my own data (test set)")),
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: NKI"))
+
+  ),
+
+tabPanel("Upload Data", p(br()),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
-
-h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -443,27 +496,40 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensure the successful data input")
+
+)
+),
+
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B.pcr", (tags$b("Show Prediction >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
 
 mainPanel(
 
-h4(tags$b("Output. Data Preview")),
-DT::DTOutput("newX"),
-hr(),
-actionButton("B.pcr", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
-p(br()),
+#actionButton("B.pcr", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+h4(tags$b("Output. Model Results")),
+
+#p(br()),
 tabsetPanel(
 tabPanel("Predicted Dependent Variable",p(br()),
-p("The first column (1 comps) is predicted value when #comp is 1, the second column (2 comps) is predicted value when #comp is 2, and so forth."),
+p("The first column (1 comps) is predicted value using the 1st component, the second column (2 comps) is predicted using the first 2 components, and so forth."),
 DT::DTOutput("pred.lp")
 ),
 
 tabPanel("Predicted Components",p(br()),
 DT::DTOutput("pred.comp")
+),
+tabPanel("Test Data",p(br()),
+DT::DTOutput("newX")
 )
-)
-)
+) 
+) 
 ),
 hr()
 
@@ -473,6 +539,8 @@ hr()
 tabPanel("PLSR",
 
 titlePanel("Partial Least Squares Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <b>Partial least squares regression (PLSR)</b> is a regression analysis technique that finds a linear regression model by projecting the predicted variables and the observable variables to a new space.
@@ -482,7 +550,7 @@ HTML(
 <li> To get correlation matrix and plot
 <li> To get the results from model
 <li> To get the factors and loadings result tables and
-<li> To get the factors and loadings distribution plots
+<li> To get the factors and loadings distribution plots in 2D and 3D
 <li> To get the predicted dependent variables
 </ul>
 
@@ -495,77 +563,69 @@ HTML(
 </ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 
 hr(),
-#source("plsr_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_pls.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************plsr
 sidebarLayout(
 
 sidebarPanel(
 
-tags$head(tags$style("#pls {overflow-y:scroll; height: 300px; background: white};")),
-tags$head(tags$style("#pls_r {overflow-y:scroll; background: white};")),
-tags$head(tags$style("#pls_rmsep {overflow-y:scroll;background: white};")),
-tags$head(tags$style("#pls_msep {overflow-y:scroll; background: white};")),
-tags$head(tags$style("#pls_tdtrace {overflow-y:scroll; height: 200px; background: white};")),
+tags$head(tags$style("#pls {overflow-y:scroll; max-height: 300px; background: white};")),
+tags$head(tags$style("#pls_r {overflow-y:scroll; max-height: 300px; background: white};")),
+tags$head(tags$style("#pls_rmsep {overflow-y:scroll;max-height: 300px; background: white};")),
+tags$head(tags$style("#pls_msep {overflow-y:scroll; max-height: 300px; background: white};")),
+tags$head(tags$style("#pls_tdtrace {overflow-y:scroll; max-height: 200px; background: white};")),
 
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the Data tab"),
+hr(), 
+h4(tags$b("Step 1. Choose parameters to build the model")),    
 
-h4(tags$b("Step 1. Choose parameters to build the model")),
-
-uiOutput('x.r'),
-uiOutput('y.r'),
+uiOutput('x.r'), 
+uiOutput('y.r'), 
 
 numericInput("nc.r", "4. How many new components (a)", 4, min = 1, max = NA),
 
-hr(),
-h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
-numericInput("c1.r", "1. Component at x-axis", 1, min = 1, max = NA),
-numericInput("c2.r", "2. Component at y-axis", 2, min = 1, max = NA),
-p("x and y must be different")
-),
-
-mainPanel(
-
-h4(tags$b("Output 1. Data Preview")),
-p(br()),
-p(tags$b("Browse")),
-p("This only shows the first several lines, please check full data in the 1st tab"),
-DT::DTOutput("pls.x"),
-
-hr(),
-actionButton("pls1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
- p(br()),
-
-tabsetPanel(
-tabPanel("Result",p(br()),
-radioButtons("val.r", "Whether to do cross-validation",
+radioButtons("val.r", "5. Whether to do cross-validation",
 choices = c("No cross-validation" = 'none',
            "10-fold cross-validation" = "CV",
            "Leave-one-out cross-validation" = "LOO"),
 selected = 'none'),
-p("10-fold cross-validation randomly split the data into 10 fold every time, so the results will not be exactly the same after refresh."),
 
-radioButtons("method.r", "Which PLS algorithm",
+radioButtons("method.r", "6. Which PLS algorithm",
   choices = c("SIMPLS: simple and fast" = 'simpls',
            "Kernel algorithm" = "kernelpls",
            "Wide kernel algorithm" = "widekernelpls",
            "Classical orthogonal scores algorithm" = "oscorespls"),
 selected = 'simpls'),
+hr(),
 
+h4(tags$b("Step 2. If data and model are ready, click the blue button to generate model results.")),
+actionButton("pls1", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
 
-verbatimTextOutput("pls"),
-p(tags$b("R^2")),
-verbatimTextOutput("pls_r"),
-p(tags$b("Mean square error of prediction (MSEP)")),
-verbatimTextOutput("pls_msep"),
-p(tags$b("Root mean square error of prediction (RMSEP)")),
-verbatimTextOutput("pls_rmsep"),
+),
+
+mainPanel(
+
+h4(tags$b("Output 1. Data Preview")),
+p(tags$b("Part of Data")),
+ p("Please edit data in Data tab"),
+DT::DTOutput("pls.x"),
+
+hr(),
+#actionButton("pls1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")),  style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output 2. Model Results")),
+
+tabsetPanel(
+tabPanel("Result",p(br()),
+
 HTML(
 "
-Explanations
+<b>Explanations</b>
 
 <ul>
 <li> The results from 1 component, 2 component, ... n components are given
@@ -575,8 +635,18 @@ Explanations
 <li> The number of components are recommended with high R^2 and low MSEP / RSMEP
 </ul>
 "
-)
-  ),
+),
+p("10-fold cross-validation randomly split the data into 10 fold every time, so the results will not be exactly the same after refresh."),
+
+verbatimTextOutput("pls"),
+p(tags$b("R^2")),
+verbatimTextOutput("pls_r"),
+p(tags$b("Mean square error of prediction (MSEP)")),
+verbatimTextOutput("pls_msep"),
+p(tags$b("Root mean square error of prediction (RMSEP)")),
+verbatimTextOutput("pls_rmsep")
+
+),
 
 tabPanel("Data Fitting",p(br()),
 p("The first column (1 comps) is predicted using the 1st component, the second column (2 comps) are predicted using the 1st and 2nd components, and so forth."),
@@ -597,7 +667,14 @@ tabPanel("Components", p(br()),
 <li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
 </ul>
   "),
-  plotOutput("pls.s.plot", width = "80%"),
+  hr(),
+
+h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c1.r", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c2.r", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+
+  plotly::plotlyOutput("pls.s.plot", width = "80%"),
   DT::DTOutput("pls.s")
   ),
 
@@ -607,12 +684,12 @@ tabPanel("Loading", p(br()),
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
-  plotOutput("pls.l.plot", width = "80%"),
+  plotly::plotlyOutput("pls.l.plot", width = "80%"),
   DT::DTOutput("pls.l")
   ),
 
@@ -627,8 +704,40 @@ tabPanel("Component and Loading 2D Plot", p(br()),
 </ul>
 
   "),
-  plotOutput("pls.bp", width = "80%")
-  )
+    hr(),
+
+h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c11.r", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c22.r", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+  plotly::plotlyOutput("pls.bp", width = "80%")
+  ),
+
+tabPanel("Component and Loading 3D Plot" ,p(br()),
+  HTML("
+<b>Explanations</b>
+<ul>
+<li> This is the extension for 2D plot. This plot overlays the components and the loadings for 3 PCs (choose PCs and the length of lines in the left panel)
+<li> We can find the outliers in the plot. 
+<li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
+<li> Loadings identify which variables have the largest effect on each component
+<li> Loadings can range from -1 to 1. Loadings close to -1 or 1 indicate that the variable strongly influences the component. Loadings close to 0 indicate that the variable has a weak influence on the component.
+</ul>
+  "),
+hr(),
+p(tags$b("This plot needs some time to load for the first time")),
+
+p(tags$b("When #comp >=3, choose components to show factor and loading 3D plot")),
+numericInput("td1.r", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("td2.r", "2. Component at y-axis", 2, min = 1, max = NA),
+numericInput("td3.r", "3. Component at z-axis", 3, min = 1, max = NA),
+p("x y z must be different"),
+
+numericInput("lines.r", "4. (Optional) Change line scale (length)", 0.1, min = 1, max = NA),
+plotly::plotlyOutput("pls.tdplot"),
+p(tags$b("Trace legend")),
+verbatimTextOutput("pls_tdtrace")
+)
 )
 
 )
@@ -643,6 +752,8 @@ hr()
 tabPanel("Prediction2",
 
 titlePanel("Prediction after Partial Least Squares Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
@@ -664,25 +775,30 @@ Suppose in the same study, we got more measurements and wanted to predict the ou
 </h4></i>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 hr(),
-#source("pr2_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_pls_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************pls-pred
 
 sidebarLayout(
 
 sidebarPanel(
 
-h4(tags$b("Use example data (test set)")),
-h4("Click the Output"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-hr(),
+tabsetPanel(
 
-h4(tags$b("Use my own data (test set)")),
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: NKI"))
+
+  ),
+
+tabPanel("Upload Data", p(br()),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
-
-h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile.pls', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -708,16 +824,23 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensure the successful data input")
+)
+),
+
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B.pls", (tags$b("Show Prediction >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
 
 mainPanel(
 
-h4(tags$b("Output. Data Preview")),
-DT::DTOutput("newX.pls"),
-hr(),
-actionButton("B.pls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
-p(br()),
+h4(tags$b("Output. Model Results")),
+
 tabsetPanel(
 tabPanel("Predicted dependent variables",p(br()),
 
@@ -726,9 +849,12 @@ DT::DTOutput("pred.lp.pls")
 
 tabPanel("Predicted Components",p(br()),
 DT::DTOutput("pred.comp.pls")
+),
+tabPanel("Test Data",p(br()),
+DT::DTOutput("newX.pls")
 )
-)
-)
+) 
+) 
 ),
 hr()
 
@@ -738,6 +864,8 @@ hr()
 tabPanel("SPLSR",
 
 titlePanel("Sparse Partial Least Squares Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <b>Sparse partial least squares regression (SPLSR)</b> is a regression analysis technique that aims simultaneously to achieve good predictive performance and variable selection by producing sparse linear combinations of the original predictors.
@@ -747,7 +875,7 @@ HTML(
 <li> To get correlation matrix and plot
 <li> To get the results from model
 <li> To get the factors and loadings result tables and
-<li> To get the factors and loadings distribution plots
+<li> To get the factors and loadings distribution plots in 2D and 3D
 <li> To get the predicted dependent variables
 </ul>
 
@@ -759,32 +887,42 @@ HTML(
 </ul>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 hr(),
-#source("spls_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_spls.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************spls
 sidebarLayout(
 
 sidebarPanel(
 
-tags$head(tags$style("#spls {overflow-y:scroll; height: 300px; background: white};")),
-tags$head(tags$style("#spls_cv {overflow-y:scroll; height: 300px; background: white};")),
-tags$head(tags$style("#tdtrace {overflow-y:scroll; height: 200px; background: white};")),
+tags$head(tags$style("#spls {overflow-y:scroll; max-height: 300px; background: white};")),
+tags$head(tags$style("#spls_cv {overflow-y:scroll; max-height: 300px; background: white};")),
+tags$head(tags$style("#tdtrace {overflow-y:scroll; max-height: 200px; background: white};")),
 
-h4("Example data is upload in Data tab"),
+h4(tags$b("Prepare the Model")),
+p("Prepare the data in the Data tab"),
+hr(),      
 
-h4(tags$b("Step 1. Choose parameters to build the model")),
+h4(tags$b("Step 1. Choose parameters to build the model")),    
 
-uiOutput('x.s'),
-uiOutput('y.s'),
+uiOutput('x.s'), 
+uiOutput('y.s'), 
 
 numericInput("nc.s", "4. How many new components", 4, min = 1, max = NA),
-numericInput("nc.eta", "5. Parameter for selection range (larger number chooses less variables)", 0.9, min = 0, max = 1, step=0.1),
+numericInput("nc.eta", "5. Parameter for selection range (larger number chooses less variables)", 0.3, min = 0, max = 1, step=0.1),
+
+radioButtons("method.s", "Which PLS algorithm",
+  choices = c("SIMPLS: simple and fast" = 'simpls',
+           "Kernel algorithm" = "kernelpls",
+           "Wide kernel algorithm" = "widekernelpls",
+           "Classical orthogonal scores algorithm" = "oscorespls"),
+selected = 'simpls'),
 hr(),
-h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
-numericInput("c1.s", "1. Component at x-axis", 1, min = 1, max = NA),
-numericInput("c2.s", "2. Component at y-axis", 2, min = 1, max = NA),
-p("x and y must be different")
+
+h4(tags$b("Step 2. If data and model are ready, click the blue button to generate model results.")),
+actionButton("spls1", (tags$b("Show Results >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
 ),
 
 mainPanel(
@@ -793,37 +931,27 @@ h4(tags$b("Output 1. Data Preview")),
 
 tabsetPanel(
 
-tabPanel("Browse", p(br()),
-p("This only shows the first several lines, please check full data in the 1st tab"),
-DT::DTOutput("spls.x")
-),
 tabPanel("Cross-validated SPLS", p(br()),
 p("Choose optimal parameters from the following settings"),
 numericInput("cv.s", "Maximum new components", 10, min = 1, max = NA),
 numericInput("cv.eta", "Parameter for selection range (larger number chooses less variables)", 0.9, min = 0, max = 1, step=0.1),
 p("This result chooses optimal parameters using 10-fold cross-validation which split data randomly, so the result will not be exactly the same every time."),
 verbatimTextOutput("spls_cv")
-  )
+  ),
+tabPanel("Part of Data", br(),
+ p("Please edit data in Data tab"),
+DT::DTOutput("spls.x")
+)
 ),
 
 hr(),
-actionButton("spls1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
- p(br()),
+#actionButton("spls1", h4(tags$b("Click 1: Output 2. Show Model Results / Refresh")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+h4(tags$b("Output 1. Model Results")),
 
 tabsetPanel(
-tabPanel("Result",p(br()),
-
-radioButtons("method.s", "Which PLS algorithm",
-  choices = c("SIMPLS: simple and fast" = 'simpls',
-           "Kernel algorithm" = "kernelpls",
-           "Wide kernel algorithm" = "widekernelpls",
-           "Classical orthogonal scores algorithm" = "oscorespls"),
-selected = 'simpls'),
-
-verbatimTextOutput("spls")
-),
-
 tabPanel("Selection",p(br()),
+p(tags$b("The selected variables")),
+verbatimTextOutput("spls"),
 plotOutput("spls.bp", width = "80%"),
 p(tags$b("Coefficient")),
 DT::DTOutput("spls.coef")
@@ -837,33 +965,39 @@ DT::DTOutput("spls.sv")
 ),
 
 tabPanel("Components", p(br()),
-    p("This is components derived based on the selected variables"),
-      HTML("
+  p("This is components derived based on the selected variables"),
+    HTML("
 <b>Explanations</b>
 <ul>
 <li> This plot graphs the components relations from two scores, you can use the score plot to assess the data structure and detect clusters, outliers, and trends
 <li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
 </ul>
   "),
-    plotOutput("spls.s.plot", width = "80%"),
+    hr(),
+h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c1.s", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c2.s", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+  plotly::plotlyOutput("spls.s.plot", width = "80%"),
   DT::DTOutput("spls.s")
   ),
 
 tabPanel("Loading", p(br()),
-    p("This is loadings derived based on the selected variables"),
-      HTML("
+  p("This is loadings derived based on the selected variables"),
+    HTML("
 <b>Explanations</b>
 <ul>
 <li> This plot show the contributions from the variables to the PCs (choose PC in the left panel)
 <li> Red indicates negative and blue indicates positive effects
-<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain.
-<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained.
+<li> Use the cumulative proportion of variance (in the variance table) to determine the amount of variance that the factors explain. 
+<li> For descriptive purposes, you may need only 80% (0.8) of the variance explained. 
 <li> If you want to perform other analyses on the data, you may want to have at least 90% of the variance explained by the factors.
 </ul>
   "),
-  plotOutput("spls.l.plot", width = "80%"),
+  plotly::plotlyOutput("spls.l.plot", width = "80%"),
   DT::DTOutput("spls.l")
   ),
+
 tabPanel("Component and Loading 2D Plot", p(br()),
   p("This is loadings derived based on the selected variables"),
     HTML("
@@ -875,8 +1009,40 @@ tabPanel("Component and Loading 2D Plot", p(br()),
 <li> Loadings can range from -1 to 1. Loadings close to -1 or 1 indicate that the variable strongly influences the component. Loadings close to 0 indicate that the variable has a weak influence on the component.
 </ul>
   "),
-  plotOutput("spls.biplot", width = "80%")
-  )
+    hr(),
+h4(tags$b("When #comp >=2, choose components to show factor and loading 2D plot")),
+numericInput("c11.s", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("c22.s", "2. Component at y-axis", 2, min = 1, max = NA),
+p("x and y must be different"),
+  plotly::plotlyOutput("spls.biplot", width = "80%")
+  ),
+
+tabPanel("Component and Loading 3D Plot" ,p(br()),
+  HTML("
+<b>Explanations</b>
+<ul>
+<li> This is the extension for 2D plot. This plot overlays the components and the loadings for 3 PCs (choose PCs and the length of lines in the left panel)
+<li> We can find the outliers in the plot. 
+<li> If the data follow a normal distribution and no outliers are present, the points are randomly distributed around zero
+<li> Loadings identify which variables have the largest effect on each component
+<li> Loadings can range from -1 to 1. Loadings close to -1 or 1 indicate that the variable strongly influences the component. Loadings close to 0 indicate that the variable has a weak influence on the component.
+</ul>
+
+  "),
+hr(),
+p(tags$b("This plot needs some time to load for the first time")),
+
+p(tags$b("When #comp >=3, choose components to show factor and loading 3D plot")),
+numericInput("td1.s", "1. Component at x-axis", 1, min = 1, max = NA),
+numericInput("td2.s", "2. Component at y-axis", 2, min = 1, max = NA),
+numericInput("td3.s", "3. Component at z-axis", 3, min = 1, max = NA),
+p("x y z must be different"),
+
+numericInput("lines.s", "4. (Optional) Change line scale (length)", 2, min = 1, max = NA),
+plotly::plotlyOutput("tdplot.s"),
+p(tags$b("Trace legend")),
+verbatimTextOutput("tdtrace.s")
+)
 )
 
 )
@@ -889,7 +1055,9 @@ hr()
 
 tabPanel("Prediction3",
 
-    titlePanel("Prediction after Partial Least Squares Regression"),
+  titlePanel("Prediction after Partial Least Squares Regression"),
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> 1. What you can do on this page  </b></h4>
@@ -911,27 +1079,32 @@ Suppose in the same study, we got more measurements and wanted to predict the ou
 </h4></i>
 
 <h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
-"),
+")
+),
 
 
 hr(),
-#source("pr3_ui.R", local=TRUE, encoding="UTF-8")$value
+#source("ui_spls_pr.R", local=TRUE, encoding="UTF-8")$value,
 #****************************************************************************************************************************************************spls-pred
 
 sidebarLayout(
 
 sidebarPanel(
 
-h4(tags$b("Use example data (test set)")),
-h4("Click the Output"),
+h4(tags$b("Test Set Preparation")),
+p("Prepare model in the previous Model tab"),
 
-hr(),
+tabsetPanel(
 
-h4(tags$b("Use my own data (test set)")),
+tabPanel("Example data", p(br()),
+
+ h4(tags$b("Data: NKI"))
+
+  ),
+
+tabPanel("Upload Data", p(br()),
 p("New data should include all the variables in the model"),
 p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
-
-h4(tags$b("Step 1. Upload New Data File")),
 
 fileInput('newfile.spls', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
@@ -959,47 +1132,60 @@ choices = c("None" = "",
 selected = '"'),
 
 p("Correct separator and quote ensure the successful data input")
+)
+),
+
+hr(),
+
+h4(tags$b("If the model and new data are ready, click the blue button to generate prediction results.")),
+
+actionButton("B.pcr", (tags$b("Show Prediction >>")),class="btn btn-primary",icon=icon("bar-chart-o"))
+
+
 ),
 
 
 mainPanel(
 
-h4(tags$b("Output. Data Preview")),
-DT::DTOutput("newX.spls"),
-hr(),
-actionButton("B.spls", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
-p(br()),
+h4(tags$b("Output. Model Results")),
 
+tabsetPanel(
+tabPanel("Predicted Dependent Variable",p(br()),
+p("The first column (1 comps) is predicted value using the 1st component, the second column (2 comps) is predicted using the first 2 components, and so forth."),
 DT::DTOutput("pred.lp.spls")
-
+),
+tabPanel("Test Data",p(br()),
+DT::DTOutput("newX.spls")
 )
+) 
+) 
 ),
 hr()
 
 ),
-
 ##########----------##########----------##########
-tabPanel((a("Help Pages Online",
-            target = "_blank",
-            style = "margin-top:-30px; color:DodgerBlue",
-            href = paste0("https://mephas.github.io/helppage/")))),
-tabPanel(
-  tags$button(
-    id = 'close',
-    type = "button",
-    class = "btn action-button",
-    style = "margin-top:-8px; color:Tomato; background-color: #F8F8F8  ",
-    onclick = "setTimeout(function(){window.close();},500);",  # close browser
-    "Stop and Quit"))
+
+tabPanel(tags$button(
+            id = 'close',
+            type = "button",
+            class = "btn action-button",
+            icon("power-off"),
+            style = "background:rgba(255, 255, 255, 0); display: inline-block; padding: 0px 0px;",
+            onclick = "setTimeout(function(){window.close();},500);")),
+navbarMenu("",icon=icon("link"))
+
 
 ))
 
+
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-#source("0data_server.R", local=TRUE, encoding="UTF-8")
+#source("../func.R")
+##########----------##########----------##########
+#source("server_data.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************
 
 #load("pls.RData")
@@ -1007,8 +1193,8 @@ server <- function(input, output) {
 
 data <- reactive({
                 switch(input$edata,
-               "NKI" = nki2.train,
-               "Liver" = liver.train)
+               "NKI" = nki2.train)
+               #"Liver" = liver.train)
                #"Independent variable matrix (Gene sample2)" = genesample2)
         })
 
@@ -1048,7 +1234,7 @@ selectInput(
 })
 
 DF1 <- reactive({
-df <-DF0()
+df <-DF0() 
 df[input$factor1] <- as.data.frame(lapply(df[input$factor1], factor))
 return(df)
   })
@@ -1069,7 +1255,7 @@ selectInput(
 })
 
 X <- reactive({
-  df <-DF1()
+  df <-DF1() 
 df[input$factor2] <- as.data.frame(lapply(df[input$factor2], as.numeric))
 return(df)
   })
@@ -1081,7 +1267,7 @@ colnames(X()[unlist(lapply(X(), is.factor))])
  output$Xdata <- DT::renderDT({
   if (ncol(X())>1000 || nrow(X())>1000) {X()[,1:1000]}
   else { X()}
-  },
+  }, 
     extensions = list(
       'Buttons'=NULL,
       'Scroller'=NULL),
@@ -1112,8 +1298,8 @@ sum <- reactive({
   return(res)
   })
 
-output$sum <- DT::renderDT({sum()},
-    extensions = 'Buttons',
+output$sum <- DT::renderDT({sum()}, 
+    extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1139,25 +1325,24 @@ output$fsum = renderPrint({fsum()})
 
 output$tx = renderUI({
    selectInput(
-     'tx',
+     'tx', 
      tags$b('1. Choose a numeric variable for the x-axis'),
      selected=type.num3()[2],
      choices = type.num3())
    })
-
+ 
  output$ty = renderUI({
    selectInput(
      'ty',
      tags$b('2. Choose a numeric variable for the y-axis'),
      selected = type.num3()[1],
      choices = type.num3())
-
+   
  })
 
- output$p1 = renderPlot({
-  plot_scat(X(), varx=input$tx, vary=input$ty)
-   #ggplot(X(), aes(x = X()[, input$tx], y = X()[, input$ty])) + geom_point(shape = 1) +
-   #  geom_smooth(method = "lm") + xlab(input$tx) + ylab(input$ty) + theme_minimal()
+ output$p1 = plotly::renderPlotly({
+   p<- plot_scat(X(), input$tx, input$ty)
+   plotly::ggplotly(p)
    })
 
 ## histogram
@@ -1166,33 +1351,29 @@ output$hx = renderUI({
   selectInput(
     'hx',
      tags$b('Choose a numeric variable'),
-     selected = type.num3()[1],
+     selected = type.num3()[1], 
      choices = type.num3())
 })
 
-output$p2 = renderPlot({
-  plot_hist1(X(), input$hx, input$bin)
-   #ggplot(X(), aes(x = X()[, input$hx])) +
-   #  geom_histogram(binwidth = input$bin, colour = "black",fill = "grey") +
-     #geom_density()+
-   #  xlab("") + theme_minimal() + theme(legend.title = element_blank())
+output$p2 = plotly::renderPlotly({
+   p<-plot_hist1(X(), input$hx, input$bin)
+   plotly::ggplotly(p)
    })
 
-output$p21 = renderPlot({
-  plot_density1(X(), input$hx)
-   #ggplot(X(), aes(x = X()[, input$hx])) +
-     #geom_histogram(binwidth = input$bin, colour = "black",fill = "white") +
-     #geom_density() +
-     #xlab("") + theme_minimal() + theme(legend.title = element_blank())
+output$p21 = plotly::renderPlotly({
+     p<-plot_density1(X(), input$hx)
+     plotly::ggplotly(p)
    })
 
-#source("pcr_server.R", local=TRUE, encoding="UTF-8")
+
+
+#source("server_pcr.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************pcr
 
 output$x = renderUI({
 selectInput(
 'x',
-tags$b('1. Choose independent variable matrix (X)'),
+tags$b('1. Add / Remove independent variables (X)'),
 selected = type.num3()[-c(1:3)],
 choices = type.num3(),
 multiple = TRUE
@@ -1229,7 +1410,7 @@ pcr <- eventReactive(input$pcr1,{
   X <- as.matrix(X()[,input$x])
   validate(need(min(ncol(X), nrow(X))>input$nc, "Please input enough independent variables"))
   validate(need(input$nc>=1, "Please input correct number of components"))
-  pls::mvr(Y~X, ncomp=input$nc, validation=input$val, model=FALSE, method = "svdpc",scale = TRUE, center = TRUE)
+  mvr(Y~X, ncomp=input$nc, validation=input$val, model=FALSE, method = "svdpc",scale = TRUE, center = TRUE)
   })
 
 #pca.x <- reactive({ pca()$x })
@@ -1243,112 +1424,179 @@ output$pcr  <- renderPrint({
   })
 
 output$pcr_r  <- renderPrint({
-  pls::R2(pcr(),estimate = "all")
+  R2(pcr(),estimate = "all")
   })
 
 output$pcr_msep  <- renderPrint({
-  pls::MSEP(pcr(),estimate = "all")
+  MSEP(pcr(),estimate = "all")
   })
 
 output$pcr_rmsep  <- renderPrint({
-  pls::RMSEP(pcr(),estimate = "all")
+  RMSEP(pcr(),estimate = "all")
   })
 
-score <- reactive({
-  as.data.frame(pcr()$scores[,1:input$nc])
+score <- eventReactive(input$pcr1,{
+  as.data.frame(pcr()$scores[,1:pcr()$ncomp])
   })
 
-load <- reactive({
-  as.data.frame(pcr()$loadings[,1:input$nc])
+load <- eventReactive(input$pcr1,{
+  as.data.frame(pcr()$loadings[,1:pcr()$ncomp])
   })
 
-output$pcr.s <- DT::renderDT({score()},
-  extensions = 'Buttons',
+output$pcr.s <- DT::renderDT({score()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.s <- DT::renderDT({load()},
-  extensions = 'Buttons',
+output$pcr.l <- DT::renderDT({load()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.pres <- DT::renderDT({as.data.frame(pcr()$fitted.values[,,1:pcr()$ncomp])},
-  extensions = 'Buttons',
+output$pcr.pres <- DT::renderDT({as.data.frame(pcr()$fitted.values[,,1:pcr()$ncomp])}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.coef <- DT::renderDT({as.data.frame(pcr()$coefficients)},
-  extensions = 'Buttons',
+output$pcr.coef <- DT::renderDT({as.data.frame(pcr()$coefficients)}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pcr.resi <- DT::renderDT({as.data.frame(pcr()$residuals[,,1:pcr()$ncomp])},
-  extensions = 'Buttons',
+output$pcr.resi <- DT::renderDT({as.data.frame(pcr()$residuals[,,1:pcr()$ncomp])}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
 
-output$pcr.s.plot  <- renderPlot({
+output$pcr.s.plot  <- plotly::renderPlotly({ 
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
-plot_score(score, input$c1, input$c2)
-#df <- as.data.frame(pcr()$scores[,1:pcr()$ncomp])
-
-#  ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
+p<-plot_score(score, input$c1, input$c2)
+plotly::ggplotly(p)
+# ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
 #  geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
 #  theme_minimal()+
 #  xlab(paste0("Score", input$c1))+ylab(paste0("Score", input$c2))
 
   })
 
-output$pcr.l.plot  <- renderPlot({
-  load <- load()
-  plot_load(load, input$nc)
-#ll <- as.data.frame(pcr()$loadings[,1:pcr()$ncomp])
+output$pcr.l.plot  <- plotly::renderPlotly({ 
+load <- load()
+p<-plot_load(loads=load, a=input$nc)
+plotly::ggplotly(p)
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
-#                   measure=colnames(ll)[1:pcr()$ncomp])
+#                   measure=colnames(ll)[1:input$nc])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
-##  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal
-#  #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading",
-#                       high = "blue", mid = "white", low = "red",
+#  geom_bar(stat="identity") + #make the bars
+#  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+#  scale_fill_gradient2(name = "Loading", 
+#                       high = "blue", mid = "white", low = "red", 
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$pcr.bp   <- renderPlot({
+output$pcr.bp   <- plotly::renderPlotly({ 
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score()
 load <- load()
-plot_biplot(score, load, input$c1, input$c2)
+p<-plot_biplot(score, load, input$c11, input$c22)
+plotly::ggplotly(p)
 #plot(pcr(), plottype = c("biplot"), comps=c(input$c1,input$c2),var.axes = TRUE, main="")
 })
 
+# Plot of the explained variance
+#output$pca.plot <- renderPlot({ screeplot(pca(), npcs= input$nc, type="lines", main="") })
 
-#source("pr1_server.R", local=TRUE, encoding="UTF-8")
+output$tdplot <- plotly::renderPlotly({ 
+validate(need(input$nc>=3, "The number of components must be >= 3"))
+
+score <- score()
+load <- load()
+
+plot_3D(scores=score, loads=load, nx=input$td1,ny=input$td2,nz=input$td3, scale=input$lines)
+
+#x <- scores[,input$td1]
+#y <- scores[,input$td2]
+#z <- scores[,input$td3]
+# Scale factor for loadings
+#scale.loads <- input$lines
+
+#layout <- list(
+#  scene = list(
+#    xaxis = list(
+#      title = paste0("PC", input$td1), 
+#      showline = TRUE
+#    ), 
+#    yaxis = list(
+#      title = paste0("PC", input$td2), 
+#      showline = TRUE
+#    ), 
+#    zaxis = list(
+#      title = paste0("PC", input$td3), 
+#      showline = TRUE
+#    )
+#  ), 
+#  title = "PCA (3D)"
+#)
+
+#rnn <- rownames(as.data.frame(pcr()$scores[,1:input$nc]))
+
+#p <- plot_ly() %>%
+#  add_trace(x=x, y=y, z=z, 
+#            type="scatter3d", mode = "text+markers", 
+#            name = "original", 
+#            linetypes = NULL, 
+#            opacity = 0.5,
+#            marker = list(size=2),
+#            text = rnn) %>%
+#  layout(p, scene=layout$scene, title=layout$title)
+
+#for (k in 1:nrow(loads)) {
+#  x <- c(0, loads[k,1])*scale.loads
+#  y <- c(0, loads[k,2])*scale.loads
+#  z <- c(0, loads[k,3])*scale.loads
+#  p <- p %>% add_trace(x=x, y=y, z=z,
+#                       type="scatter3d", mode="lines",
+#                       line = list(width=4),
+#                       opacity = 1) 
+#}
+#p
+
+})
+
+output$tdtrace <- renderPrint({
+  validate(need(input$nc>=3, "The number of components must be >= 3"))
+  x <- rownames(load())
+  names(x) <- paste0("trace", 1:length(x)) 
+  return(x)
+  })
+
+#source("server_pcr_pr.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************pcr-pred
 
 newX = reactive({
   inFile = input$newfile
   if (is.null(inFile)){
-    if (input$edata=="NKI") {x <- nki2.test}
-    else {x<- liver.test}
+    input$edata=="NKI"
+    #if (input$edata=="NKI") {x <- nki2.test}
+    #else {x<- liver.test}
     }
   else{
 if(!input$newcol){
@@ -1367,7 +1615,7 @@ return(as.data.frame(x))
 #prediction plot
 # prediction
 output$newX  = DT::renderDT({newX()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1386,7 +1634,7 @@ pred.comp = eventReactive(input$B.pcr,
 output$pred.lp = DT::renderDT({
 pred.lp()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1395,20 +1643,21 @@ scrollX = TRUE))
 output$pred.comp = DT::renderDT({
 pred.comp()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
 
-#source("plsr_server.R", local=TRUE, encoding="UTF-8")
+
+#source("server_pls.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************plsr
 
 output$x.r = renderUI({
 selectInput(
 'x.r',
-tags$b('1. Choose independent variable matrix (X)'),
+tags$b('1. Add / Remove independent variable matrix (X)'),
 selected = type.num3()[-c(1:3)],
 choices = type.num3(),
 multiple = TRUE
@@ -1445,7 +1694,7 @@ pls <- eventReactive(input$pls1,{
   X <- as.matrix(X()[,input$x.r])
   validate(need(min(ncol(X), nrow(X))>input$nc.r, "Please input enough independent variables"))
   validate(need(input$nc.r>=1, "Please input correct number of components"))
-  pls::mvr(Y~X, ncomp=input$nc.r, validation=input$val.r, model=FALSE, method = input$method.r,scale = TRUE, center = TRUE)
+  mvr(Y~X, ncomp=input$nc.r, validation=input$val.r, model=FALSE, method = input$method.r,scale = TRUE, center = TRUE)
   })
 
 output$pls  <- renderPrint({
@@ -1453,15 +1702,15 @@ output$pls  <- renderPrint({
   })
 
 output$pls_r  <- renderPrint({
-  pls::R2(pls(),estimate = "all")
+  R2(pls(),estimate = "all")
   })
 
 output$pls_msep  <- renderPrint({
-  pls::MSEP(pls(),estimate = "all")
+  MSEP(pls(),estimate = "all")
   })
 
 output$pls_rmsep  <- renderPrint({
-  pls::RMSEP(pls(),estimate = "all")
+  RMSEP(pls(),estimate = "all")
   })
 
 score.r <- reactive({
@@ -1472,36 +1721,36 @@ load.r <- reactive({
   as.data.frame(pls()$loadings[,1:pls()$ncomp])
   })
 
-output$pls.s <- DT::renderDT({score.r()},
-  extensions = 'Buttons',
+output$pls.s <- DT::renderDT({score.r()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.s <- DT::renderDT({load.r()},
-  extensions = 'Buttons',
+output$pls.l <- DT::renderDT({load.r()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.pres <- DT::renderDT({as.data.frame(pls()$fitted.values[,,1:pls()$ncomp])},
-  extensions = 'Buttons',
+output$pls.pres <- DT::renderDT({as.data.frame(pls()$fitted.values[,,1:pls()$ncomp])}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients)},
-  extensions = 'Buttons',
+output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients)}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])},
-  extensions = 'Buttons',
+output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1509,12 +1758,11 @@ output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])
 
 
 
-output$pls.s.plot  <- renderPlot({
+output$pls.s.plot  <- plotly::renderPlotly({ 
 validate(need(input$nc.r>=2, "The number of components must be >= 2"))
 score <- score.r()
-plot_score(score, input$c1.r, input$c2.r)
-#df <- as.data.frame(pls()$scores[,1:input$nc.r])
-
+p<-plot_score(score, input$c1.r, input$c2.r)
+plotly::ggplotly(p)
 #  ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
 #  geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
 #  theme_minimal()+
@@ -1522,44 +1770,111 @@ plot_score(score, input$c1.r, input$c2.r)
 
   })
 
-output$pls.l.plot  <- renderPlot({
+output$pls.l.plot  <- plotly::renderPlotly({ 
 load <- load.r()
-plot_load(load, input$nc.r)
-#ll <- as.data.frame(pls()$loadings[,1:input$nc.r])
+p<-plot_load(loads=load, a=pls()$ncomp)
+plotly::ggplotly(p)
 #ll$group <- rownames(ll)
 #loadings.m <- reshape::melt(ll, id="group",
 #                   measure=colnames(ll)[1:input$nc.r])
 
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
+#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
 #  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
 #  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal
+#  coord_flip() + #flip the axes so the test names can be horizontal  
   #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading",
-#                       high = "blue", mid = "white", low = "red",
+#  scale_fill_gradient2(name = "Loading", 
+#                       high = "blue", mid = "white", low = "red", 
 #                       midpoint=0, guide=F) +
 #  ylab("Loading Strength") + #improve y-axis label
 #  theme_bw(base_size=10)
 
   })
 
-output$pls.bp   <- renderPlot({
+output$pls.bp   <- plotly::renderPlotly({ 
   validate(need(input$nc.r>=2, "The number of components must be >= 2"))
-score <- score.r()
+  score <- score.r()
 load <- load.r()
-plot_biplot(score, load, input$c1.r, input$c2.r)
+p<-plot_biplot(score, load, input$c11.r, input$c22.r)
+plotly::ggplotly(p)
 #plot(pls(), plottype = c("biplot"), comps=c(input$c1.r,input$c2.r),var.axes = TRUE)
 })
 
+# Plot of the explained variance
+#output$pca.plot <- plotly::renderPlotly({ screeplot(pca(), npcs= input$nc.r, type="lines", main="") })
 
-#source("pr2_server.R", local=TRUE, encoding="UTF-8")
+output$pls.tdplot <- plotly::renderPlotly({ 
+validate(need(input$nc.r>=3, "The number of components must be >= 3"))
+score <- score.r()
+load <- load.r()
+
+plot_3D(scores=score, loads=load, nx=input$td1.r,ny=input$td2.r,nz=input$td3.r, scale=input$lines.r)
+
+
+# x <- scores[,input$td1.r]
+# y <- scores[,input$td2.r]
+# z <- scores[,input$td3.r]
+# # Scale factor for loadings
+# scale.loads <- input$lines.r
+# 
+# layout <- list(
+#   scene = list(
+#     xaxis = list(
+#       title = paste0("PC", input$td1.r), 
+#       showline = TRUE
+#     ), 
+#     yaxis = list(
+#       title = paste0("PC", input$td2.r), 
+#       showline = TRUE
+#     ), 
+#     zaxis = list(
+#       title = paste0("PC", input$td3.r), 
+#       showline = TRUE
+#     )
+#   ), 
+#   title = "PLS (3D)"
+# )
+# 
+# rnn <- rownames(as.data.frame(pls()$scores[,1:input$nc.r]))
+# 
+# p <- plot_ly() %>%
+#   add_trace(x=x, y=y, z=z, 
+#             type="scatter3d", mode = "text+markers", 
+#             name = "original", 
+#             linetypes = NULL, 
+#             opacity = 0.5,
+#             marker = list(size=2),
+#             text = rnn) %>%
+#   layout(p, scene=layout$scene, title=layout$title)
+# 
+# for (k in 1:nrow(loads)) {
+#   x <- c(0, loads[k,1])*scale.loads
+#   y <- c(0, loads[k,2])*scale.loads
+#   z <- c(0, loads[k,3])*scale.loads
+#   p <- p %>% add_trace(x=x, y=y, z=z,
+#                        type="scatter3d", mode="lines",
+#                        line = list(width=4),
+#                        opacity = 1) 
+# }
+# p
+
+})
+
+output$pls_tdtrace <- renderPrint({
+  x <- rownames(as.data.frame(pls()$loadings[,1:pls()$ncomp]))
+  names(x) <- paste0("trace", 1:length(x)) 
+  return(x)
+  })
+
+#source("server_pls_pr.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************pls-pred
 
 newX.pls = reactive({
   inFile = input$newfile.pls
   if (is.null(inFile)){
-    if (input$edata=="NKI") {x <- nki2.test}
-    else {x<- liver.test}
+    input$edata=="NKI"
+    #if (input$edata=="NKI") {x <- nki2.test}
+    #else {x<- liver.test}
     }
   else{
 if(!input$newcol.pls){
@@ -1578,20 +1893,21 @@ return(as.data.frame(x))
 #prediction plot
 # prediction
 output$newX.pls  = DT::renderDT({newX.pls()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
 pred.lp.pls = eventReactive(input$B.pls,
-{x <- as.data.frame(predict(pls(), newdata = as.data.frame(newX.pls())[,input$x], type="response")[,,pls()$ncomp])
+{
+x <- as.data.frame(predict(pls(), comps=pls()$ncomp, newdata = as.matrix(newX.pls())[,input$x.r], type="response"))
 colnames(x) <- input$y.r
 return(x)
 })
 
 pred.comp.pls = eventReactive(input$B.pls,
-{as.data.frame(predict(pls(), newdata = as.data.frame(newX.pls())[,input$x], type="scores"))
+{as.data.frame(predict(pls(), comps=1:pls()$ncomp, newdata = as.matrix(newX.pls())[,input$x.r], type="scores"))
 })
 
 
@@ -1599,7 +1915,7 @@ pred.comp.pls = eventReactive(input$B.pls,
 output$pred.lp.pls = DT::renderDT({
 pred.lp.pls()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1608,13 +1924,15 @@ scrollX = TRUE))
 output$pred.comp.pls = DT::renderDT({
 pred.comp.pls()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
-#source("spls_server.R", local=TRUE, encoding="UTF-8")
+
+
+#source("server_spls.R", local=TRUE, encoding="UTF-8") 
 #****************************************************************************************************************************************************spls
 
 output$x.s = renderUI({
@@ -1657,7 +1975,7 @@ output$spls_cv  <- renderPrint({
   validate(need(input$cv.eta>0 && input$nc.eta<1, "Please correct parameters"))
   spls::cv.spls(X,Y, eta = seq(0.1,input$cv.eta,0.1), K = c(1:input$cv.s),
     select="pls2", fit = input$method.s, plot.it = FALSE)
-
+  
   })
 
 spls <- eventReactive(input$spls1,{
@@ -1675,13 +1993,13 @@ output$spls  <- renderPrint({
   print(spls())
   })
 
-output$spls.bp   <- renderPlot({
+output$spls.bp   <- renderPlot({ 
 plot(spls())
 })
 
 score.s <- reactive({
   data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
-  })
+  }) 
 load.s <- reactive({
   as.data.frame(spls()$projection)
   })
@@ -1690,22 +2008,22 @@ output$spls.coef <- DT::renderDT({
   x<-as.data.frame(spls()$betamat)
   colnames(x) <- paste0("At comp", 1:spls()$K)
   rownames(x) <- input$x.s
-  return(x)},
-  extensions = 'Buttons',
+  return(x)}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.s <- DT::renderDT({score.s()},
-  extensions = 'Buttons',
+output$spls.s <- DT::renderDT({score.s()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.s <- DT::renderDT({load.s()},
-  extensions = 'Buttons',
+output$spls.l <- DT::renderDT({load.s()}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1714,15 +2032,15 @@ output$spls.s <- DT::renderDT({load.s()},
 output$spls.pres <- DT::renderDT({
   x <- as.data.frame(predict(spls(), type="fit"))
   colnames(x) <- input$y.s
-  return(x)},
-  extensions = 'Buttons',
+  return(x)}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
-  extensions = 'Buttons',
+output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])}, 
+  extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
@@ -1730,56 +2048,124 @@ output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
 
 
 
-output$spls.s.plot  <- renderPlot({
+output$spls.s.plot  <- plotly::renderPlotly({ 
   validate(need(input$nc.s>=2, "The number of components must be >=2"))
-    score <- score.s()
-  plot_score(score, input$c1.s, input$c2.s)
 
+  score <- score.s()
+  p<-plot_score(score, input$c1.s, input$c2.s)
+  plotly::ggplotly(p)
 #df <- data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
 
-##  ggplot(df, aes(x = df[,input$c1.s], y = df[,input$c2.s]))+
-#  geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
-#  theme_minimal()+
-#  xlab(paste0("Comp", input$c1.s))+ylab(paste0("Comp", input$c2.s))
+  #ggplot(df, aes(x = df[,input$c1.s], y = df[,input$c2.s]))+
+  #geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
+  #theme_minimal()+
+  #xlab(paste0("Comp", input$c1.s))+ylab(paste0("Comp", input$c2.s))
 
   })
 
-output$spls.l.plot  <- renderPlot({
-  load <- load.s()
-  plot_load(load, a=input$nc.s)
-#ll <- as.data.frame(spls()$projection)
-#ll$group <- rownames(ll)
-#loadings.m <- reshape::melt(ll, id="group",
-#                   measure=colnames(ll)[1:spls()$K])
-
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) +
-#  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
-#  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal
-  #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading",
-#                       high = "blue", mid = "white", low = "red",
-#                       midpoint=0, guide=F) +
-#  ylab("Loading Strength") + #improve y-axis label
-#  theme_bw(base_size=10)
+output$spls.l.plot  <- plotly::renderPlotly({ 
+load <- load.s()
+p <- plot_load(loads=load, a=input$nc.s)
+plotly::ggplotly(p)
+# ll$group <- rownames(ll)
+# loadings.m <- reshape::melt(ll, id="group",
+#                    measure=colnames(ll)[1:spls()$K])
+# 
+# ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
+#   facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
+#   geom_bar(stat="identity") + #make the bars
+#   coord_flip() + #flip the axes so the test names can be horizontal  
+#   #define the fill color gradient: blue=positive, red=negative
+#   scale_fill_gradient2(name = "Loading", 
+#                        high = "blue", mid = "white", low = "red", 
+#                        midpoint=0, guide=F) +
+#   ylab("Loading Strength") + #improve y-axis label
+#   theme_bw(base_size=10)
 
   })
 
-output$spls.biplot<- renderPlot({
+output$spls.biplot<- plotly::renderPlotly({ 
 validate(need(input$nc>=2, "The number of components must be >= 2"))
 score <- score.s()
 load <- load.s()
-plot_biplot(score, load, input$c1.s, input$c2.s)
+p<-plot_biplot(score, load, input$c11.s, input$c22.s)
+plotly::ggplotly(p)
 })
 
-#source("pr3_server.R", local=TRUE, encoding="UTF-8")
+output$tdplot.s <- plotly::renderPlotly({ 
+  validate(need(input$nc.s>=3, "The number of components must be >=3"))
+
+score <- score.s()
+load <- load.s()
+
+plot_3D(scores=score, loads=load, nx=input$td1.s,ny=input$td2.s,nz=input$td3.s, scale=input$lines.s)
+
+# 
+# x <- scores[,input$td1.s]
+# y <- scores[,input$td2.s]
+# z <- scores[,input$td3.s]
+# # Scale factor for loadings
+# scale.loads <- input$lines.s
+# 
+# layout <- list(
+#   scene = list(
+#     xaxis = list(
+#       title = paste0("PC", input$td1.s), 
+#       showline = TRUE
+#     ), 
+#     yaxis = list(
+#       title = paste0("PC", input$td2.s), 
+#       showline = TRUE
+#     ), 
+#     zaxis = list(
+#       title = paste0("PC", input$td3.s), 
+#       showline = TRUE
+#     )
+#   ), 
+#   title = "SPLS (3D)"
+# )
+# 
+# rnn <- rownames(scores)
+# 
+# p <- plot_ly() %>%
+#   add_trace(x=x, y=y, z=z, 
+#             type="scatter3d", mode = "text+markers", 
+#             name = "original", 
+#             linetypes = NULL, 
+#             opacity = 0.5,
+#             marker = list(size=2),
+#             text = rnn
+#             ) %>%
+#   layout(p, scene=layout$scene, title=layout$title)
+# 
+# for (k in 1:nrow(loads)) {
+#   x <- c(0, loads[k,1])*scale.loads
+#   y <- c(0, loads[k,2])*scale.loads
+#   z <- c(0, loads[k,3])*scale.loads
+#   p <- p %>% add_trace(x=x, y=y, z=z,
+#                        type="scatter3d", mode="lines",
+#                        line = list(width=4),
+#                        opacity = 1) 
+# }
+# p
+
+})
+
+output$tdtrace.s <- renderPrint({
+  x <- rownames(as.data.frame(spls()$projection))
+  names(x) <- paste0("trace", 1:length(x)) 
+  return(x)
+  })
+
+#source("server_spls_pr.R", local=TRUE, encoding="UTF-8")
 #****************************************************************************************************************************************************spls-pred
 
 newX.spls = reactive({
   inFile = input$newfile.spls
   if (is.null(inFile)){
-    if (input$edata=="NKI") {x <- nki2.test}
-    else {x<- liver.test}
+    input$edata=="NKI"
+    #if (input$edata=="NKI") {x <- nki2.test}
+    #else {x<- liver.test}
     }
   else{
 if(!input$newcol.spls){
@@ -1798,7 +2184,7 @@ return(as.data.frame(x))
 
 
 output$newX.spls  = DT::renderDT({newX.spls()},
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
@@ -1813,16 +2199,22 @@ return(x)
 output$pred.lp.spls = DT::renderDT({
 pred.lp.spls()
 },
-extensions = 'Buttons',
+extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
 buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
 
+
+##########----------##########----------##########
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
+
+observeEvent(input$"ModelPCR", showTab("navibar", target = "PCR", select = TRUE))
+observeEvent(input$"ModelPLSR", showTab("navibar", target = "PLSR", select = TRUE))
+observeEvent(input$"ModelSPLSR", showTab("navibar", target = "SPLSR", select = TRUE))
 
 }
 

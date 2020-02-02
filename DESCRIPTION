@@ -18,17 +18,22 @@ Imports:
     dunn.test,
     ROCR,
     ggplot2,
+    magrittr,
     psych,
     pls,
+    plotly,
     reshape,
     shiny,
+    shinythemes,
+    shinyWidgets,
     survival,
     survminer,
     survAUC,
-    stargazer,
     spls    
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
 URL: https://github.com/mephas/mephas
 BugReports: https://github.com/mephas/mephas/issues
+Suggests: 
+    stargazer

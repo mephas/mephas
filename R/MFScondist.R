@@ -15,40 +15,52 @@
 ##' @return shiny interface
 ##'
 ##' @import shiny
+##' @import shinythemes
 ##' @import ggplot2
-##' @importFrom stats dchisq dnorm dt pbinom pnorm ppois qchisq qexp qf qgamma qnorm qt quantile rchisq rexp rf rgamma rnorm rt sd var qbeta rbeta
-##' @importFrom utils head
-
+##'
+##' @importFrom stats dchisq dnorm dt pbinom pnorm ppois qchisq qexp qf qgamma qnorm qt quantile rchisq rexp rf rgamma rnorm rt sd var qbeta rbeta cor reshape
+##' @importFrom utils read.csv write.csv head
+##' @importFrom plotly plotlyOutput renderPlotly ggplotly layout plot_ly add_trace
+##' @importFrom shinyWidgets switchInput 
+##' @importFrom magrittr %>% 
+##'
 ##' @examples
-##' # library(mephas)
-##' # MFScondist()
-##' # or,
-##' # mephas::MFScondist()
-##' # or,
-##' # mephasOpen("condist")
-##' # Use 'Stop and Quit' Button in the top to quit the interface
+##' if (interactive()) {
+##'  MFScondist()
+##' }
+##' 
+##' if (interactive()) {
+##'  mephasOpen("condist")
+##' }
+
 
 ##' @export
 MFScondist <- function(){
 
-requireNamespace("shiny", quietly = TRUE)
-requireNamespace("ggplot2", quietly = TRUE)
-requireNamespace("DT", quietly = TRUE)
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
 ui <- tagList(
 
+##source("../0tabs/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+##source("../0tabs/onoff.R", local=TRUE)$value,
+tabof(),
+
 navbarPage(
-
-title = "Continuous Probability Distribution",
-
-
-##########----------##########----------##########
+theme = shinythemes::shinytheme("cerulean"),
+title = a("Continuous Probability Distribution", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+collapsible = TRUE,
+#id="navbar", 
+position="fixed-top",
 
 ##########----------##########----------##########
 tabPanel("Normal",
 
 headerPanel("Normal Distribution"),
 
+#condiPa 1
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -67,129 +79,160 @@ Suppose we wanted to see the shape of N(0, 1), and wanted to know 1. at which po
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
-),
+)
+	),
+
 
 hr(),
 
-#source("p1_ui.R", local=TRUE)$value,
+#source("ui_N.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.1. Normal distribution
 sidebarLayout(
 
-	sidebarPanel(
+  sidebarPanel( 
 
-	tabsetPanel(
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+  #Select Src
+  selectInput(
+      "InputSrc", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end
+    h4(tags$b("Step 2. Set parameters")), 
 
-		tabPanel(
-			"Draw a Normal Distribution", p(br()),
+    #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc == 'MathDist'",
+      #h3("Draw a Normal Distribution"), p(br()),
 
-		  HTML("<h4><b>Step 1. Set Parameters for N(&#956, &#963)</h4></b>"),
-		  numericInput("mu", HTML("Mean (&#956), the dashed line, indicates the location  "), value = 0),
-		  numericInput("sigma", HTML("Standard Deviation (&#963), indicates the shape"), value = 1, min = 0),
-		  hr(),
-
-		  h4(tags$b("Step 2. Show Probability")),
-		  numericInput("n", HTML("Blue Area = Pr(Mean-n*SD < X < Mean+n*SD)"), value = 1, min = 0),
-	 		numericInput("pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
-
-	 		hr(),
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("xlim", "Range of x-asis, symmetric to 0", value = 5, min = 1)
-		  #numericInput("ylim", "Range of y-asis > 0", value = 0.5, min = 0.1, max = 1),
-
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x", #p
-        rows = 10,
-				"-1.8\n0.8\n-0.3\n1\n-1.2\n-0.7\n-0.7\n-0.6\n1.3\n-0.8\n-1.2\n0.6\n2.2\n0.5\n0.4\n-0.3\n0.3\n-0.2\n-1.1\n0"
-				        ),
-      p("Missing value is input as NA"),
-
+      HTML("<b>1. Set Parameters for N(&#956, &#963)</b>"), 
+      numericInput("mu", HTML("Mean (&#956), the dashed line, indicates the location  "), value = 0, min = -10000000, max = 10000000),
+      numericInput("sigma", HTML("Standard Deviation (&#963), indicates the shape"), value = 1, min = 0, max = 10000000),
       hr(),
-
-      h4(tags$b("Or, 2. Upload Data")),
-
-      ##-------csv file-------##
-        p(tags$b("This only reads the 1st column of your data")),
-        fileInput('file', "1. Choose CSV/TXT file",
-                  accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
-
-        p(tags$b("2. Show 1st row as header?")),
-        checkboxInput("header", "Show Data Header?", TRUE),
-
-        p(tags$b("3. Use 1st column as row names? (No duplicates)")),
-        checkboxInput("col", "Yes", TRUE),
-
-             # Input: Select separator ----
-        radioButtons("sep",
-          "4. Which Separator for Data?",
-          choiceNames = list(
-            HTML("Comma (,): CSV often use this"),
-            HTML("One Tab (->|): TXT often use this"),
-            HTML("Semicolon (;)"),
-            HTML("One Space (_)")
-            ),
-          choiceValues = list(",", "\t", ";", " ")
+      
+      (tags$b("2. Show Probability")),   
+      numericInput("n", HTML("Blue Area = Pr(Mean-n*SD < X < Mean+n*SD)"), value = 1, min = 0, max = 10),
+      numericInput("pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
+      
+      hr(),
+      p(tags$b("You can adjust x-axes range")), 
+      numericInput("xlim", "Range of x-asis, symmetric to 0", value = 5, min = 1, max = 10000000)
+      #numericInput("ylim", "Range of y-asis > 0", value = 0.5, min = 0.1, max = 1),
+    ),
+    #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc == 'SimuDist'",  
+      numericInput("size", "Sample size of simulated numbers", value = 100, min = 1),
+      sliderInput("bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+      p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc == 'DataDist'",  
+      
+      tabsetPanel(
+        tabPanel("Manual Input",p(br()),
+          p("Data point can be separated by , ; /Enter /Tab /Space"),
+          tags$textarea(
+            id = "x", #p
+            rows = 10,
+            "-1.8\n0.8\n-0.3\n1\n-1.2\n-0.7\n-0.7\n-0.6\n1.3\n-0.8\n-1.2\n0.6\n2.2\n0.5\n0.4\n-0.3\n0.3\n-0.2\n-1.1\n0"
           ),
-
-        p("Correct Separator ensures data input successfully"),
-
-        a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+          p("Missing value is input as NA")
+        ), 
+        tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data")),
+          fileInput('file', "1. Choose CSV/TXT file",
+                    accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+          
+          p(tags$b("2. Show 1st row as header?")),
+          checkboxInput("header", "Show Data Header?", TRUE),
+          
+          p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+          checkboxInput("col", "Yes", TRUE),
+          
+          # Input: Select separator ----
+          radioButtons("sep", 
+                       "4. Which Separator for Data?",
+                       choiceNames = list(
+                         HTML("Comma (,): CSV often use this"),
+                         HTML("One Tab (->|): TXT often use this"),
+                         HTML("Semicolon (;)"),
+                         HTML("One Space (_)")
+                       ),
+                       choiceValues = list(",", "\t", ";", " ")
+          ),
+          br(),
+          p("Correct Separator ensures data input successfully"),
+          
+          a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
         )
+      ),
+      sliderInput("bin1","The number of bins in histogram", min = 0, max = 100, value = 0),
+      p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-		)
-	),
+  ), #sidePa end
 
-	mainPanel(
-		h4(tags$b("Output Plots")),
+  mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc == 'MathDist'",
+      h4("Mathematical-based Plot"), 
+      #tags$b("Normal distribution plot"),
+      #plotOutput("norm.plot", click = "plot_click", width = "600px", height = "400px"), #click = "plot_click", 
+      plotOutput("norm.plot", click = "plot_click", width = "80%"), #click = "plot_click", 
+      
+      verbatimTextOutput("info"),
+      
+      p(tags$b("The position of Red-line and the Blue Ares")),
+      tableOutput("xs")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc == 'SimuDist'",
+      h4("Simulation-based Plot"), 
+      tags$b("Histogram from random numbers"),
+      plotly::plotlyOutput("norm.plot2",  width = "80%"), # click = "plot_click2",
 
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 tags$b("Normal distribution plot"),
-			 	#plotOutput("norm.plot", click = "plot_click", width = "600px", height = "400px"), #click = "plot_click",
-			 	plotOutput("norm.plot", click = "plot_click", width = "80%"), #click = "plot_click",
+      #verbatimTextOutput("info2"),
+      downloadButton("download1", "Download Random Numbers"),
+      p(tags$b("Sample descriptive statistics")),
+      tableOutput("sum")
+      #verbatimTextOutput("data")
+      
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc == 'DataDist'",
+      h4("Distribution of Your Data"),
+      
+      tags$b("Density from upload data"),
+      plotly::plotlyOutput("makeplot.2", width = "80%"),
+      tags$b("Histogram from upload data"),
+      plotly::plotlyOutput("makeplot.1", width = "80%"),
 
-			 	verbatimTextOutput("info"),
+      p(tags$b("Sample descriptive statistics")),
+      tableOutput("sum2")
+      
+      
+    )
+    
+  )
+  ),
 
-			 	p(tags$b("The position of Red-line and the Blue Ares")),
-				tableOutput("xs")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("size", "Sample size of simulated numbers", value = 100, min = 1),
-			 	tags$b("Histogram from random numbers"),
-			 	plotOutput("norm.plot2", click = "plot_click2",  width = "80%"),
-
-			 	sliderInput("bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				verbatimTextOutput("info2"),
-
-				downloadButton("download1", "Download Random Numbers"),
-
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("sum")
-				#verbatimTextOutput("data")
-			 	),
-
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.1", width = "80%"),
-      	sliderInput("bin1","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("sum2")
-
-			 	)
-
-			)
-	)
-	),
 hr()
 ),
 
@@ -198,6 +241,8 @@ tabPanel("Exponential",
 
 headerPanel("Exponential Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -216,129 +261,145 @@ Suppose we wanted to see the shape of E(2), and wanted to know at which point x0
 
 "
 
+)
 ),
 
 hr(),
 
-#source("p2_ui.R", local=TRUE)$value,
+#source("ui_E.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.2. Exp distribution
 sidebarLayout(
 
-	sidebarPanel(
-
-	tabsetPanel(
-
-		tabPanel(
-			"Draw an Exponential Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for E(Rate)")),
-		  numericInput("r", HTML("Rate (> 0) indicates the rate of change"), value = 2, min = 0),
-		  hr(),
-
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("e.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
-
-		  #numericInput("e.ylim", "Range of y-asis > 0", value = 2.5, min = 0.1, max = 3),
-		  hr(),
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("e.xlim", "Range of x-asis > 0", value = 5, min = 1)
-
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x.e", #p
-        rows = 10,
-"2.6\n0.5\n0.8\n2.3\n0.3\n2\n0.5\n4.4\n0.1\n1.1\n0.7\n0.2\n0.7\n0.6\n3.7\n0.3\n0.1\n1\n2.6\n1.3"
-				        ),
-      p("Missing value is input as NA"),
-
+  sidebarPanel( 
+    
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+    #Select Src
+    selectInput(
+      "InputSrc_e", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+    hr(),
+    #Select Src end
+   h4(tags$b("Step 2. Set parameters")), 
+    #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_e == 'MathDist'",
+      #"Draw an Exponential Distribution", p(br()),
+      HTML("<b>1. Set Parameters for E(Rate)</b></h4>"), 
+      numericInput("r", HTML("Rate (> 0) indicates the rate of change"), value = 2, min = 0),
       hr(),
+      
+      h4(tags$b("2. Show Probability")),   
+      numericInput("e.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
+      
+      hr(),
+      p(tags$b("You can adjust x-axes range")), 
+      numericInput("e.xlim", "Range of x-asis > 0", value = 5, min = 1)
+      
+    ),
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_e == 'SimuDist'",
+      numericInput("e.size", "Sample size of simulated numbers", value = 100, min = 1,step = 1),
+      sliderInput("e.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+      p("When the number of bins is 0, plot will use the default number of bins")
+    ),
+    #condiPa 2 end
+    
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_e == 'DataDist'",  
 
-      h4(tags$b("Or, 2. Upload Data")),
+      tabsetPanel(
+              tabPanel("Manual Input",p(br()), 
+                p("Data point can be separated by , ; /Enter /Tab /Space"),
+                tags$textarea(
+                  id = "x.e", #p
+                  rows = 10,
+                  "2.6\n0.5\n0.8\n2.3\n0.3\n2\n0.5\n4.4\n0.1\n1.1\n0.7\n0.2\n0.7\n0.6\n3.7\n0.3\n0.1\n1\n2.6\n1.3"
+                ),
+                p("Missing value is input as NA")
+                ),
+              tabPanel("Upload Data",p(br()), 
+                ##-------csv file-------##
+                p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
+                fileInput('e.file', "1. Choose CSV/TXT file",
+                          accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+                
+                p(tags$b("2. Show 1st row as header?")),
+                checkboxInput("e.header", "Show Data Header?", TRUE),
+                
+                p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+                checkboxInput("e.col", "Yes", TRUE),
+                radioButtons("e.sep", 
+                             "3. Which Separator for Data?",
+                             choiceNames = list(
+                               HTML("Comma (,): CSV often use this"),
+                               HTML("One Tab (->|): TXT often use this"),
+                               HTML("Semicolon (;)"),
+                               HTML("One Space (_)")
+                             ),
+                             choiceValues = list(",", "\t", ";", " ")
+                ),
+                p("Correct Separator ensures data input successfully"),
+                a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+              )
+              
+       ),
+      sliderInput("bin.e", "The number of bins in histogram", min = 0, max = 100, value = 0),
+      p("When the number of bins is 0, plot will use the default number of bins")
+    ) #condiPa 3 end
+  ), #sidePa end
 
-        p(tags$b("This only reads the 1st column of your data")),
-        fileInput('e.file', "Choose CSV/TXT file",
-                  accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
-
-        p(tags$b("2. Show 1st row as header?")),
-        checkboxInput("e.header", "Show Data Header?", TRUE),
-
-        p(tags$b("3. Use 1st column as row names? (No duplicates)")),
-        checkboxInput("e.col", "Yes", TRUE),
-
-        radioButtons("e.sep",
-          "3. Which Separator for Data?",
-          choiceNames = list(
-            HTML("Comma (,): CSV often use this"),
-            HTML("One Tab (->|): TXT often use this"),
-            HTML("Semicolon (;)"),
-            HTML("One Space (_)")
-            ),
-          choiceValues = list(",", "\t", ";", " ")
-          ),
-
-        p("Correct Separator ensures data input successfully"),
-
-        a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+    mainPanel(
+      h4(tags$b("Outputs")),
+      
+      conditionalPanel(
+        condition = "input.InputSrc_e == 'MathDist'",
+        h4("Mathematical-based Plot"),
+        tags$b("Exponential distribution plot"),
+        plotOutput("e.plot", click = "plot_click9", width = "80%"),#
+        verbatimTextOutput("e.info"),
+        p(tags$b("The position of Red-line, x0")),
+        tableOutput("e")
+      ),
+      conditionalPanel(
+        condition = "input.InputSrc_e == 'SimuDist'",
+       h4("Simulation-based Plot"), 
+        tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("e.plot2",  width = "80%"),#click = "plot_click10",
+        #verbatimTextOutput("e.info2"),
+        downloadButton("download2", "Download Random Numbers"),
+        
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("e.sum"),
+        HTML(
+          " 
+          <b> Explanation </b>
+         <ul>
+          <li>  Mean = 1/Rate
+          <li>  SD = 1/Rate
+         </ul>
+          "
         )
+      ),
+      
+      conditionalPanel(
+        condition = "input.InputSrc_e == 'DataDist'",
+        h4("Distribution of Your Data"), 
+        tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.e2", width = "80%"),
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.e1", width = "80%"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("e.sum2")
+        
+      ) 
+  )
+),
 
-		)
-	),
-
-	mainPanel(
-		h4(tags$b("Output. Plots")),
-
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("Exponential distribution plot"),
-
-				plotOutput("e.plot", click = "plot_click9", width = "80%"),
-			 	verbatimTextOutput("e.info"),
-
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("e")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("e.size", "Sample size of simulated numbers", value = 100, min = 1,step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("e.plot2", click = "plot_click10", width = "80%"),
-			 	sliderInput("e.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-
-				verbatimTextOutput("e.info2"),
-				downloadButton("download2", "Download Random Numbers"),
-
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("e.sum"),
-				HTML(
-			    "
-			    <b> Explanation </b>
-			   <ul>
-			    <li>  Mean = 1/Rate
-			    <li>  SD = 1/Rate
-			   </ul>
-			    "
-			    )
-			  ),
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.e2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.e1", width = "80%"),
-      	sliderInput("bin.e","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-				tableOutput("e.sum2")
-
-			 	)
-
-			)
-	)
-	),
 hr()
 ),
 
@@ -348,6 +409,8 @@ tabPanel("Gamma",
 
 headerPanel("Gamma Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -365,54 +428,74 @@ Suppose we wanted to see the shape of Gamma(9,0.5), and wanted to know at which 
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
+)
 ),
 
 hr(),
 
-#source("p3_ui.R", local=TRUE)$value,
+#source("ui_G.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.3. gamma
 sidebarLayout(
 
-	sidebarPanel(
+  sidebarPanel(
 
-	tabsetPanel(
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+  #Select Src
+  selectInput(
+      "InputSrc_g", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end 
 
-		tabPanel(
-			"Draw a Gamma Distribution", p(br()),
-		  HTML("<h4><b>Step 1. Set Parameters for Gamma(&#945, &#952)</h4></b>"),
-		  numericInput("g.shape", HTML("&#945 > 0, Shape parameter"), value = 9, min = 0),
-		  numericInput("g.scale", HTML("&#952 > 0, Scale parameter"), value = 0.5, min = 0),
+  #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_g == 'MathDist'",
+      #h3("Draw a Gamma Distribution", p(br())),
+      HTML("<b>1. Set Parameters for Gamma(&#945, &#952)</b>"), 
+      numericInput("g.shape", HTML("&#945 > 0, Shape parameter"), value = 9, min = 0),
+    numericInput("g.scale", HTML("&#952 > 0, Scale parameter"), value = 0.5, min = 0),
+    hr(),
+    tags$b(" 2. Show Probability"),   
+    numericInput("g.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
+    hr(),
+    p(tags$b("You can adjust x-axes range")), 
+    numericInput("g.xlim", "Range of x-asis, > 0", value = 20, min = 1)
+    #numericInput("g.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
+    ),
+    #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_g == 'SimuDist'",  
+      numericInput("g.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
+      sliderInput("g.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+    p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_g == 'DataDist'",  
+      tabsetPanel(
+        
+        tabPanel("Manual Input",p(br()),
+          p("Data point can be separated by , ; /Enter /Tab /Space"),
+      tags$textarea(
+          id = "x.g", #p
+         rows = 10, "4.1\n9.3\n11.7\n2\n2\n5.8\n1.6\n1.9\n4.7\n5.8\n3.1\n3.1\n3\n11\n1.2\n5.7\n10\n13.8\n3.8\n3.1"
+                ),
+          p("Missing value is input as NA")
+         ), #tab1 end 
+        tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
 
-		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("g.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
-
- 			hr(),
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("g.xlim", "Range of x-asis, > 0", value = 20, min = 1)
-		  #numericInput("g.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
-
-
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x.g", #p
-        rows = 10,
-"4.1\n9.3\n11.7\n2\n2\n5.8\n1.6\n1.9\n4.7\n5.8\n3.1\n3.1\n3\n11\n1.2\n5.7\n10\n13.8\n3.8\n3.1"
-				        ),
-      p("Missing value is input as NA"),
-
-      hr(),
-
-      h4(tags$b("Or, 2. Upload Data")),
-
-      ##-------csv file-------##
-        fileInput('g.file', "1. Choose CSV/TXT file",
+          fileInput('g.file', "1. Choose CSV/TXT file",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
         p(tags$b("2. Show 1st row as header?")),
@@ -420,7 +503,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("g.col", "Yes", TRUE),
 
-        radioButtons("g.sep",
+        radioButtons("g.sep", 
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -434,38 +517,41 @@ sidebarLayout(
         p("Correct Separator ensures data input successfully"),
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+        ) #tab2 end 
+      ),
+        sliderInput("bin.g","The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-        )
+  ), #sidePa end
 
-		)
-	),
-
-	mainPanel(
-		h4(tags$b("Output. Plots")),
-
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("Gamma distribution plot"),
-
-				plotOutput("g.plot", click = "plot_click11", width = "80%"),
-			 	verbatimTextOutput("g.info"),
-
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("g")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("g.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("g.plot2", click = "plot_click12", width = "80%"),
-			 	sliderInput("g.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-
-				verbatimTextOutput("g.info2"),
-				downloadButton("download3", "Download Random Numbers"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("g.sum"),
-				HTML(
-    "
+mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_g == 'MathDist'",
+      h4("Mathematical-based Plot"),
+      tags$b("Gamma distribution plot"),
+      plotOutput("g.plot", click = "plot_click11", width = "80%"),
+         verbatimTextOutput("g.info"), 
+     p(tags$b("The position of Red-line, x0")),
+         tableOutput("g")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_g == 'SimuDist'",
+     h4("Simulation-based Plot"), 
+      
+    tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("g.plot2",  width = "80%"),#click = "plot_click12",
+        
+        #verbatimTextOutput("g.info2"),
+        downloadButton("download3", "Download Random Numbers"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("g.sum"),
+        HTML(
+    " 
     <b> Explanation </b>
    <ul>
     <li>  Rate = &#946=1/&#952
@@ -473,22 +559,23 @@ sidebarLayout(
    </ul>
     "
     )
-			 	),
+      
+    ),
+    
+    conditionalPanel(
+    condition = "input.InputSrc_g == 'DataDist'",
+    h4("Distribution of Your Data"),
+    tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.g2", width = "80%"),
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.g1", width = "80%"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("g.sum2")  
+    )
+    
+  )
+  ),
 
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.g2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.g1", width = "80%"),
-      	sliderInput("bin.g","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-				tableOutput("g.sum2")
-			 	)
-
-			)
-	)
-	),
 hr()
 ),
 
@@ -498,6 +585,8 @@ tabPanel("Beta",
 
 headerPanel("Beta Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -515,53 +604,75 @@ Suppose we wanted to see the shape of Beta(2, 2), and wanted to know at which po
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
+)
 ),
 
 hr(),
 
-#source("p4_ui.R", local=TRUE)$value,
+#source("ui_B.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.4. beta
 
 sidebarLayout(
 
-	sidebarPanel(
+  sidebarPanel(
 
-	tabsetPanel(
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+  #Select Src
+  selectInput(
+      "InputSrc_b", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end 
 
-		tabPanel(
-			"Draw a Beta Distribution", p(br()),
-		  HTML("<h4><b>Step 1. Set Parameters for Beta(&#945, &#946)</h4></b>"),
-		  numericInput("b.shape", HTML("&#945 > 0, Shape parameter"), value = 2, min = 0),
-		  numericInput("b.scale", HTML("&#946 > 0, Shape parameter"), value = 2, min = 0),
-
-		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("b.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
-		  hr(),
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("b.xlim", "Range of x-asis, > 0", value = 1, min = 1)
-		  #snumericInput("b.ylim", "Range of y-asis, > 0", value = 2.5, min = 0.1, max = 3),
-
-
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x.b", #p
-        rows = 10,
-"0.11\n0.57\n0.59\n0.52\n0.13\n0.45\n0.63\n0.68\n0.44\n0.55\n0.48\n0.54\n0.29\n0.41\n0.64\n0.75\n0.33\n0.24\n0.45\n0.18"				        ),
-      p("Missing value is input as NA"),
+  #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_b == 'MathDist'",
+      HTML("<h4><b>Step 1. Set Parameters for Beta(&#945, &#946)</h4></b>"), 
+    numericInput("b.shape", HTML("&#945 > 0, Shape parameter"), value = 2, min = 0),
+      numericInput("b.scale", HTML("&#946 > 0, Shape parameter"), value = 2, min = 0),
 
       hr(),
+      h4(tags$b("Step 2. Show Probability")),   
+      numericInput("b.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
+      hr(),
+      p(tags$b("You can adjust x-axes range")), 
+      numericInput("b.xlim", "Range of x-asis, > 0", value = 1, min = 1)
+      #snumericInput("b.ylim", "Range of y-asis, > 0", value = 2.5, min = 0.1, max = 3),
+    ),
+   #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_b == 'SimuDist'",  
+      numericInput("b.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
+      sliderInput("b.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+    p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_b == 'DataDist'",  
+      
+      tabsetPanel(
+         tabPanel("Manual Input",p(br()),
+    p("Data point can be separated by , ; /Enter /Tab /Space"),
+      tags$textarea(
+        id = "x.b", #p
+        rows = 10,
+"0.11\n0.57\n0.59\n0.52\n0.13\n0.45\n0.63\n0.68\n0.44\n0.55\n0.48\n0.54\n0.29\n0.41\n0.64\n0.75\n0.33\n0.24\n0.45\n0.18"                ),
+        p("Missing value is input as NA")
+         ), #tab1 end 
+          tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
 
-      h4(tags$b("Or, 2. Upload Data")),
-
-      ##-------csv file-------##
-        fileInput('b.file', "1. Choose CSV/TXT file",
+          fileInput('b.file', "1. Choose CSV/TXT file",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
         p(tags$b("2. Show 1st row as header?")),
@@ -570,7 +681,7 @@ sidebarLayout(
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("b.col", "Yes", TRUE),
 
-        radioButtons("b.sep",
+        radioButtons("b.sep", 
           "3. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -584,38 +695,41 @@ sidebarLayout(
         p("Correct Separator ensures data input successfully"),
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+        ) #tab2 end 
+      ),
+    sliderInput("bin.b","The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-        )
+  ), #sidePa end
 
-		)
-	),
+mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_b == 'MathDist'",
+      h4("Mathematical-based Plot"), 
+    tags$b("Beta distribution plot"),
+        plotOutput("b.plot", click = "plot_click13", width = "80%"),
+        verbatimTextOutput("b.info"),
+        p(tags$b("The position of Red-line, x0")),
+        tableOutput("b")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_b == 'SimuDist'",
+       h4("Simulation-based Plot"), 
+      
+    tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("b.plot2", width = "80%"),# click = "plot_click14",
 
-	mainPanel(
-		h4(tags$b("Output. Plots")),
-
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("Beta distribution plot"),
-
-				plotOutput("b.plot", click = "plot_click13", width = "80%"),
-			 	verbatimTextOutput("b.info"),
-
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("b")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-
-			 	numericInput("b.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("b.plot2", click = "plot_click14", width = "80%"),
-			 	sliderInput("b.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				verbatimTextOutput("b.info2"),
-				downloadButton("download4", "Download Random Numbers"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("b.sum"),
-				HTML(
-    "
+        #verbatimTextOutput("b.info2"),
+        downloadButton("download4", "Download Random Numbers"),       
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("b.sum"),
+        HTML(
+    " 
     <b> Explanation </b>
    <ul>
     <li>  Mean = &#945/(&#945+&#946)
@@ -623,23 +737,27 @@ sidebarLayout(
    </ul>
     "
     )
-			 	),
+      
+    ),
+    
+    conditionalPanel(
+    condition = "input.InputSrc_b == 'DataDist'",
+    h4("Distribution of Your Data"), 
+        tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.b2", width = "80%"),
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.b1", width = "80%"),
+        
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("b.sum2")
 
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.b2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.b1", width = "80%"),
-	      sliderInput("bin.b","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-				tableOutput("b.sum2")
+    )
+    
+  ) #main pa end  
 
-			 	)
+  
+  ),
 
-			)
-	)
-	),
 hr()
 ),
 
@@ -649,6 +767,8 @@ tabPanel("T",
 
 headerPanel("Student's T Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -665,62 +785,82 @@ Suppose we wanted to see the shape of T(4) and wanted to know at which point x0 
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
+)
 ),
 
 hr(),
 
-#source("p5_ui.R", local=TRUE)$value,
+#source("ui_T.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.5. T
 sidebarLayout(
+  sidebarPanel( 
 
-	sidebarPanel(
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+  #Select Src
+  selectInput(
+      "InputSrc_t", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end 
 
-	tabsetPanel(
-
-		tabPanel(
-			"Draw a T Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for T(v)")),
-		  numericInput("t.df", HTML("v > 0, Degree of Freedom, related to the shape"), value = 4, min = 0),
-
-		  hr(),
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("t.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
-
-		  hr(),
-		  p(tags$b("You can adjust x-axes range")),
-		  numericInput("t.xlim", "Range of x-asis", value = 5, min = 1)
-		  #numericInput("t.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
-
-
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
+  #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_t == 'MathDist'",
+      HTML("<h4><b>Step 1. Set Parameters for T(v)</h4></b>"), 
+    numericInput("t.df", HTML("v > 0, Degree of Freedom, related to the shape"), value = 4, min = 0),
+      
+      hr(),
+      h4(tags$b("Step 2. Show Probability")),   
+      numericInput("t.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.025, min = 0, max = 1, step = 0.05),
+      
+      hr(),     
+      p(tags$b("You can adjust x-axes range")), 
+      numericInput("t.xlim", "Range of x-asis", value = 5, min = 1)
+      #numericInput("t.ylim", "Range of y-asis, > 0", value = 0.5, min = 0.1, max = 3),
+    ),
+   #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_t == 'SimuDist'",  
+        numericInput("t.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
+        sliderInput("t.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+    p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_t == 'DataDist'",  
+      
+      tabsetPanel(
+         tabPanel("Manual Input",p(br()),
+      p("Data point can be separated by , ; /Enter /Tab /Space"),
+        tags$textarea(
         id = "x.t", #p
         rows = 10,
 "-0.52\n-0.36\n-1.15\n-1.46\n0.54\n-1.6\n0.1\n-0.48\n-0.69\n-1.66\n0.59\n0.11\n-0.01\n0.32\n-1.31\n1.25\n-0.19\n-0.66\n0.75\n-1.86"
 ),
-      p("Missing value is input as NA"),
+      p("Missing value is input as NA")
+         ), #tab1 end 
+        tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
 
-      hr(),
-
-      h4(tags$b("Or, 2. Upload Data")),
-
-      ##-------csv file-------##
-        fileInput('t.file', "1. Choose CSV/TXT file",
+          fileInput('t.file', "1. Choose CSV/TXT file",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
         p(tags$b("2. Show 1st row as header?")),
         checkboxInput("t.header", "Show Data Header?", TRUE),
-
+        
         p(tags$b("3. Use 1st column as row names? (No duplicates)")),
         checkboxInput("t.col", "Yes", TRUE),
 
-        radioButtons("t.sep",
+        radioButtons("t.sep", 
           "4. Which Separator for Data?",
           choiceNames = list(
             HTML("Comma (,): CSV often use this"),
@@ -734,54 +874,65 @@ sidebarLayout(
         p("Correct Separator ensures data input successfully"),
 
         a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+        ) #tab2 end 
+      ),
+      sliderInput("bin.t","The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-        )
+  ), #sidePa end
 
-		)
-	),
 
-	mainPanel(
-		h4(tags$b("Output. Plots")),
+  mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_t == 'MathDist'",
+      h4("Mathematical-based Plot"),
+    tags$b("T distribution plot"),
+        p("The blue curve is the standard normal distribution"),
 
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("T distribution plot"),
+        plotOutput("t.plot", click = "plot_click3", width ="80%"),
+        verbatimTextOutput("t.info"),
 
-				plotOutput("t.plot", click = "plot_click3", width ="80%"),
-			 	verbatimTextOutput("t.info"),
+        p(tags$b("The position of Red-line, x0")),
+        tableOutput("t")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_t == 'SimuDist'",
+       h4("Simulation-based Plot"),
+      
+    tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("t.plot2",  width ="80%"),#click = "plot_click4",
 
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("t")
 
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("t.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("t.plot2", click = "plot_click4", width ="80%"),
-			 	sliderInput("t.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				verbatimTextOutput("t.info2"),
-				downloadButton("download5", "Download Random Numbers"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("t.sum")
+        #verbatimTextOutput("t.info2"),
+        downloadButton("download5", "Download Random Numbers"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("t.sum")
+      
+    ),
+    
+    conditionalPanel(
+    condition = "input.InputSrc_t == 'DataDist'",
+     h4("Distribution of Your Data"), 
+        tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.t2", width = "80%"),   
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.t1", width = "80%"),
 
-			 	),
+      p(tags$b("Sample descriptive statistics")),
+      tableOutput("t.sum2")
 
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.t2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.t1", width = "80%"),
-			sliderInput("bin.t","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-      				tableOutput("t.sum2")
+    )
+    
+  ) #main pa end  
 
-			 	)
+  
+  ),
 
-			)
-	)
-	),
 hr()
 ),
 
@@ -791,6 +942,8 @@ tabPanel("Chi",
 
 headerPanel("Chi-Squared Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -807,103 +960,130 @@ Suppose we wanted to see the shape of Chi(4), and wanted to know at which point 
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
+)
 ),
 
 hr(),
 
-#source("p6_ui.R", local=TRUE)$value,
+#source("ui_Chi.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.6. chi
 sidebarLayout(
 
-	sidebarPanel(
 
-	tabsetPanel(
+  sidebarPanel( 
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),  
+  #Select Src
+  selectInput(
+      "InputSrc_x", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end 
 
-		tabPanel(
-			"Draw a Chi-squared Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters for Chi(v)")),
-		  numericInput("x.df", HTML("v > 0, Degree of Freedom related the the shape"), value = 4, min = 0),
-
-		  hr(),
-
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("x.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
-		  hr(),
-
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("x.xlim", "Range of x-asis, > 0", value = 8, min = 1)
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x.x", #p
-        rows = 10,
-"11.92\n1.42\n5.56\n5.31\n1.28\n3.87\n1.31\n2.32\n3.75\n6.41\n3.04\n3.96\n1.09\n5.28\n7.88\n4.48\n1.22\n1.2\n9.06\n2.27"
-),
-      p("Missing value is input as NA"),
-
-      hr(),
-
-      h4(tags$b("Or, 2. Upload Data")),
-
-        fileInput('x.file', "1. Choose CSV/TXT file",
+  #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_x == 'MathDist'",
+      HTML("<h4><b>Step 1. Set Parameters for Chi(v)</b></h4>"), 
+    numericInput("x.df", HTML("v > 0, Degree of Freedom related the the shape"), value = 4, min = 0),
+    hr(),
+    h4(tags$b("Step 2. Show Probability")),
+    numericInput("x.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
+    hr(),
+    p(tags$b("You can adjust x-axes range")), 
+    numericInput("x.xlim", "Range of x-asis, > 0", value = 8, min = 1)
+    ),
+   #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_x == 'SimuDist'",  
+        numericInput("x.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
+        sliderInput("x.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+    p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_x == 'DataDist'",  
+      tabsetPanel(
+         tabPanel("Manual Input",p(br()),
+      p("Data point can be separated by , ; /Enter /Tab /Space"),
+        tags$textarea(
+          id = "x.x", #p
+          rows = 10, "11.92\n1.42\n5.56\n5.31\n1.28\n3.87\n1.31\n2.32\n3.75\n6.41\n3.04\n3.96\n1.09\n5.28\n7.88\n4.48\n1.22\n1.2\n9.06\n2.27"
+      ),
+          p("Missing value is input as NA")
+       ), #tab1 end 
+        
+        tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
+          fileInput('x.file', "1. Choose CSV/TXT file",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-        p(tags$b("2. Show 1st row as header?")),
-        checkboxInput("x.header", "Show Data Header?", TRUE),
+          p(tags$b("2. Show 1st row as header?")),
+          checkboxInput("x.header", "Show Data Header?", TRUE),
 
-        p(tags$b("3. Use 1st column as row names? (No duplicates)")),
-        checkboxInput("x.col", "Yes", TRUE),
+          p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+          checkboxInput("x.col", "Yes", TRUE),
 
-        radioButtons("x.sep",
-          "4. Which Separator for Data?",
-          choiceNames = list(
+          radioButtons("x.sep", 
+            "4. Which Separator for Data?",
+            choiceNames = list(
             HTML("Comma (,): CSV often use this"),
             HTML("One Tab (->|): TXT often use this"),
             HTML("Semicolon (;)"),
             HTML("One Space (_)")
             ),
-          choiceValues = list(",", "\t", ";", " ")
-          ),
+            choiceValues = list(",", "\t", ";", " ")
+            ),
 
-        p("Correct Separator ensures data input successfully"),
+          p("Correct Separator ensures data input successfully"),
 
-        a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+          a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+        ) #tab2 end 
+      ),
+        sliderInput("bin.x","The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-        )
+  ), #sidePa end
+  
 
-		)
-	),
+  mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_x == 'MathDist'",
+      h4("Mathematical-based Plot"), 
+    tags$b("Chi-square distribution plot"),
 
-	mainPanel(
-		h4(tags$b("Output. Plots")),
+        plotOutput("x.plot", click = "plot_click5", width = "80%"),
+        verbatimTextOutput("x.info"),
 
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("Chi-square distribution plot"),
+        p(tags$b("The position of Red-line, x0")),
+        tableOutput("x")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_x == 'SimuDist'",
+     h4("Simulation-based Plot"),
+      
+     tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("x.plot2", width = "80%"),#click = "plot_click6", 
 
-				plotOutput("x.plot", click = "plot_click5", width = "80%"),
-			 	verbatimTextOutput("x.info"),
-
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("x")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("x.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("x.plot2", click = "plot_click6", width = "80%"),
-			 	sliderInput("x.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				verbatimTextOutput("x.info2"),
-				downloadButton("download6", "Download Random Numbers"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("x.sum"),
-				HTML(
-    "
+        p("When the number of bins is 0, plot will use the default number of bins"),
+        #verbatimTextOutput("x.info2"),
+        downloadButton("download6", "Download Random Numbers"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("x.sum"),
+        HTML(
+    " 
     <b> Explanation </b>
    <ul>
     <li>  Mean = v
@@ -911,23 +1091,28 @@ sidebarLayout(
    </ul>
     "
     )
-			 	),
+      
+    ),
+    
+    conditionalPanel(
+    condition = "input.InputSrc_x == 'DataDist'",
+     h4("Distribution of Your Data"), 
+    tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.x2", width = "80%"),
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.x1", width = "80%"),
 
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.x2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.x1", width = "80%"),
-	      sliderInput("bin.x","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-	      tableOutput("x.sum2")
+        p("When the number of bins is 0, plot will use the default number of bins"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("x.sum2")
 
-			 	)
+    )
+    
+  ) #main pa end  
 
-			)
-	)
-	),
+  
+),
+
 hr()
 ),
 
@@ -936,6 +1121,8 @@ tabPanel("F",
 
 headerPanel("F Distribution"),
 
+conditionalPanel(
+condition = "input.explain_on_off",
 HTML(
 "
 <h4><b> What you can do on this page</b></h4>
@@ -952,137 +1139,169 @@ Suppose we wanted to see the shape of F(100, 10), and wanted to know at which po
 
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
+)
 ),
 
 hr(),
 
-#source("p7_ui.R", local=TRUE)$value,
+#source("ui_F.R", local=TRUE)$value,
 #****************************************************************************************************************************************************1.7. F
 sidebarLayout(
 
-	sidebarPanel(
 
-	tabsetPanel(
+  sidebarPanel(
+  h4(tags$b("Step 1. Select the data source")),
+  p("Mathematical-based, simulated-data-based, or user data-based"),    #Select Src
+  selectInput(
+      "InputSrc_f", "Select plot",
+      c("Mathematical formula based" = "MathDist",
+        "Simulation data based" = "SimuDist",
+        "Data-based" = "DataDist")),
+  hr(),
+  #Select Src end 
 
-		tabPanel(
-			"Draw a Beta Distribution", p(br()),
-		  h4(tags$b("Step 1. Set Parameters")),
-		  numericInput("df11", HTML("df1 > 0, Degree of Freedom 1"), value = 100, min = 0),
-		  numericInput("df21", HTML("df2 > 0, Degree of Freedom 2"), value = 100, min = 0),
-
-		  #numericInput("f.ylim", "Range of y-asis, > 0", value = 2.5, min = 0.1, max = 3),
-		  hr(),
-
-		  h4(tags$b("Step 2. Show Probability")),
-	 		numericInput("f.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
-		  hr(),
-
-	 		p(tags$b("You can adjust x-axes range")),
-		  numericInput("f.xlim", "Range of x-asis, > 0", value = 5, min = 1)
-
-		),
-
-	tabPanel("Distribution of Your Data", p(br()),
-
-		h4(tags$b("1. Manual Input")),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
-    tags$textarea(
-        id = "x.f", #p
-        rows = 10,
-"1.08\n1.54\n0.89\n0.83\n1.13\n0.89\n1.22\n1.04\n0.71\n0.84\n1.17\n0.88\n1.05\n0.91\n1.37\n0.87\n1\n1\n1\n1.01"
-				        ),
-      p("Missing value is input as NA"),
-
-      hr(),
-
-      h4(tags$b("Or, 2. Upload Data")),
-
-      fileInput('f.file', "1. Choose CSV/TXT file",
+  #condiPa 1
+    conditionalPanel(
+      condition = "input.InputSrc_f == 'MathDist'",
+      HTML("<h4><b>Step 1. Set Parameters</b></h4>"), 
+    numericInput("df11", HTML("df1 > 0, Degree of Freedom 1"), value = 100, min = 0),
+    numericInput("df21", HTML("df2 > 0, Degree of Freedom 2"), value = 100, min = 0),
+    hr(),
+    h4(tags$b("Step 2. Show Probability")),   
+    numericInput("f.pr", HTML("Area Proportion Left to Red-line = Pr.(X < x0), x0 is the position of Red-line"), value = 0.05, min = 0, max = 1, step = 0.05),
+    hr(),
+    p(tags$b("You can adjust x-axes range")), 
+    numericInput("f.xlim", "Range of x-asis, > 0", value = 5, min = 1)
+    ),
+   #condiPa 1 end
+  
+    #condiPa 2
+    conditionalPanel(
+      condition = "input.InputSrc_f == 'SimuDist'",  
+        numericInput("f.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
+        sliderInput("f.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+      
+    ),
+    #condiPa 2 end
+    #condiPa 3
+    conditionalPanel(
+      condition = "input.InputSrc_f == 'DataDist'",  
+      tabsetPanel(
+         tabPanel("Manual Input",p(br()),
+      p("Data point can be separated by , ; /Enter /Tab /Space"),
+        tags$textarea(
+          id = "x.f", #p
+          rows = 10, "1.08\n1.54\n0.89\n0.83\n1.13\n0.89\n1.22\n1.04\n0.71\n0.84\n1.17\n0.88\n1.05\n0.91\n1.37\n0.87\n1\n1\n1\n1.01"
+      ),
+          p("Missing value is input as NA")
+       ), #tab1 end 
+        
+        tabPanel("Upload Data",p(br()),
+          
+          ##-------csv file-------##
+          p(tags$b("This only reads the 1st column of your data, and will cover the input data")),
+          fileInput('f.file', "1. Choose CSV/TXT file",
                 accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
 
-      p(tags$b("2. Show 1st row as header?")),
-      checkboxInput("f.header", "Show Data Header?", TRUE),
+        p(tags$b("2. Show 1st row as header?")),
+        checkboxInput("f.header", "Show Data Header?", TRUE),
 
-      p(tags$b("3. Use 1st column as row names? (No duplicates)")),
-      checkboxInput("f.col", "Yes", TRUE),
+        p(tags$b("3. Use 1st column as row names? (No duplicates)")),
+          checkboxInput("f.col", "Yes", TRUE),
 
-      radioButtons("f.sep", "4. Which Separator for Data?",
-        choiceNames = list(
+          radioButtons("f.sep", "4. Which Separator for Data?",
+          choiceNames = list(
           HTML("Comma (,): CSV often use this"),
           HTML("One Tab (->|): TXT often use this"),
-          HTML("Semicolon (;)"),
-          HTML("One Space (_)")
+            HTML("Semicolon (;)"),
+            HTML("One Space (_)")
+            ),
+            choiceValues = list(",", "\t", ";", " ")
           ),
-          choiceValues = list(",", "\t", ";", " ")
-        ),
 
-        p("Correct Separator ensures data input successfully"),
+          p("Correct Separator ensures data input successfully"),
 
-        a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
-        )
+          a(tags$i("Find some example data here"),href = "https://github.com/mephas/datasets")
+        ) #tab2 end 
+      ),
+        sliderInput("bin.f","The number of bins in histogram", min = 0, max = 100, value = 0),
+        p("When the number of bins is 0, plot will use the default number of bins")
+    )
+    #condiPa 3 end
 
-		)
-	),
+  ), #sidePa end
+  
 
-	mainPanel(
-		h4(tags$b("Output. Plots")),
+mainPanel(
+    h4(tags$b("Outputs")),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_f == 'MathDist'",
+      h4("Mathematical-based Plot"),
+    tags$b("F distribution plot"),
 
-		tabsetPanel(
-			 tabPanel("Mathematical-based Plot", p(br()),
-			 	tags$b("F distribution plot"),
+        plotOutput("f.plot", click = "plot_click7", width = "80%"),
+        verbatimTextOutput("f.info"),
 
-				plotOutput("f.plot", click = "plot_click7", width = "80%"),
-			 	verbatimTextOutput("f.info"),
+        p(tags$b("The position of Red-line, x0")),
+        tableOutput("f")
+    ),
+    
+    conditionalPanel(
+      condition = "input.InputSrc_f == 'SimuDist'",
+       h4("Simulation-based Plot"), 
+      
+    tags$b("Histogram from random numbers"),
+        plotly::plotlyOutput("f.plot2", width = "80%"),#click = "plot_click8", 
 
-			 	p(tags$b("The position of Red-line, x0")),
-				tableOutput("f")
-				),
-			 tabPanel("Simulation-based Plot", p(br()),
-			 	numericInput("f.size", "Sample size of simulated numbers", value = 100, min = 1, step = 1),
-			 	tags$b("Histogram from random numbers"),
-				plotOutput("f.plot2", click = "plot_click8", width = "80%"),
-			 	sliderInput("f.bin", "The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-				verbatimTextOutput("f.info2"),
-				downloadButton("download7", "Download Random Numbers"),
-				p(tags$b("Sample descriptive statistics")),
-				tableOutput("f.sum")
-			 	),
+        #verbatimTextOutput("f.info2"),
+        downloadButton("download7", "Download Random Numbers"),
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("f.sum")
+      
+    ),
+    
+    conditionalPanel(
+    condition = "input.InputSrc_f == 'DataDist'",
+   h4("Distribution of Your Data"), 
+    tags$b("Density from upload data"),
+        plotly::plotlyOutput("makeplot.f2", width = "80%"),
+        tags$b("Histogram from upload data"),
+        plotly::plotlyOutput("makeplot.f1", width = "80%"),
 
-			 tabPanel("Distribution of Your Data", p(br()),
-			 	tags$b("Density from upload data"),
-				plotOutput("makeplot.f2", width = "80%"),
-			 	tags$b("Histogram from upload data"),
-				plotOutput("makeplot.f1", width = "80%"),
-      	sliderInput("bin.f","The number of bins in histogram", min = 0, max = 100, value = 0),
-      	p("When the number of bins is 0, plot will use the default number of bins"),
-      	p(tags$b("Sample descriptive statistics")),
-				tableOutput("f.sum2")
+        p(tags$b("Sample descriptive statistics")),
+        tableOutput("f.sum2")
 
-			 	)
+    )
+    
+  ) #main pa end  
 
-			)
-	)
-	),
+  
+),
+
 hr()
 ),
 
-
 ##########----------##########----------##########
-tabPanel((a("Help Pages Online",
-            target = "_blank",
-            style = "margin-top:-30px; color:DodgerBlue",
-            href = paste0("https://mephas.github.io/helppage/")))),
-tabPanel(
-  tags$button(
-    id = 'close',
-    type = "button",
-    class = "btn action-button",
-    style = "margin-top:-8px; color:Tomato; background-color: #F8F8F8  ",
-    onclick = "setTimeout(function(){window.close();},500);",  # close browser
-    "Stop and Quit"))
+
+##source("../0tabs/stop.R",local=TRUE, encoding="UTF-8")$value,
+##source("../0tabs/help.R",local=TRUE, encoding="UTF-8")$value,
+##source("../0tabs/home.R",local=TRUE, encoding="UTF-8")$value,
+##source("../0tabs/onoff.R",local=TRUE, encoding="UTF-8")$value
+
+tabPanel(tags$button(
+				    id = 'close',
+				    type = "button",
+				    class = "btn action-button",
+				    icon("power-off"),
+				    style = "background:rgba(255, 255, 255, 0); display: inline-block; padding: 0px 0px;",
+				    onclick = "setTimeout(function(){window.close();},500);")),
+navbarMenu("",icon=icon("link"))
 
 ))
+
+
 
 
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########
@@ -1090,10 +1309,15 @@ tabPanel(
 
 server <- function(input, output) {
 
-#source("p1_server.R", local=TRUE)$value
+
+##########----------##########----------##########
+#source("../func.R")
+
+
+#source("server_N.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.1. Normal
 output$norm.plot <- renderPlot({
-
+  
   mynorm = function (x) {
   norm = dnorm(x, input$mu, input$sigma)
   norm[x<=(input$mu-input$n*input$sigma) |x>=(input$mu+input$n*input$sigma)] = NA
@@ -1101,12 +1325,12 @@ output$norm.plot <- renderPlot({
   }
 
   ggplot(data = data.frame(x = c(-(input$xlim), input$xlim)), aes(x)) +
-  stat_function(fun = dnorm, n = 101, args = list(mean = input$mu, sd = input$sigma)) +
+  stat_function(fun = dnorm, n = 101, args = list(mean = input$mu, sd = input$sigma)) + 
   scale_y_continuous(breaks = NULL) +
-  stat_function(fun = mynorm, geom = "area", fill="cornflowerblue", alpha = 0.3) +
+  stat_function(fun = mynorm, geom = "area", fill="cornflowerblue", alpha = 0.3) + 
   scale_x_continuous(breaks = c(-input$xlim, input$xlim))+
-  ylab("Density") +
-  theme_minimal() +
+  ylab("Density") + 
+  theme_minimal() + 
   ggtitle("")+
   geom_vline(aes(xintercept=input$mu), color="red", linetype="dashed", size=0.5) +
   geom_vline(aes(xintercept=qnorm(input$pr, mean = input$mu, sd = input$sigma, lower.tail = TRUE, log.p = FALSE)), color="red", size=0.5) })
@@ -1123,25 +1347,29 @@ output$xs = renderTable({
   b = 100*pnorm(input$mu+input$n*input$sigma, input$mu, input$sigma)-pnorm(input$mu-input$n*input$sigma, input$mu, input$sigma)
   x <- t(data.frame(x.position = a, blue.area = b))
   rownames(x) <- c("Red-line Position (x0)", "Blue Area, Probability %")
-  return(x)},
+  return(x)}, 
   digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-
-N = reactive({
+N = reactive({ 
   df = data.frame(x = rnorm(input$size, input$mu, input$sigma))
   return(df)})
 
-output$norm.plot2 = renderPlot({
-df = N()
-x <- names(df)
-plot_hist1c(df, x, input$bin)+
-geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-#ggplot(df, aes(x = x)) +
-#theme_minimal() +
-#ggtitle("")+
-#ylab("Frequency")+ geom_histogram(binwidth = input$bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-input$xlim, input$xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
+
+
+output$norm.plot2 = plotly::renderPlotly({
+
+  df = N()
+  x <- names(df)
+p<-plot_hist1c(df, x, input$bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
+# df = N()
+# ggplot(df, aes(x = x)) + 
+# theme_minimal() + 
+# ggtitle("")+
+# ylab("Frequency")+ geom_histogram(binwidth = input$bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-input$xlim, input$xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
 
@@ -1152,12 +1380,12 @@ output$sum = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-output$info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-    paste0("Click Position: ", "\n", xy_str(input$plot_click2))})
+# output$info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click2))})
 
 output$download1 <- downloadHandler(
     filename = function() {
@@ -1190,36 +1418,22 @@ NN <- reactive({
     return(as.data.frame(x))
   })
 
+output$makeplot.1 <- plotly::renderPlotly({
 
-
-output$makeplot.1 <- renderPlot({
-  #x = NN()
   df = NN()
   x <- names(df)
-  plot_hist1(df, x, input$bin1)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin1, position = "identity") +
-  #xlab("") +
-  #ggtitle("") +
-  #theme_minimal() +
-  #theme(legend.title =element_blank())
+  p<-plot_hist1(df, x, input$bin1)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   })
 
-output$makeplot.2 <- renderPlot({
-  #x = NN()
+output$makeplot.2 <- plotly::renderPlotly({
+  
   df = NN()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_density() +
-  #xlab("") +
-  #theme_minimal() +
-  #theme(legend.title =element_blank())+
-  #geom_vline(aes(xintercept=quantile(x[,1], probs = input$pr, na.rm = FALSE)), color="red", size=0.5)
+  p<-plot_density1(df, x)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   })
 
 output$sum2 = renderTable({
@@ -1228,13 +1442,14 @@ output$sum2 = renderTable({
   rownames(x) <- c("Mean", "Standard Deviation", "Red-line Position (x0)")
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
-#source("p2_server.R", local=TRUE)$value
+
+#source("server_E.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.2. Exp distribution
 output$e.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$e.xlim)), aes(x)) +
   stat_function(fun = "dexp", args = list(rate = input$r)) + ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
+  scale_y_continuous(breaks = NULL) + 
+  theme_minimal() + 
   ggtitle("") + #ylim(0, input$e.ylim) +
   geom_vline(aes(xintercept=qexp(input$e.pr, rate = input$r)), colour = "red")
   })
@@ -1266,28 +1481,27 @@ output$download2 <- downloadHandler(
     }
   )
 
-output$e.plot2 = renderPlot({
-	df = E()
+output$e.plot2 = plotly::renderPlotly({
+  df = E()
   x <- names(df)
-	plot_hist1c(df, x, input$e.bin)+
-	geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
+p<-plot_hist1c(df, x, input$e.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
 
-#df = E()
-#ggplot(df, aes(x = x)) +
-#theme_minimal() +
-#ylab("Frequency")+
-#geom_histogram(binwidth = input$e.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-0.1, input$e.xlim) +
+#ggplot(df, aes(x = x)) + 
+#theme_minimal() + 
+#geom_histogram(bins = input$e.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+#xlim(-0.1, input$e.xlim) + 
 #geom_vline(aes(xintercept=quantile(x, probs = input$e.pr, na.rm=TRUE)), color="red", size=0.5)
 })
 
-output$e.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-
-    paste0("Click Position: ", "\n", xy_str(input$plot_click10))})
+# output$e.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+# 
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click10))})
 
 output$e.sum = renderTable({
   x = E()[,1]
@@ -1319,33 +1533,26 @@ Y <- reactive({
   })
 
 
-output$makeplot.e1 <- renderPlot({
+output$makeplot.e1 <- plotly::renderPlotly({
   df = Y()
   x <- names(df)
-  plot_hist1(df, x, input$bin.e)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #x = Y()
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.e, position = "identity") +
-  #xlab("") +
-  #ggtitle("") +
-  #theme_minimal() +
-  #theme(legend.title =element_blank())
+  p<-plot_hist1(df, x, input$bin.e)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
    })
-output$makeplot.e2 <- renderPlot({
+output$makeplot.e2 <- plotly::renderPlotly({
   df = Y()
   x <- names(df)
-  plot_hist1(df, x, input$bin.e)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #x = Y()
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_density() +
-  #ggtitle("") +
-  #xlab("") + theme_minimal() +
-  #theme(legend.title =element_blank())+
-  #geom_vline(aes(xintercept=quantile(x[,1], probs = input$e.pr, na.rm = TRUE)), color="red", size=0.5)
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$e.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
+  # x = Y()
+  # ggplot(x, aes(x = x[,1])) + 
+  # geom_density() + 
+  # ggtitle("") + 
+  # xlab("") + theme_minimal() + 
+  # theme(legend.title =element_blank())+
+  # geom_vline(aes(xintercept=quantile(x[,1], probs = input$e.pr, na.rm = TRUE)), color="red", size=0.5)
    })
 
 output$e.sum2 = renderTable({
@@ -1354,13 +1561,16 @@ output$e.sum2 = renderTable({
   rownames(x) <- c("Mean", "Standard Deviation", "Red-line Position (x0)")
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
-#source("p3_server.R", local=TRUE)$value
+
+
+
+#source("server_G.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.3. gamma
 output$g.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$g.xlim)), aes(x)) +
-  stat_function(fun = "dgamma", args = list(shape = input$g.shape, scale=input$g.scale)) +
+  stat_function(fun = "dgamma", args = list(shape = input$g.shape, scale=input$g.scale)) + 
   ylab("Density") +
-  theme_minimal() +
+  theme_minimal() + 
   ggtitle("")+
   scale_y_continuous(breaks = NULL) + #ylim(0, input$g.ylim) +
   geom_vline(aes(xintercept=qgamma(input$g.pr, shape = input$g.shape, scale=input$g.scale)), colour = "red")
@@ -1393,29 +1603,30 @@ output$download3 <- downloadHandler(
     }
   )
 
-output$g.plot2 = renderPlot({
-df = G()
-x <- names(df)
-plot_hist1c(df, x, input$g.bin)+
-geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
+output$g.plot2 = plotly::renderPlotly({
+  df = G()
+  x <- names(df)
+p<-plot_hist1c(df, x, input$g.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
+# df = G()
+# ggplot(df, aes(x = x)) + 
+# ylab("Frequency")+ 
+# theme_minimal() + 
+# ggtitle("")+
+# geom_histogram(binwidth = input$g.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-0.1, input$g.xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
 
-#df = G()
-#ggplot(df, aes(x = x)) +
-#ylab("Frequency")+
-#theme_minimal() +
-#ggtitle("")+
-#geom_histogram(binwidth = input$g.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-0.1, input$g.xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
-output$g.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-
-    paste0("Click Position: ", "\n", xy_str(input$plot_click12))})
+# output$g.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+# 
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click12))})
 
 output$g.sum = renderTable({
   x = G()
@@ -1446,37 +1657,37 @@ Z <- reactive({
     return(as.data.frame(x))
   })
 
-output$makeplot.g1 <- renderPlot({
-  df = Z()
+output$makeplot.g1 <- plotly::renderPlotly({
+    df = Z()
   x <- names(df)
-  plot_hist1(df, x, input$bin.g)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #x = Z()
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.g, position = "identity") +
-  #xlab("") +
-  #ggtitle("") +
-  #theme_minimal() +
-  #theme(legend.title =element_blank())
-
+  p<-plot_hist1(df, x, input$bin.g)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
+  # x = Z()
+  # ggplot(x, aes(x = x[,1])) + 
+  # geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.g, position = "identity") + 
+  # xlab("") + 
+  # ggtitle("") + 
+  # theme_minimal() + 
+  # theme(legend.title =element_blank())
+  # 
   })
 
-output$makeplot.g2 <- renderPlot({
-  df = Z()
+output$makeplot.g2 <- plotly::renderPlotly({
+    df = Z()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm = TRUE)), color="red", size=0.3)
-
-  #x = Z()
-  #ggplot(x, aes(x = x[,1])) +
-  #geom_density() +
-  #ggtitle("") +
-  #xlab("") +
-  #theme_minimal() +
-  #theme(legend.title =element_blank())+
-  #geom_vline(aes(xintercept=quantile(x[,1], probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
-
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$g.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
+  # x = Z()
+  # ggplot(x, aes(x = x[,1])) + 
+  # geom_density() + 
+  # ggtitle("") + 
+  # xlab("") + 
+  # theme_minimal() + 
+  # theme(legend.title =element_blank())+ 
+  # geom_vline(aes(xintercept=quantile(x[,1], probs = input$g.pr, na.rm = FALSE)), color="red", size=0.5)
+  # 
   })
 
 output$g.sum2 = renderTable({
@@ -1486,14 +1697,14 @@ output$g.sum2 = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-#source("p4_server.R", local=TRUE)$value
+#source("server_B.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.4. beta
 output$b.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$b.xlim)), aes(x)) +
-  stat_function(fun = "dbeta", args = list(shape1 = input$b.shape, shape2=input$b.scale)) +
+  stat_function(fun = "dbeta", args = list(shape1 = input$b.shape, shape2=input$b.scale)) + 
   ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
+  scale_y_continuous(breaks = NULL) + 
+  theme_minimal() + 
   ggtitle("") + #ylim(0, input$b.ylim) +
   geom_vline(aes(xintercept=qbeta(input$b.pr, shape1 = input$b.shape, shape2=input$b.scale)), colour = "red")})
 
@@ -1524,29 +1735,30 @@ output$download4 <- downloadHandler(
     }
   )
 
-output$b.plot2 = renderPlot({
+output$b.plot2 = plotly::renderPlotly({
   df = B()
   x <- names(df)
-	plot_hist1c(df, x, input$b.bin)+
-	geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
+p<-plot_hist1c(df, x, input$b.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
 
-#df = B()
-#ggplot(df, aes(x = x)) +
-#theme_minimal() +
-#ggtitle("")+
-#ylab("Frequency")+
-#geom_histogram(binwidth = input$b.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-0.1, input$b.xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
+#   df = B()
+# ggplot(df, aes(x = x)) + 
+# theme_minimal() + 
+# ggtitle("")+
+# ylab("Frequency")+ 
+# geom_histogram(binwidth = input$b.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-0.1, input$b.xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
-output$b.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-
-    paste0("Click Position: ", "\n", xy_str(input$plot_click12))})
+# output$b.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+# 
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click12))})
 
 output$b.sum = renderTable({
   x = B()
@@ -1577,22 +1789,22 @@ ZZ <- reactive({
     return(as.data.frame(x))
   })
 
-output$makeplot.b1 <- renderPlot({
+output$makeplot.b1 <- plotly::renderPlotly({
   df = ZZ()
   x <- names(df)
-  plot_hist1(df, x, input$bin.b)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
-
+  p<-plot_hist1(df, x, input$bin.b)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(ZZ())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.b, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
 
-output$makeplot.b2 <- renderPlot({
+output$makeplot.b2 <- plotly::renderPlotly({
   df = ZZ()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm = TRUE)), color="red", size=0.3)
-
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(ZZ())
   #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank()) + geom_vline(aes(xintercept=quantile(x[,1], probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1604,15 +1816,17 @@ output$b.sum2 = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-#source("p5_server.R", local=TRUE)$value
+
+
+#source("server_T.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.5. T
 output$t.plot <- renderPlot({
-  ggplot(data = data.frame(x = c(-input$t.xlim, input$t.xlim)), aes(x)) +
-  stat_function(fun = dt, n = 100, args = list(df = input$t.df)) +
+  ggplot(data = data.frame(x = c(-input$t.xlim, input$t.xlim)), aes(x)) + 
+  stat_function(fun = dt, n = 100, args = list(df = input$t.df)) + 
   stat_function(fun = dnorm, args = list(mean = 0, sd = 1), color = "cornflowerblue") +
-  ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
+  ylab("Density") + 
+  scale_y_continuous(breaks = NULL) + 
+  theme_minimal() + 
   ggtitle("")+
   geom_vline(aes(xintercept=qt(input$t.pr, df = input$t.df)), colour = "red")})
 
@@ -1644,28 +1858,31 @@ output$download5 <- downloadHandler(
     }
   )
 
-output$t.plot2 = renderPlot({
+#output$table2 = renderDataTable({head(T(), n = 100L)},  options = list(pageLength = 10))
+
+output$t.plot2 = plotly::renderPlotly({
   df = T()
   x <- names(df)
-	plot_hist1c(df, x, input$t.bin)+
-	geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
+p<-plot_hist1c(df, x, input$t.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
 
-#df = T()
-#ggplot(df, aes(x = x)) +
-#theme_minimal() +
-##ggtitle("")+
-#ylab("Frequency")+
-#geom_histogram(binwidth = input$t.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-input$t.xlim, input$t.xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm = FALSE)), color="red", size=0.5)
+# df = T()
+# ggplot(df, aes(x = x)) + 
+# theme_minimal() + 
+# ggtitle("")+
+# ylab("Frequency")+ 
+# geom_histogram(binwidth = input$t.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-input$t.xlim, input$t.xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$t.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
-output$t.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-    paste0("Click Position: ", "\n", xy_str(input$plot_click4))})
+# output$t.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click4))})
 
 output$t.sum = renderTable({
   x = T()
@@ -1698,21 +1915,21 @@ TT <- reactive({
   })
 
 
-output$makeplot.t1 <- renderPlot({
+output$makeplot.t1 <- plotly::renderPlotly({
   df = TT()
   x <- names(df)
-  plot_hist1(df, x, input$bin.t)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
-
+  p<-plot_hist1(df, x, input$bin.t)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(TT())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.t, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
-output$makeplot.t2 <- renderPlot({
+output$makeplot.t2 <- plotly::renderPlotly({
   df = TT()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm = TRUE)), color="red", size=0.3)
-
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$t.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(TT())
   #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank()) + geom_vline(aes(xintercept=quantile(x[,1], probs = input$t.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1724,14 +1941,14 @@ output$t.sum2 = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-#source("p6_server.R", local=TRUE)$value
+#source("server_Chi.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.6. chi
 output$x.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$x.xlim)), aes(x)) +
-  stat_function(fun = dchisq, n = 100, args = list(df = input$x.df)) +
+  stat_function(fun = dchisq, n = 100, args = list(df = input$x.df)) + 
   ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
+  scale_y_continuous(breaks = NULL) + 
+  theme_minimal() + 
   ggtitle("") + #ylim(0, input$x.ylim) +
   geom_vline(aes(xintercept=qchisq(input$x.pr, df = input$x.df)), colour = "red")})
 
@@ -1762,28 +1979,29 @@ output$download6 <- downloadHandler(
     }
   )
 
-output$x.plot2 = renderPlot({
+output$x.plot2 = plotly::renderPlotly({
   df = X()
   x <- names(df)
-	plot_hist1c(df, x, input$x.bin)+
-	geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
+p<-plot_hist1c(df, x, input$x.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
+# df = X()
+# ggplot(df, aes(x = x)) + 
+# theme_minimal() + 
+# ggtitle("")+
+# ylab("Frequency")+ 
+# geom_histogram(binwidth = input$x.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-0.1, input$x.xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm = FALSE)), color="red", size=0.5)
 
-#df = X()
-#ggplot(df, aes(x = x)) +
-#theme_minimal() +
-##ggtitle("")+
-#ylab("Frequency")+
-#geom_histogram(binwidth = input$x.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-0.1, input$x.xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$x.pr, na.rm = FALSE)), color="red", size=0.5)
 })
 
-output$x.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-    paste0("Click Position: ", "\n", xy_str(input$plot_click6))})
+# output$x.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click6))})
 
 output$x.sum = renderTable({
   x = X()
@@ -1814,21 +2032,21 @@ XX <- reactive({
     return(as.data.frame(x))
   })
 
-output$makeplot.x1 <- renderPlot({
+output$makeplot.x1 <- plotly::renderPlotly({
   df = XX()
   x <- names(df)
-  plot_hist1(df, x, input$bin.x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
-
+  p<-plot_hist1(df, x, input$bin.x)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(XX())
   #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.x, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
-output$makeplot.x2 <- renderPlot({
+output$makeplot.x2 <- plotly::renderPlotly({
   df = XX()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm = TRUE)), color="red", size=0.3)
-
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$x.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
   #x = as.data.frame(XX())
 #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())+ geom_vline(aes(xintercept=quantile(x[,1], probs = input$x.pr, na.rm = FALSE)), color="red", size=0.5)
    })
@@ -1840,13 +2058,13 @@ output$x.sum2 = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
-#source("p7_server.R", local=TRUE)$value
+#source("server_F.R", local=TRUE)$value
 #****************************************************************************************************************************************************1.7. F
 output$f.plot <- renderPlot({
   ggplot(data = data.frame(x = c(-0.1, input$f.xlim)), aes(x)) +
   stat_function(fun = "df", n= 100, args = list(df1 = input$df11, df2 = input$df21)) + ylab("Density") +
-  scale_y_continuous(breaks = NULL) +
-  theme_minimal() +
+  scale_y_continuous(breaks = NULL) + 
+  theme_minimal() + 
   ggtitle("") + #ylim(0, input$f.ylim) +
   geom_vline(aes(xintercept=qf(input$f.pr, df1 = input$df11, df2 = input$df21)), colour = "red")})
 
@@ -1880,29 +2098,31 @@ output$download7 <- downloadHandler(
 
 output$table4 = renderDataTable({head(F(), n = 100L)},  options = list(pageLength = 10))
 
-output$f.plot2 = renderPlot({
+output$f.plot2 = plotly::renderPlotly({
   df = F()
   x <- names(df)
-	plot_hist1c(df, x, input$f.bin)+
-	geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
+p<-plot_hist1c(df, x, input$f.bin)
+p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
+plotly::ggplotly(p)
 
-#df = F()
-#ggplot(df, aes(x = x)) +
-#ggtitle("") +
-#theme_minimal() +
-#ylab("Frequency")+
-#geom_histogram(binwidth = input$f.bin, colour = "white", fill = "cornflowerblue", size = 0.1) +
-#xlim(-0.1, input$f.xlim) +
-#geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
+#   df = F()
+# ggplot(df, aes(x = x)) + 
+# ggtitle("") + 
+# theme_minimal() + 
+# ylab("Frequency")+ 
+# geom_histogram(binwidth = input$f.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
+# xlim(-0.1, input$f.xlim) + 
+# geom_vline(aes(xintercept=quantile(x, probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
+
 })
 
-output$f.info2 = renderText({
-    xy_str = function(e) {
-      if(is.null(e)) return("NULL\n")
-      paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-    }
-
-    paste0("Click Position: ", "\n", xy_str(input$plot_click8))})
+# output$f.info2 = renderText({
+#     xy_str = function(e) {
+#       if(is.null(e)) return("NULL\n")
+#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
+#     }
+# 
+#     paste0("Click Position: ", "\n", xy_str(input$plot_click8))})
 
 output$f.sum = renderTable({
   x = F()
@@ -1934,24 +2154,26 @@ FF <- reactive({
     return(as.data.frame(x))
   })
 
-output$makeplot.f1 <- renderPlot({
-  df = FF()
+output$makeplot.f1 <- plotly::renderPlotly({
+    df = FF()
   x <- names(df)
-  plot_hist1(df, x, input$bin.f)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
-
-  #x = as.data.frame(FF())
-  #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.f, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
-   })
-output$makeplot.f2 <- renderPlot({
-  df = FF()
+  p<-plot_hist1(df, x, input$bin.f)
+  p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm=TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
+  # x = as.data.frame(FF())
+  # ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.f, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
+  
+  })
+output$makeplot.f2 <- plotly::renderPlotly({
+    df = FF()
   x <- names(df)
-  plot_density1(df, x)+
-  geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm = TRUE)), color="red", size=0.3)
-
-  #x = as.data.frame(FF())
- #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())+ geom_vline(aes(xintercept=quantile(x[,1], probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
-   })
+  p<-plot_density1(df, x)
+  p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$f.pr, na.rm = TRUE)), color="red", size=0.3)
+  plotly::ggplotly(p)
+ #  x = as.data.frame(FF())
+ # ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank())+ geom_vline(aes(xintercept=quantile(x[,1], probs = input$f.pr, na.rm = FALSE)), color="red", size=0.5)
+ #   
+ })
 
 output$f.sum2 = renderTable({
   x = FF()
@@ -1960,10 +2182,12 @@ output$f.sum2 = renderTable({
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
+##########----------##########----------##########
 
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
+
 }
 
 ##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########----------##########

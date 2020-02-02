@@ -630,13 +630,15 @@ theme_minimal()+theme(legend.title=element_blank())
 ##'
 ##' @export
 plot_corr <- function(data){
+  
   c <- as.data.frame(cor(data))
+  c <- c[ , order(names(c))]
+  c <- c[order(rownames(c)),]
   c$group <- rownames(c)
-  corrs.m <- reshape::melt(c, id="group",
-                           measure=rownames(c))
-  group <- corrs.m[,"group"]
-  value <- corrs.m[,"value"]
-  variable <- corrs.m[,"variable"]
+  corrs.m <- reshape::melt(c, id="group", measure=rownames(c))
+  group <- corrs.m[,1]
+  value <- corrs.m[,3]
+  variable <- corrs.m[,2]
 
   ggplot(corrs.m, aes(group, variable, fill=abs(value))) +
     geom_tile() + #rectangles for each correlation
@@ -654,4 +656,80 @@ plot_corr <- function(data){
     scale_fill_gradient(low="white", high="red") +
     guides(fill=F) #omit unnecessary gradient legend
 
+}
+
+##' @title plot functions in MEPHAS
+##'
+##' @param data input data
+##'
+##' @export
+plot_piely <- function(data){
+  value <- data[,"value"]
+  groups <- data[,"group"]
+  colors <- c('rgb(211,94,96)', 'rgb(114,147,203)')
+  plotly::plot_ly(data, labels = ~group, values = ~value, type = 'pie',
+    textposition = 'inside',textinfo = 'label+percent',
+    marker = list(colors = colors, line = list(color = '#FFFFFF', width = 1))) %>%
+  layout(title ="",
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+}
+
+
+##' @title plot functions in MEPHAS
+##'
+##' @param scores input score data frame
+##' @param loads input loading data frame
+##' @param nx input nth component for x-axis
+##' @param ny input nth component for y-axis
+##' @param nz input nth component for x-axis
+##' @param scale input length
+##'
+##' @export
+plot_3D <- function(scores, loads, nx,ny,nz, scale){
+  
+  x <- scores[,nx]
+  y <- scores[,ny]
+  z <- scores[,nz]
+  scale.loads <- scale
+  layout <- list(
+    scene = list(
+      xaxis = list(
+        title = names(scores)[nx], 
+        showline = TRUE
+      ), 
+      yaxis = list(
+        title = names(scores)[ny], 
+        showline = TRUE
+      ), 
+      zaxis = list(
+        title = names(scores)[nz], 
+        showline = TRUE
+      )
+    )#, 
+    #title = "FA (3D)"
+  )
+  
+  rnn <- rownames(as.data.frame(scores))
+  
+  p <- plot_ly() %>%
+    add_trace(x=x, y=y, z=z, 
+              type="scatter3d", mode = "text+markers", 
+              name = "original", 
+              linetypes = NULL, 
+              opacity = 0.5,
+              marker = list(size=2),
+              text = rnn) %>%
+    layout(p, scene=layout$scene, title=layout$title)
+  
+  for (k in 1:nrow(loads)) {
+    x <- c(0, loads[k,1])*scale.loads
+    y <- c(0, loads[k,2])*scale.loads
+    z <- c(0, loads[k,3])*scale.loads
+    p <- p %>% add_trace(x=x, y=y, z=z,
+                         type="scatter3d", mode="lines",
+                         line = list(width=4),
+                         opacity = 1) 
+  }
+  p
 }
