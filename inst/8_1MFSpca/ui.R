@@ -1,0 +1,152 @@
+source("../tab/tab.R")
+
+tagList(
+
+source("../tab/font.R",local=TRUE, encoding="UTF-8")$value,
+#tags$head(includeScript("../0tabs/navtitle.js")),
+tags$head(
+  tags$link(rel = "shortcut icon", href = "../www/favicon.ico"),
+  tags$link(rel = "icon", type = "image/png", sizes = "96x96", href = "../www/favicon-96x96.ico"),
+  tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "../www/favicon-32x32.png"),
+  tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "../www/favicon-16x16.png")
+),
+tags$style(type="text/css", "body {padding-top: 70px;}"),
+#source("../0tabs/onoff.R", local=TRUE)$value,
+tabOF(),
+navbarPage(
+theme = shinythemes::shinytheme("cerulean"),
+
+
+#title = a("Dimensional Analysis 1", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
+title = "Dimensional Analysis 1", 
+
+collapsible = TRUE,
+id="navibar", 
+position="fixed-top",
+
+
+##########----------##########----------##########
+
+tabPanel("Data",
+
+headerPanel("Data Preparation"),
+
+conditionalPanel(
+condition = "input.explain_on_off",
+HTML(
+"
+<h4><b> 1. Functionalities  </b></h4>
+<ul>
+<li> To upload data file, preview data set, and check the correctness of data input</li>
+<li> To pre-process some variables (when necessary) for building the model</li>
+<li> To get the basic descriptive statistics and plots of the variables</li>
+</ul>
+
+<h4><b> 2. About your data</b></h4>
+
+<ul>
+<li> Your data need to have more rows than columns</li>
+<li> Your data need to be all numeric</li>
+</ul>
+
+
+<h4><i>Case Example 1: Mouse gene expression data</i></h4>
+
+<i>This data measured the gene expression of 20 mouses in a diet experiment. Some mouses showed same genotype and some gene variables were correlated.
+We wanted to compute the principal components which were linearly uncorrelated from the gene expression data.</i>
+
+<h4><i>Case Example 2: Chemical data</i></h4>
+
+<i>
+Suppose in one study, people measured the 9 chemical attributes of 7 types of drugs. Some chemicals had latent association.
+We wanted to explore the latent relational structure among the set of chemical variables and narrow down to smaller number of variables.
+</i>
+
+<h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results. After getting data ready, please find the model in the next tabs.</h4>
+"
+)
+),
+hr(),
+source("ui_data.R", local=TRUE, encoding="UTF-8")$value,
+hr()
+
+),
+
+
+##########----------##########----------##########
+tabPanel("PCA",
+
+headerPanel("Principal Component Analysis"),
+
+conditionalPanel(
+condition = "input.explain_on_off",
+HTML(
+"
+<b>Principal components analysis (PCA)</b> is a data reduction technique that transforms a larger number of correlated variables into a much smaller set of uncorrelated variables called principal components.
+
+<h4><b> 1. Functionalities  </b></h4>
+<ul>
+<li> From <parallel analysis> to estimate the number of components</li>
+<li> To get correlation matrix and plot</li>
+<li> To get the principal components and loadings result tables and</li>
+<li> To get the principal components and loadings distribution plots in 2D and 3D</li>
+</ul>
+
+<h4><b> 2. About your data </b></h4>
+
+<ul>
+<li> All the data for analysis are numeric
+<li> More samples size than the number of independent variables, that is, he number of rows is greater than the number of columns</li>
+</ul>
+
+<h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
+")
+),
+hr(),
+source("ui_pca.R", local=TRUE, encoding="UTF-8")$value,
+hr()
+
+), #penal tab end
+
+##########----------##########----------##########
+tabPanel("EFA",
+
+headerPanel("Exploratory Factor Analysis"),
+conditionalPanel(
+condition = "input.explain_on_off",
+HTML(
+"
+<b>Exploratory Factor analysis (EFA)</b> is a statistical method used to describe variability among observed, correlated variables in terms of a potentially lower number of unobserved variables called factors.
+
+<h4><b> 1. Functionalities  </b></h4>
+<ul>
+<li> From <parallel analysis> to estimate the number of components</li>
+<li> To get correlation matrix and plot</li>
+<li> To get the factors and loadings result tables and</li>
+<li> To get the factors and loadings distribution plots in 2D and 3D</li>
+</ul>
+
+<h4><b> 2. About your data </b></h4>
+
+<ul>
+<li> All the data for analysis are numeric</li>
+<li> More samples size than the number of independent variables, that is, he number of rows is greater than the number of columns</li>
+</ul>
+
+<h4> Please follow the <b>Steps</b> to build the model, and click <b>Outputs</b> to get analytical results.</h4>
+")
+),
+hr(),
+source("ui_fa.R", local=TRUE, encoding="UTF-8")$value,
+hr()
+),
+
+##########----------##########----------##########
+
+tabstop(),
+tablink()
+
+))
+
+##########----------##########----------####################----------##########----------####################----------##########----------##########
+#)

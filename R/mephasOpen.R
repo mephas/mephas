@@ -41,7 +41,7 @@ mephasOpen <- function(method=c("condist",
 
 method <- match.arg(method)
 
-  switch(method,
+        switch(method,
          condist = MFScondist(),
          disdist = MFSdisdist(),
 
@@ -58,5 +58,6 @@ method <- match.arg(method)
          pca     = MFSpca(),
          pls     = MFSpls()
          )
+
 
 }

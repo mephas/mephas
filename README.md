@@ -182,4 +182,4 @@ More functions are under construction...
 
 ##### Web server MEPHAS updates earlier than R package mephas
 
-##### R package mephas uses only local R and Rstudio. After installed, it can be used with no need for Internet
+##### R package mephas uses only local R and RStudio. After installed, it can be used with no need for Internet
