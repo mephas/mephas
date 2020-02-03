@@ -90,7 +90,6 @@
 <li><a href="#commands-to-open-mephas-windows">Commands to open mephas windows</a></li>
 </ul>
 </li>
-<li><a href="#some-differences-between-web-server-mephas-and-r-package-mephas">Some differences between web server MEPHAS and R package mephas</a></li>
 </ul>
 <!-- /MarkdownTOC --><p>MEPHAS is a shiny-based statistical software that was developed to support statistical data analyses for medical and pharmaceutical students, researchers, and doctors.</p>
 <p>Two platforms are available: (1) web server and (2) R package.</p>
@@ -165,24 +164,34 @@
 <div id="file-mephas_1-1-tar-gz-updated-2020-1" class="section level4">
 <h4 class="hasAnchor">
 <a href="#file-mephas_1-1-tar-gz-updated-2020-1" class="anchor"></a>File: <a href="https://github.com/mephas/mephas.tar.gz">mephas_1.1.tar.gz</a> (updated 2020-1)</h4>
-<div id="you-may-need-to-install-the-following-packages-before-or-during-the-installation-if-there-were-warnings" class="section level5">
+<div id="check-whether-you-have-installed-the-following-packages" class="section level5">
 <h5 class="hasAnchor">
-<a href="#you-may-need-to-install-the-following-packages-before-or-during-the-installation-if-there-were-warnings" class="anchor"></a>You may need to install the following packages Before or During the Installation (if there were warnings)</h5>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DescTools"</span>,</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">                      <span class="st">"DT"</span>,</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">                      <span class="st">"exactRankTests"</span>,</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">                      <span class="st">"dunn.test"</span>,</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">                      <span class="st">"ROCR"</span>,</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">                      <span class="st">"ggplot2"</span>,</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">                      <span class="st">"psych"</span>,</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">                      <span class="st">"pls"</span>,</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">                      <span class="st">"reshape"</span>,</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">                      <span class="st">"shiny"</span>,</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">                      <span class="st">"survival"</span>,</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">                      <span class="st">"survminer"</span>,</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">                      <span class="st">"survAUC"</span>,</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14">                      <span class="st">"stargazer"</span>,</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">                      <span class="st">"spls"</span>))</a></code></pre></div>
+<a href="#check-whether-you-have-installed-the-following-packages" class="anchor"></a>Check whether you have installed the following packages</h5>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span>mephas.need.packages &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"DescTools"</span>,</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">                        <span class="st">"DT"</span>,</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">                        <span class="st">"exactRankTests"</span>,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">                        <span class="st">"dunn.test"</span>,</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">                        <span class="st">"ROCR"</span>,</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">                        <span class="st">"ggplot2"</span>,</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">                        <span class="st">"magrittr"</span>,</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">                        <span class="st">"psych"</span>,</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">                        <span class="st">"pls"</span>,</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">                        <span class="st">"plotly"</span>,</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">                        <span class="st">"reshape"</span>,</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">                        <span class="st">"shiny"</span>,</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">                        <span class="st">"shinythemes"</span>,</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">                        <span class="st">"shinyWidgets"</span>,</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">                        <span class="st">"survival"</span>,</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">                        <span class="st">"survminer"</span>,</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">                        <span class="st">"survAUC"</span>,</a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">                        <span class="st">"spls"</span>)</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="op">&gt;</span><span class="st"> </span>not.installed.packages &lt;-<span class="st"> </span>mephas.need.packages[<span class="op">!</span>(mephas.need.packages <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()[,<span class="st">"Package"</span>])]</a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="op">&gt;</span><span class="st"> </span>not.installed.packages</a></code></pre></div>
+</div>
+<div id="if-some-packages-have-not-been-installed-install-them-first" class="section level5">
+<h5 class="hasAnchor">
+<a href="#if-some-packages-have-not-been-installed-install-them-first" class="anchor"></a>If some packages have not been installed, install them first</h5>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="cf">if</span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(not.installed.packages)) <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(not.installed.packages)</a></code></pre></div>
 <p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html">Videos of the installation process on windows</a></p>
 <hr>
 <p><a id="find-a-statistical-methods-using-the-flowchart"></a></p>
@@ -198,18 +207,18 @@
 <div id="commands-to-open-mephas-windows" class="section level3">
 <h3 class="hasAnchor">
 <a href="#commands-to-open-mephas-windows" class="anchor"></a>Commands to open mephas windows</h3>
-<div id="load-the-whole-package" class="section level4">
+<div id="load-the-package" class="section level4">
 <h4 class="hasAnchor">
-<a href="#load-the-whole-package" class="anchor"></a>Load the whole package</h4>
+<a href="#load-the-package" class="anchor"></a>Load the package</h4>
 <p>Before open the applications, please load the package mephas</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mephas)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mephas)</a></code></pre></div>
 <p>Then, you can open the applications as follows.</p>
 </div>
 <div id="all-in-one-function-see-details" class="section level4">
 <h4 class="hasAnchor">
 <a href="#all-in-one-function-see-details" class="anchor"></a>All-in-one function, <a href="https://mephas.github.io/mephas/reference/mephasOpen.html">see details</a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/mephasOpen.html">mephasOpen</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/mephasOpen.html">mephasOpen</a></span>()</a></code></pre></div>
 <p><a href="https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html">Videos of the opening process on windows</a></p>
 </div>
 <div id="alternatively-open-each-interfaces-using-the-method-names" class="section level4">
@@ -219,81 +228,60 @@
 <h5 class="hasAnchor">
 <a href="#probability-distributions" class="anchor"></a>1. Probability distributions</h5>
 <p>Continuous probability distribution, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/1_1MFScondist/">web server</a></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFScondist.html">MFScondist</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFScondist.html">MFScondist</a></span>()</a></code></pre></div>
 <p>Discrete probability distribution, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/1_2MFSdisdist/">web server</a></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSdisdist.html">MFSdisdist</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSdisdist.html">MFSdisdist</a></span>()</a></code></pre></div>
 </div>
 <div id="parametric-t-test-for-means-web-server" class="section level5">
 <h5 class="hasAnchor">
 <a href="#parametric-t-test-for-means-web-server" class="anchor"></a>2. Parametric T test for means, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/2MFSttest.html">web server</a>
 </h5>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSttest.html">MFSttest</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSttest.html">MFSttest</a></span>()</a></code></pre></div>
 </div>
 <div id="non-parametric-tests-for-median-web-server" class="section level5">
 <h5 class="hasAnchor">
 <a href="#non-parametric-tests-for-median-web-server" class="anchor"></a>3. Non-parametric tests for median, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/3MFSnptest.html">web server</a>
 </h5>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSnptest.html">MFSnptest</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSnptest.html">MFSnptest</a></span>()</a></code></pre></div>
 </div>
 <div id="test-for-binomial-proportions-web-server" class="section level5">
 <h5 class="hasAnchor">
 <a href="#test-for-binomial-proportions-web-server" class="anchor"></a>4. Test for binomial proportions, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/4MFSproptest.html">web server</a>
 </h5>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSproptest.html">MFSproptest</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSproptest.html">MFSproptest</a></span>()</a></code></pre></div>
 </div>
 <div id="test-for-contingency-tables-web-server" class="section level5">
 <h5 class="hasAnchor">
 <a href="#test-for-contingency-tables-web-server" class="anchor"></a>5. Test for contingency tables, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/5MFSrctabtest.html">web server</a>
 </h5>
-<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSrctabtest.html">MFSrctabtest</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSrctabtest.html">MFSrctabtest</a></span>()</a></code></pre></div>
 </div>
 <div id="analysis-of-variance-web-server" class="section level5">
 <h5 class="hasAnchor">
 <a href="#analysis-of-variance-web-server" class="anchor"></a>6. Analysis of variance, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/6MFSanova.html">web server</a>
 </h5>
-<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSanova.html">MFSanova</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSanova.html">MFSanova</a></span>()</a></code></pre></div>
 </div>
 <div id="statistical-model" class="section level5">
 <h5 class="hasAnchor">
 <a href="#statistical-model" class="anchor"></a>7. Statistical model,</h5>
 <p>Linear regression, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/7_1MFSlr.html">web server</a></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSlr.html">MFSlr</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSlr.html">MFSlr</a></span>()</a></code></pre></div>
 <p>Logistic regression, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/7_2MFSlogit.html">web server</a></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSlogit.html">MFSlogit</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSlogit.html">MFSlogit</a></span>()</a></code></pre></div>
 <p>Survival analysis, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/7_3MFSsurv.html">web server</a></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSsurv.html">MFSsurv</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSsurv.html">MFSsurv</a></span>()</a></code></pre></div>
 </div>
 <div id="dimensional-analysis" class="section level5">
 <h5 class="hasAnchor">
 <a href="#dimensional-analysis" class="anchor"></a>8. Dimensional analysis</h5>
 <p>Dimensional analysis 1, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/8_1MFSpca.html">web server</a></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSpca.html">MFSpca</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSpca.html">MFSpca</a></span>()</a></code></pre></div>
 <p>Dimensional analysis 2, <a href="https://alain003.phs.osaka-u.ac.jp/mephas/8_2MFSpls.html">web server</a></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSpls.html">MFSpls</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="reference/MFSpls.html">MFSpls</a></span>()</a></code></pre></div>
 <p>More functions are under construction…</p>
-<p><a id="some-differences-between-web-server-mephas-and-r-package-mephas"></a></p>
 </div>
 </div>
-</div>
-</div>
-<div id="some-differences-between-web-server-mephas-and-r-package-mephas" class="section level2">
-<h2 class="hasAnchor">
-<a href="#some-differences-between-web-server-mephas-and-r-package-mephas" class="anchor"></a>Some differences between web server MEPHAS and R package mephas</h2>
-<div id="web-server-mephas-employs-plotly-for-2d-and-3d-plot-r-package-mephas-employs-ggplot2-for-2d-plots-only" class="section level5">
-<h5 class="hasAnchor">
-<a href="#web-server-mephas-employs-plotly-for-2d-and-3d-plot-r-package-mephas-employs-ggplot2-for-2d-plots-only" class="anchor"></a>Web server MEPHAS employs <a href="https://plot.ly/">plotly</a> for 2D and 3D plot; R package mephas employs <a href="https://ggplot2.tidyverse.org/">ggplot2</a> for 2D plots only</h5>
-</div>
-<div id="web-server-mephas-has-comparatively-more-explanation-and-interpretation-than-r-package-mephas" class="section level5">
-<h5 class="hasAnchor">
-<a href="#web-server-mephas-has-comparatively-more-explanation-and-interpretation-than-r-package-mephas" class="anchor"></a>Web server MEPHAS has comparatively more explanation and interpretation than R package mephas</h5>
-</div>
-<div id="web-server-mephas-updates-earlier-than-r-package-mephas" class="section level5">
-<h5 class="hasAnchor">
-<a href="#web-server-mephas-updates-earlier-than-r-package-mephas" class="anchor"></a>Web server MEPHAS updates earlier than R package mephas</h5>
-</div>
-<div id="r-package-mephas-uses-only-local-r-and-rstudio--after-installed-it-can-be-used-with-no-need-for-internet" class="section level5">
-<h5 class="hasAnchor">
-<a href="#r-package-mephas-uses-only-local-r-and-rstudio--after-installed-it-can-be-used-with-no-need-for-internet" class="anchor"></a>R package mephas uses only local R and Rstudio. After installed, it can be used with no need for Internet</h5>
 </div>
 </div>
 </div>
@@ -303,8 +291,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<!--li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mephas">https://​cloud.r-project.org/​package=mephas</a>
-</li-->
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mephas">https://​cloud.r-project.org/​package=mephas</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/mephas/mephas">https://​github.com/​mephas/​mephas</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/mephas/mephas/issues">https://​github.com/​mephas/​mephas/​issues</a>

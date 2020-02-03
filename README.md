@@ -7,7 +7,6 @@
   - [Installation from ".tar.gz" file](#installation-from-targz-file)
   - [Find a statistical methods using the flowchart](#find-a-statistical-methods-using-the-flowchart)
   - [Commands to open mephas windows](#commands-to-open-mephas-windows)
-- [Some differences between web server MEPHAS and R package mephas](#some-differences-between-web-server-mephas-and-r-package-mephas)
 
 <!-- /MarkdownTOC -->
 
@@ -68,24 +67,33 @@ Note: `upgrade="never"`: suppress the updates of the R packages, [see details he
 
 #### File: [mephas_1.1.tar.gz](https://github.com/mephas/mephas.tar.gz) (updated 2020-1)
 
-##### You may need to install the following packages Before or During the Installation (if there were warnings)
+##### Check whether you have installed the following packages
 
-    > install.packages(c("DescTools",
-                          "DT",
-                          "exactRankTests",
-                          "dunn.test",
-                          "ROCR",
-                          "ggplot2",
-                          "psych",
-                          "pls",
-                          "reshape",
-                          "shiny",
-                          "survival",
-                          "survminer",
-                          "survAUC",
-                          "stargazer",
-                          "spls"))
+    > mephas.need.packages <- c("DescTools",
+                            "DT",
+                            "exactRankTests",
+                            "dunn.test",
+                            "ROCR",
+                            "ggplot2",
+                            "magrittr",
+                            "psych",
+                            "pls",
+                            "plotly",
+                            "reshape",
+                            "shiny",
+                            "shinythemes",
+                            "shinyWidgets",
+                            "survival",
+                            "survminer",
+                            "survAUC",
+                            "spls")
+    > not.installed.packages <- mephas.need.packages[!(mephas.need.packages %in% installed.packages()[,"Package"])]
+    > not.installed.packages
 
+
+##### If some packages have not been installed, install them first
+
+    > if(length(not.installed.packages)) install.packages(not.installed.packages)
 
 [Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
 
@@ -100,7 +108,7 @@ Note: `upgrade="never"`: suppress the updates of the R packages, [see details he
 <a id="commands-to-open-mephas-windows"></a>
 ### Commands to open mephas windows
 
-#### Load the whole package
+#### Load the package
 
 Before open the applications, please load the package mephas
 
@@ -173,13 +181,3 @@ Dimensional analysis 2, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/8
 
 More functions are under construction...
 
-<a id="some-differences-between-web-server-mephas-and-r-package-mephas"></a>
-## Some differences between web server MEPHAS and R package mephas
-
-##### Web server MEPHAS employs [plotly](https://plot.ly/) for 2D and 3D plot; R package mephas employs [ggplot2](https://ggplot2.tidyverse.org/) for 2D plots only
-
-##### Web server MEPHAS has comparatively more explanation and interpretation than R package mephas
-
-##### Web server MEPHAS updates earlier than R package mephas
-
-##### R package mephas uses only local R and RStudio. After installed, it can be used with no need for Internet
