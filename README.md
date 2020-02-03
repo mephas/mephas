@@ -126,55 +126,55 @@ Then, you can open the applications as follows.
 
 ##### 1. Probability distributions
 
-Continuous probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_1MFScondist/)
+Continuous probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/1_1MFScondist/)
 
     > MFScondist()
 
-Discrete probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/1_2MFSdisdist/)
+Discrete probability distribution, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/1_2MFSdisdist/)
 
     > MFSdisdist()
     
-##### 2. Parametric T test for means, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/2MFSttest.html)
+##### 2. Parametric T test for means, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/2MFSttest.html)
 
     > MFSttest()
 
-##### 3. Non-parametric tests for median, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/3MFSnptest.html)
+##### 3. Non-parametric tests for median, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/3MFSnptest.html)
 
     > MFSnptest()
 
-##### 4. Test for binomial proportions, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/4MFSproptest.html)
+##### 4. Test for binomial proportions, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/4MFSproptest.html)
 
     > MFSproptest()
 
-##### 5. Test for contingency tables, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/5MFSrctabtest.html)
+##### 5. Test for contingency tables, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/5MFSrctabtest.html)
 
     > MFSrctabtest()
 
-##### 6. Analysis of variance, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/6MFSanova.html)
+##### 6. Analysis of variance, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/6MFSanova.html)
 
     > MFSanova()
 
 ##### 7. Statistical model, 
 
-Linear regression, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/7_1MFSlr.html)
+Linear regression, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/7_1MFSlr.html)
     
     > MFSlr()
 
-Logistic regression, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/7_2MFSlogit.html)
+Logistic regression, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/7_2MFSlogit.html)
 
     > MFSlogit()
 
-Survival analysis, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/7_3MFSsurv.html)
+Survival analysis, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/7_3MFSsurv.html)
     
     > MFSsurv()
 
 ##### 8. Dimensional analysis
 
-Dimensional analysis 1, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/8_1MFSpca.html)
+Dimensional analysis 1, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/8_1MFSpca.html)
 
     > MFSpca()
 
-Dimensional analysis 2, [web server](https://alain003.phs.osaka-u.ac.jp/mephas/8_2MFSpls.html)
+Dimensional analysis 2, [web server](https://alain003.phs.osaka-u.ac.jp/mephas_web/8_2MFSpls.html)
 
     > MFSpls()
 
