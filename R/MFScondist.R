@@ -33,6 +33,9 @@
 ##' @export
 MFScondist <- function(){
 
+if (!require("mephas.tools")) {devtools::install_github("mephas.tools")}; 
+requireNamespace("mephas.tools", quietly = TRUE)
+
   suppressPackageStartupMessages(
     shiny::runApp(system.file("1_1MFScondist", package = "mephas"))
   )
