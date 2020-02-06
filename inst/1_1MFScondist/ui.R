@@ -282,11 +282,11 @@ hr(),
 source("ui_F.R", local=TRUE)$value,
 
 hr()
-),
+)#,
 
 ##########----------##########----------##########
-tabstop(),
-tablink()
+#tabstop(),
+#tablink()
 
 #navbarMenu("",icon=icon("link"))
 
