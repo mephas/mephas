@@ -37,6 +37,11 @@
 ##' @export
 MFScondist <- function(){
 
+if (!requireNamespace("shiny")) {install.packages("shiny")}; requireNamespace("shiny")
+if (!requireNamespace("ggplot2")) {install.packages("ggplot2")}; requireNamespace("ggplot2")
+if (!requireNamespace("plotly")) {install.packages("plotly")}; requireNamespace("plotly")
+if (!requireNamespace("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespace("shinyWidgets")
+
   suppressPackageStartupMessages(
     shiny::runApp(system.file("1_1MFScondist", package = "mephas"))
   )

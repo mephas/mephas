@@ -1,12 +1,12 @@
-if (!require("shiny")) {install.packages("shiny")}; library("shiny")
-if (!require("ggplot2")) {install.packages("ggplot2")}; library("ggplot2")
-if (!require("plotly")) {install.packages("plotly")}; library("plotly")
-if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
+#if (!require("shiny")) {install.packages("shiny")}; requireNamespace("shiny")
+#if (!require("ggplot2")) {install.packages("ggplot2")}; requireNamespace("ggplot2")
+#if (!require("plotly")) {install.packages("plotly")}; requireNamespace("plotly")
+#if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespace("shinyWidgets")
 
 
-source("../tab/tab.R")
-source("../tab/panel.R")
-source("../tab/func.R")
+#source("../tab/tab.R")
+#source("../tab/panel.R")
+#source("../tab/func.R")
 
 tagList(
 
