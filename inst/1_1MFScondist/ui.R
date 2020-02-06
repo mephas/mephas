@@ -1,8 +1,8 @@
-if (!require("shiny")) {install.packages("shiny")}; requireNamespace("shiny")
-if (!require("ggplot2")) {install.packages("ggplot2")}; requireNamespace("ggplot2")
-if (!require("plotly")) {install.packages("plotly")}; requireNamespace("plotly")
-if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespace("shinyWidgets")
-
+if (!require("shiny")) {install.packages("shiny")}; requireNamespace("shiny", quietly = TRUE)
+if (!require("ggplot2")) {install.packages("ggplot2")}; requireNamespace("ggplot2", quietly = TRUE)
+if (!require("plotly")) {install.packages("plotly")}; requireNamespace("plotly", quietly = TRUE)
+if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespace("shinyWidgets", quietly = TRUE)
+requireNamespace("mephas.tools", quietly = TRUE)
 
 #source("../tab/tab.R")
 #source("../tab/panel.R")
@@ -11,8 +11,8 @@ if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespa
 tagList(
 
 includeCSS("../www/style.css"),
-#stylink(),
-#tabOF(),
+stylink(),
+tabOF(),
 
 ##########--------------------##########--------------------##########
 
@@ -285,8 +285,8 @@ hr()
 )#,
 
 ##########----------##########----------##########
-#tabstop(),
-#tablink()
+tabstop(),
+tablink()
 
 #navbarMenu("",icon=icon("link"))
 
