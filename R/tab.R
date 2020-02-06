@@ -69,6 +69,9 @@ shinyWidgets::switchInput(#
 )
 }
 
+##' @title tab functions in MEPHAS
+##'
+##' @export
 sty.link <- function(){
   tags$head(
   tags$link(rel = "shortcut icon", href = "../www/favicon.ico"),

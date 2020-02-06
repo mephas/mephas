@@ -9,13 +9,13 @@ plot_scorec(scores, n1, n2, groupvec, type)
 \arguments{
 \item{scores}{input score data frame}
 
+\item{n1}{input x variable}
+
+\item{n2}{input y variable}
+
 \item{groupvec}{input group variable}
 
 \item{type}{input type variable}
-
-\item{varx}{input x variable}
-
-\item{vary}{input y variable}
 }
 \description{
 plot functions in MEPHAS

@@ -23,6 +23,7 @@ Imports:
     pls,
     plotly,
     reshape,
+    scales,
     shiny,
     shinythemes,
     shinyWidgets,

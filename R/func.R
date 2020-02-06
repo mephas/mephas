@@ -5,6 +5,8 @@
 ##' @param data input data frame
 ##' @param varx input x variable name
 ##' @param vary input y variable name
+##' @param xlab input x variable name
+##' @param ylab input y variable name
 ##'
 ##' @export
 plot_scat <- function(data, varx, vary, xlab, ylab){
@@ -22,6 +24,8 @@ plot_scat <- function(data, varx, vary, xlab, ylab){
 ##' @param data input data frame
 ##' @param varx input x variable name
 ##' @param vary input y variable name
+##' @param xlab input x variable name
+##' @param ylab input y variable name
 ##'
 ##' @export
 plot_slgt <- function(data, varx, vary, xlab, ylab){
@@ -541,8 +545,8 @@ plot_scoreg <- function(scores, n1, n2, groupvec){
 ##' @title plot functions in MEPHAS
 ##'
 ##' @param scores input score data frame
-##' @param varx input x variable
-##' @param vary input y variable
+##' @param n1 input x variable
+##' @param n2 input y variable
 ##' @param groupvec input group variable
 ##' @param type input type variable
 ##'
@@ -570,8 +574,8 @@ plot_scorec <- function(scores, n1, n2, groupvec, type){
 ##' @title plot functions in MEPHAS
 ##'
 ##' @param scores input score data frame
-##' @param varx input x variable
-##' @param vary input y variable
+##' @param n1 input x variable
+##' @param n2 input y variable
 ##'
 ##' @export
 plot_score <- function(scores, n1, n2){

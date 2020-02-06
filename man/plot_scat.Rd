@@ -12,6 +12,10 @@ plot_scat(data, varx, vary, xlab, ylab)
 \item{varx}{input x variable name}
 
 \item{vary}{input y variable name}
+
+\item{xlab}{input x variable name}
+
+\item{ylab}{input y variable name}
 }
 \description{
 plot functions in MEPHAS

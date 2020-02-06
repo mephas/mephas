@@ -9,9 +9,9 @@ plot_score(scores, n1, n2)
 \arguments{
 \item{scores}{input score data frame}
 
-\item{varx}{input x variable}
+\item{n1}{input x variable}
 
-\item{vary}{input y variable}
+\item{n2}{input y variable}
 }
 \description{
 plot functions in MEPHAS
