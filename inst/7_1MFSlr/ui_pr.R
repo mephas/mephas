@@ -17,40 +17,8 @@ tabPanel("Example data", p(br()),
 
   ),
 
-tabPanel("Upload Data", p(br()),
+tabPanel.upload.pr(file ="newfile", header="newheader", col="newcol", sep="newsep", quote="newquote")
 
-p("New data should include all the variables in the model"),
-p("We suggested putting the dependent variable (Y) (if existed) in the left side of all independent variables (X)"),
-
-fileInput('newfile', "1. Choose CSV/TXT file", accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
-#helpText("The columns of X are not suggested greater than 500"),
-# Input: Checkbox if file has header ----
-p(tags$b("2. Show 1st row as column names?")),
-checkboxInput("newheader", "Yes", TRUE),
-
-p(tags$b("3. Use 1st column as row names? (No duplicates)")),
-checkboxInput("newcol", "Yes", TRUE),
-
-     # Input: Select separator ----
-radioButtons("newsep", "4. Which separator for data?",
-  choiceNames = list(
-    HTML("Comma (,): CSV often use this"),
-    HTML("One Tab (->|): TXT often use this"),
-    HTML("Semicolon (;)"),
-    HTML("One Space (_)")
-    ),
-  choiceValues = list(",", "\t", ";", " ")
-  ),
-
-radioButtons("newquote", "5. Which quote for characters?",
-choices = c("None" = "",
-           "Double Quote" = '"',
-           "Single Quote" = "'"),
-selected = '"'),
-
-p("Correct separator and quote ensure the successful data input")
-
-)
 ),
 
 hr(),
@@ -67,7 +35,7 @@ hr()
 
 mainPanel(
 h4(tags$b("Output 3. Prediction Results")),
-#actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), 
+#actionButton("B2", h4(tags$b("Click 2: Output. Prediction Results / Refresh, given model and new data are ready. ")), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
 p(br()),
 tabsetPanel(
 tabPanel("Prediction",p(br()),
@@ -79,8 +47,8 @@ tabPanel("Evaluation Plot",p(br()),
 p(tags$b("Prediction vs True Dependent Variable Plot")),
 p("This plot is shown when new dependent variable is provided in the test data."),
 p("This plot shows the relation between predicted dependent variable and new dependent variable, using linear smooth. Grey area is confidence interval."),
-plotly::plotlyOutput("p.s", width = "80%")
+plotly::plotlyOutput("p.s")
 )
-) 
-) 
+)
+)
 )

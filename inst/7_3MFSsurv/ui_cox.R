@@ -25,10 +25,7 @@ tabPanel("Basic Model", p(br()),
 uiOutput('var.cx'),
 
 p(br()),
-#p(tags$b("3 (Optional). Add interaction term between categorical variables")),
 
-#p('Please input: + var1:var2'), 
-#tags$textarea(id='conf.cx', " " ), 
 uiOutput('conf.cx'),
 
 p(tags$b("If you want to consider the heterogeneity in the sample, continue with Extending Model tab"))
@@ -107,12 +104,12 @@ HTML(
 "
 <b> Explanations  </b>
 <ul>
-<li> For each variable, estimated coefficients (coef), statistic for the significance of single variable, and P value are given.</li>
-<li> The column marked 'z' gives the Wald statistic value. It corresponds to the ratio of each regression coefficient to its standard error (z = coef/se(coef)).The Wald statistic evaluates, whether the beta coefficient of a given variable is statistically significantly different from 0.</li>
-<li> The coefficients relate to hazard; a positive coefficient indicates a worse prognosis and a negative coefficient indicates a protective effect of the variable with which it is associated.</li>
+<li> For each variable, estimated coefficients (coef), the statistic for the significance of a single variable, and P value are given.</li>
+<li> The column marked 'z' gives the Wald statistic value. It corresponds to the ratio of each regression coefficient to its standard error (z = coef/se(coef)). The Wald statistic evaluates whether the beta coefficient of a given variable is statistically significantly different from 0.</li>
+<li> The coefficients relate to hazard; a positive coefficient indicates a worse prognosis, and a negative coefficient indicates a protective effect of the variable with which it is associated.</li>
 <li> exp(coef) = hazard ratio (HR). HR = 1: No effect; HR < 1: Reduction in the hazard; HR > 1: Increase in Hazard</li>
 <li> The output also gives upper and lower 95% confidence intervals for the hazard ratio (exp(coef)), </li>
-<li> The likelihood-ratio test, Wald test, and score log-rank statistics give global statistical significance of the model. These three methods are asymptotically equivalent. For large enough N, they will give similar results. For small N, they may differ somewhat. The Likelihood ratio test has better behavior for small sample sizes, so it is generally preferred.</li>
+<li> The likelihood-ratio test, Wald test, and score log-rank statistics give the global statistical significance of the model. These three methods are asymptotically equivalent. For large enough N, they will give similar results. For small N, they may differ somewhat. The Likelihood ratio test has better behavior for small sample sizes, so it is generally preferred.</li>
 </ul>
 "
 ),
@@ -136,7 +133,7 @@ tabPanel("Survival Curve", p(br()),
 "
 ),
 p(tags$b("The adjusted survival curves from Cox regression")),
- plotOutput("splot", width = "80%")
+ plotOutput("splot")
 
 ),
 
@@ -154,7 +151,7 @@ HTML(
 ),
 numericInput("num", HTML("Choose N'th variable"), value = 1, min = 1, step=1),
 
-plotOutput("zphplot", width = "80%"),
+plotOutput("zphplot"),
 
 DT::DTOutput("zph")
 
@@ -198,16 +195,16 @@ Martingale residuals may present any value in the range (-INF, +1):
 p(tags$b("1. Martingale residuals plot against continuous independent variable")), 
 
 uiOutput('var.mr'),
-plotly::plotlyOutput("diaplot1", width = "80%"),
+plotly::plotlyOutput("diaplot1"),
 
 #p(tags$b("2. Martingale residuals plot against observation id")), 
-# plotOutput("diaplot1.2", width = "80%"),
+# plotOutput("diaplot1.2"),
 
  p(tags$b("2. Deviance residuals plot by observational id")),
- plotly::plotlyOutput("diaplot2", width = "80%"),
+ plotly::plotlyOutput("diaplot2"),
 
  p(tags$b("3. Cox-Snell residuals plot")),
- plotly::plotlyOutput("csplot.cx", width = "80%")
+ plotly::plotlyOutput("csplot.cx")
 )
 
 )

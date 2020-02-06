@@ -3,22 +3,26 @@
 newX = reactive({
   inFile = input$newfile
   if (is.null(inFile)){
-    x <- nki2.test
-    #if (input$edata=="NKI") {x <- nki2.test}
-    #else {x<- liver.test}
+    #x <- nki2.test
+    if (input$edata=="NKI") {x <- nki2.test}
+    else {x<- liver.test}
+    
     }
   else{
-if(!input$newcol){
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote)
+if(input$newcol){
+    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote, row.names=1)
     }
     else{
-    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote, row.names=1)
+    csv <- read.csv(inFile$datapath, header = input$newheader, sep = input$newsep, quote=input$newquote)
     }
     validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
     validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
+    validate(need(match(input$x, colnames(csv)), "New data do not cover all the independent variables"))
 
   x <- as.data.frame(csv)
+
 }
+
 return(as.data.frame(x))
 })
 #prediction plot
@@ -31,11 +35,23 @@ buttons = c('copy', 'csv', 'excel'),
 scrollX = TRUE))
 
 pred.lp = eventReactive(input$B.pcr,
-{ as.data.frame(predict(pcr(), newdata = as.matrix(newX())[,input$x], type="response")[,,1:pcr()$ncomp])
+{ 
+  DF<- data.frame(
+  X <- I(as.matrix(newX()[,input$x]))
+  )
+  as.data.frame(predict(pcr(), newdata = DF$X, type="response",comps=pcr()$ncomp))
+
+  #as.data.frame(predict(pcr(), newdata = as.matrix(newX())[,input$x], type="response")[,,1:pcr()$ncomp])
 })
 
 pred.comp = eventReactive(input$B.pcr,
-{as.data.frame(predict(pcr(), newdata = as.matrix(newX())[,input$x], type="scores"))
+{ 
+  DF<- data.frame(
+  X <- I(as.matrix(newX()[,input$x]))
+  )
+  as.data.frame(predict(pcr(), newdata = DF$X, type="scores"))
+  #as.data.frame(predict(pcr(), newdata = as.matrix(newX())[,input$x], type="scores"))
+
 })
 
 

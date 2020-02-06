@@ -23,8 +23,9 @@ options = pickerOptions(
 )
 })
 
-DF4.r <- reactive({
+type.num4.r <- reactive({
   df <-X()[ ,-which(names(X()) %in% c(input$y.r))]
+  df <- colnames(df[unlist(lapply(df, is.numeric))])
 return(df)
   })
 
@@ -32,8 +33,8 @@ output$x.r = renderUI({
 shinyWidgets::pickerInput(
 'x.r',
 tags$b('2. Add / Remove independent variables (X)'),
-selected = names(DF4.r()),
-choices = names(DF4.r()),
+selected = type.num4.r(),
+choices = type.num4.r(),
 multiple = TRUE,
 options = pickerOptions(
       actionsBox=TRUE,
@@ -50,7 +51,6 @@ options = pickerOptions(
 #)
 #})
 
-
 output$pls.x <- DT::renderDT({
     if (ncol(X())>50) {lim <- 50}
     else {lim <-ncol(X())}
@@ -61,11 +61,15 @@ output$pls.x <- DT::renderDT({
 # model
 pls <- eventReactive(input$pls1,{
 
-  Y <- as.matrix(X()[,input$y.r])
-  X <- as.matrix(X()[,input$x.r])
-  validate(need(min(ncol(X), nrow(X))>input$nc.r, "Please input enough independent variables"))
-  validate(need(input$nc.r>=1, "Please input correct number of components"))
-  mvr(Y~X, ncomp=input$nc.r, validation=input$val.r, model=FALSE, method = input$method.r,scale = TRUE, center = TRUE)
+  DF<- data.frame(
+   Y = I(as.matrix(X()[,input$y.r])),
+  X = I(as.matrix(X()[,input$x.r]))
+  )
+
+  #validate(need(input$y.r, "Please choose dependent variable"))
+  #validate(need(min(ncol(X), nrow(X))>input$nc.r, "Please choose enough independent variables"))
+  #validate(need(input$nc.r>=1, "Please input correct number of components"))
+  mvr(Y~X, data=DF, ncomp=input$nc.r, validation=input$val.r, model=FALSE, method = input$method.r,scale = input$scale.r, center = input$scale.r)
   })
 
 output$pls  <- renderPrint({
@@ -85,8 +89,9 @@ output$pls_rmsep  <- renderPrint({
   })
 
 score.r <- reactive({
-  as.data.frame(pls()$scores[,1:pls()$ncomp])
-  })
+  s <- as.data.frame(predict(pls(), type="scores"))
+  rownames(s) <- rownames(X())
+  return(s)  })
 
 load.r <- reactive({
   as.data.frame(pls()$loadings[,1:pls()$ncomp])
@@ -106,21 +111,23 @@ output$pls.l <- DT::renderDT({load.r()},
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.pres <- DT::renderDT({as.data.frame(pls()$fitted.values[,,1:pls()$ncomp])}, 
+output$pls.pres <- DT::renderDT({
+  as.data.frame(pls()$fitted.values[,,pls()$ncomp])
+  }, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients)}, 
+output$pls.coef <- DT::renderDT({as.data.frame(pls()$coefficients[,,pls()$ncomp])}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])}, 
+output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,pls()$ncomp])}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
@@ -128,37 +135,63 @@ output$pls.resi <- DT::renderDT({as.data.frame(pls()$residuals[,,1:pls()$ncomp])
     scrollX = TRUE))
 
 
+
+#output$pls.s.plot  <- plotly::renderPlotly({ 
+#validate(need(input$nc.r>=2, "The number of components must be >= 2"))
+#score <- score.r()
+##p<-plot_score(score, input$c1.r, input$c2.r)
+#plotly::ggplotly(p)
+
+#  })
+
+##########----------##########----------##########---------- score plot
+
+output$g.pls = renderUI({
+selectInput(
+'g.pls',
+tags$b('1. Choose one group variable, categorical to add group circle'),
+selected = "None",
+choices = c("None",type.fac4())
+)
+})
+
+output$type.pls = renderUI({
+radioButtons("type.pls", "The type of ellipse",
+ choices = c(
+  "None" = "",
+  "T: assumes a multivariate t-distribution" = 't',
+ "Normal: assumes a multivariate normal-distribution" = "norm",
+ "Euclid: the euclidean distance from the center" = "euclid"),
+ selected = 'euclid',
+ width="500px")
+})
 
 output$pls.s.plot  <- plotly::renderPlotly({ 
-validate(need(input$nc.r>=2, "The number of components must be >= 2"))
-score <- score.r()
-p<-plot_score(score, input$c1.r, input$c2.r)
+#output$pca.ind  <- renderPlot({ 
+df <- score.r()
+if (input$g.pls == "None") {
+#df$group <- rep(1, nrow(df))
+p<-plot_score(df, input$c1.r, input$c2.r)
+
+}
+else {
+
+  if (input$type.pls==""){
+    p<-plot_scoreg(df, input$c1.r, input$c2.r, X()[,input$g.pls])
+  }
+  else{
+    p<-plot_scorec(df, input$c1.r, input$c2.r, X()[,input$g.pls], input$type.pls)
+}
+
+}
 plotly::ggplotly(p)
-#  ggplot(df, aes(x = df[,input$c1], y = df[,input$c2]))+
-#  geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
-#  theme_minimal()+
-#  xlab(paste0("Comp", input$c1))+ylab(paste0("Comp", input$c2))
+})
 
-  })
-
+##########----------##########----------##########---------- load plot
 output$pls.l.plot  <- plotly::renderPlotly({ 
 load <- load.r()
 p<-plot_load(loads=load, a=pls()$ncomp)
 plotly::ggplotly(p)
-#ll$group <- rownames(ll)
-#loadings.m <- reshape::melt(ll, id="group",
-#                   measure=colnames(ll)[1:input$nc.r])
-
-#ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
-#  facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
-#  geom_bar(stat="identity") + #make the bars
-#  coord_flip() + #flip the axes so the test names can be horizontal  
-  #define the fill color gradient: blue=positive, red=negative
-#  scale_fill_gradient2(name = "Loading", 
-#                       high = "blue", mid = "white", low = "red", 
-#                       midpoint=0, guide=F) +
-#  ylab("Loading Strength") + #improve y-axis label
-#  theme_bw(base_size=10)
 
   })
 
@@ -168,11 +201,8 @@ output$pls.bp   <- plotly::renderPlotly({
 load <- load.r()
 p<-plot_biplot(score, load, input$c11.r, input$c22.r)
 plotly::ggplotly(p)
-#plot(pls(), plottype = c("biplot"), comps=c(input$c1.r,input$c2.r),var.axes = TRUE)
 })
 
-# Plot of the explained variance
-#output$pca.plot <- plotly::renderPlotly({ screeplot(pca(), npcs= input$nc.r, type="lines", main="") })
 
 output$pls.tdplot <- plotly::renderPlotly({ 
 validate(need(input$nc.r>=3, "The number of components must be >= 3"))
@@ -180,54 +210,6 @@ score <- score.r()
 load <- load.r()
 
 plot_3D(scores=score, loads=load, nx=input$td1.r,ny=input$td2.r,nz=input$td3.r, scale=input$lines.r)
-
-
-# x <- scores[,input$td1.r]
-# y <- scores[,input$td2.r]
-# z <- scores[,input$td3.r]
-# # Scale factor for loadings
-# scale.loads <- input$lines.r
-# 
-# layout <- list(
-#   scene = list(
-#     xaxis = list(
-#       title = paste0("PC", input$td1.r), 
-#       showline = TRUE
-#     ), 
-#     yaxis = list(
-#       title = paste0("PC", input$td2.r), 
-#       showline = TRUE
-#     ), 
-#     zaxis = list(
-#       title = paste0("PC", input$td3.r), 
-#       showline = TRUE
-#     )
-#   ), 
-#   title = "PLS (3D)"
-# )
-# 
-# rnn <- rownames(as.data.frame(pls()$scores[,1:input$nc.r]))
-# 
-# p <- plot_ly() %>%
-#   add_trace(x=x, y=y, z=z, 
-#             type="scatter3d", mode = "text+markers", 
-#             name = "original", 
-#             linetypes = NULL, 
-#             opacity = 0.5,
-#             marker = list(size=2),
-#             text = rnn) %>%
-#   layout(p, scene=layout$scene, title=layout$title)
-# 
-# for (k in 1:nrow(loads)) {
-#   x <- c(0, loads[k,1])*scale.loads
-#   y <- c(0, loads[k,2])*scale.loads
-#   z <- c(0, loads[k,3])*scale.loads
-#   p <- p %>% add_trace(x=x, y=y, z=z,
-#                        type="scatter3d", mode="lines",
-#                        line = list(width=4),
-#                        opacity = 1) 
-# }
-# p
 
 })
 

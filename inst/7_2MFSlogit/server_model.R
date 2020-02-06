@@ -38,7 +38,8 @@ selected = names(DF4()),
 choices = names(DF4()),
 multiple = TRUE,
 options = pickerOptions(
-      actionsBox=TRUE)
+      actionsBox=TRUE,
+      size=5)
 )
 })
 
@@ -54,7 +55,8 @@ choices = type.fac4(),
 multiple = TRUE,
 options = pickerOptions(
       maxOptions=2,
-      actionsBox=TRUE)
+      actionsBox=TRUE,
+      size=5)
 )
 })
 
@@ -70,7 +72,7 @@ validate(need(input$x, "Please choose some independent variable"))
 
 f <- paste0(input$y,' ~ ',paste0(input$x, collapse = "+"), input$intercept)
 
-if(length(input$conf)==2) {f <- paste0(f, paste0("+",input$conf, collapse = ":"))}
+if(length(input$conf)==2) {f <- paste0(f, "+",paste0(input$conf, collapse = ":"))}
 
 return(f)
 
@@ -89,10 +91,6 @@ glm(as.formula(formula()),family = binomial(link = "logit"), data = DF3())
 })
 
 
-#gfit = eventReactive(input$B1, {
-#  glm(formula(), data = DF3())
-#})
-# 
 output$fit = renderPrint({ 
 stargazer::stargazer(
 fit(),
@@ -138,20 +136,7 @@ output$step = renderPrint({step(fit())})
   yhat <- predict(fit())
   y <- DF3()[,input$y]
   p<-plot_roc(yhat, y)
-  #p <- ROCR::prediction(predict(fit()), DF3()[,input$y])
-  #ps <- ROCR::performance(p, "tpr", "fpr")
-  #pf <- ROCR::performance(p, "auc")
 
-  #df <- data.frame(tpr=unlist(ps@y.values), 
-  #  fpr=unlist(ps@x.values))
-
-#p<- ggplot(df, aes(fpr,tpr)) + 
-#  geom_step() +
-#  coord_cartesian(xlim=c(0,1), ylim=c(0,1)) +
-#  theme_minimal()+ ggtitle("") +
-#  xlab("False positive rate (1-specificity)")+
-#  ylab("True positive rate (sensitivity)")+
-#  annotate("text", x = .75, y = .25, label = paste("AUC =",pf@y.values))
   plotly::ggplotly(p)
 	})
 # 

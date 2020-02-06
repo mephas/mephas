@@ -17,10 +17,10 @@ DF0 = reactive({
     }
   else{
 if(!input$col){
-    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote)
+    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, stringsAsFactors=TRUE)
     }
     else{
-    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, row.names=1)
+    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, row.names=1, stringsAsFactors=TRUE)
     }
     validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
     validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
@@ -40,7 +40,6 @@ selectInput(
   'factor1',
   HTML('1. Convert real-valued numeric variable into categorical variable'),
   selected = NULL,
-  #choices = names(DF()),
   choices = type.num0(),
   multiple = TRUE
 )
@@ -61,7 +60,6 @@ selectInput(
   'factor2',
   HTML('2. Convert categorical variable into real-valued numeric variable'),
   selected = NULL,
-  #choices = names(DF()),
   choices = type.fac1(),
   multiple = TRUE
 )
@@ -89,14 +87,36 @@ multiple = TRUE
 )
 })
 
+output$rmrow = renderUI({
+shinyWidgets::pickerInput(
+'rmrow',
+h4(tags$b('Remove some samples / outliers')),
+selected = NULL,
+choices = rownames(DF2()),
+multiple = TRUE,
+options = shinyWidgets::pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+})
+
+DF2.1 <- reactive({
+  if(length(input$rmrow)==0) {df <- DF2()}
+
+  else{
+  df <- DF2()[-which(rownames(DF2()) %in% c(input$rmrow)),]
+  }
+  return(df)
+  })
+
 DF3 <- reactive({
    
   if (length(input$lvl)==0 || length(unlist(strsplit(input$ref, "[\n]")))==0 ||length(input$lvl)!=length(unlist(strsplit(input$ref, "[\n]")))){
-  df <- DF2()
+  df <- DF2.1()
 }
 
 else{
-  df <- DF2()
+  df <- DF2.1()
   x <- input$lvl
   y <- unlist(strsplit(input$ref, "[\n]"))
   for (i in 1:length(x)){
@@ -137,46 +157,61 @@ colnames(DF3()[unlist(lapply(DF3(), is.factor))])
 output$t = renderUI({
 selectInput(
 't',
-tags$b('Choose time-duration variable, numeric'),
-selected = type.time3()[1],
-choices = c("NULL",type.time3()))
+tags$b('2.1. Choose time-duration variable, numeric'),
+#selected = type.time3()[1],
+choices = type.time3())
 })
 
 output$t1 = renderUI({
 selectInput(
 't1',
-('Start-time variable, numeric'),
-selected = "NULL",
-choices = c("NULL",type.time3()))
+('2.1. Start-time variable, numeric'),
+#selected = "NULL",
+choices = type.time3())
 })
+
+type.time2 <- reactive({
+  if (input$time=="B") {df <-DF3()[ ,-which(names(DF3()) %in% c(input$c,input$t1))]
+  names <- apply(df,2,function(x) { length(levels(as.factor(x)))>2 })
+  df <- df[,names]
+  x <- colnames(df[unlist(lapply(df, is.numeric))])
+  return(x)
+  }
+return(df)
+  })
 
 output$t2 = renderUI({
 selectInput(
 't2',
-('End-time variable, numeric'),
-selected = "NULL",
-choices = c("NULL",type.time3()))
+'2.2. End-time variable, numeric',
+#selected = "NULL",
+choices = type.time2())
 })
 
 output$c = renderUI({
 selectInput(
 'c',
 ('1. Choose 1/0 censoring information variable (1= event, 0=censor)'),
-selected = type.bi3()[1],
+#selected = type.bi3()[1],
 choices = type.bi3())
 })
 
 ##3. Survival Object
 surv = reactive({
+
+validate(need(input$c, "Please choose a censoring information variable"))
+
 if (input$time == "A"){
 validate(need(!("FALSE" %in% (DF0()[,input$t]>=0)), "Time should be >= 0"))
-
+validate(need(input$t, "Please choose a time variable"))
 y <- paste0("Surv(", input$t, ",", input$c, ")")
 }
 if (input$time == "B"){
 #validate(need(!("FALSE" %in% (input$t2>=input$t1)), "End time should be grater than the start time"))
 validate(need(!("FALSE" %in% (DF0()[,input$t2] - DF0()[,input$t1]>=0)), "End time should be grater than the start time"))
 validate(need(!("FALSE" %in% (DF0()[,input$t1]>=0)), "Time should be >= 0"))
+#validate(need(!(input$t1=="NULL"), "Please choose a start time"))
+#validate(need(!(input$t2=="NULL"), "Please choose a end time"))
 #validate(need(!("FALSE" %in% (DF0()[,input$t2]>=0)), "Time should be >= 0"))
 
 y <- paste0("Surv(", input$t1, ",", input$t2, ",", input$c, ")")
@@ -184,17 +219,7 @@ y <- paste0("Surv(", input$t1, ",", input$t2, ",", input$c, ")")
 return(y)
 })
 
-#surv2 <- reactive({
 
-#validate(need(!("FALSE" %in% (input$t2-input$t1>=0)), "End time should be grater than the start time"))
-#validate(need(!("FALSE" %in% (input$t1>=0)), "Time should be >= 0"))
-#validate(need(!("FALSE" %in% (input$t2>=0)), "Time should be >= 0"))
-
-#if (input$time == "B"){
-#y <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")
-#}
-#return(y)
-#})
 
 output$surv = renderPrint({
 validate(need(length(levels(as.factor(DF3()[, input$c])))==2, "Please choose a binary variable as censoring information")) 
@@ -211,6 +236,7 @@ DF3(),
       dom = 'Bfrtip',
       buttons = c('copy', 'csv', 'excel'),
       deferRender = TRUE,
+      scrollX=TRUE,
       scrollY = 300,
       scroller = TRUE))
 
@@ -316,11 +342,13 @@ scrollX = TRUE)
  })
  
 output$p2 = plotly::renderPlotly({
+    validate(need(input$hx, "Loading variable"))
    p<-plot_hist1(DF3(), input$hx, input$bin)
    plotly::ggplotly(p)
    })
 
 output$p21 = plotly::renderPlotly({
+    validate(need(input$hx, "Loading variable"))
      p<-plot_density1(DF3(), input$hx)
      plotly::ggplotly(p)
    })

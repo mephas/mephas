@@ -3,7 +3,6 @@ anova
 condist
 devtools
 disdist
-ggplot
 gz
 https
 jp
@@ -27,7 +26,6 @@ osaka
 paried
 pca
 phs
-plotly
 pls
 proptest
 RStudio

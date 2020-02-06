@@ -14,10 +14,10 @@ DF0 = reactive({
     }
   else{
 if(input$col){
-    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, row.names=1)
+    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, row.names=1, stringsAsFactors=TRUE)
     }
     else{
-    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote)
+    csv <- read.csv(inFile$datapath, header = input$header, sep = input$sep, quote=input$quote, stringsAsFactors=TRUE)
     }
     validate( need(ncol(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
     validate( need(nrow(csv)>1, "Please check your data (nrow>1, ncol>1), valid row names, column names, and spectators") )
@@ -86,14 +86,36 @@ multiple = TRUE
 )
 })
 
+output$rmrow = renderUI({
+shinyWidgets::pickerInput(
+'rmrow',
+h4(tags$b('Remove some samples / outliers')),
+selected = NULL,
+choices = rownames(DF2()),
+multiple = TRUE,
+options = pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+})
+
+DF2.1 <- reactive({
+  if(length(input$rmrow)==0) {df <- DF2()}
+
+  else{
+  df <- DF2()[-which(rownames(DF2()) %in% c(input$rmrow)),]
+  }
+  return(df)
+  })
+
 DF3 <- reactive({
 
 if (length(input$lvl)==0 || length(unlist(strsplit(input$ref, "[\n]")))==0 ||length(input$lvl)!=length(unlist(strsplit(input$ref, "[\n]")))){
-df <- DF2()
+df <- DF2.1()
 }
 
 else{
-df <- DF2()
+df <- DF2.1()
 x <- input$lvl
 y <- unlist(strsplit(input$ref, "[\n]"))
 for (i in 1:length(x)){
@@ -115,6 +137,7 @@ output$Xdata <- DT::renderDT(DF3(),
       dom = 'Bfrtip',
       buttons = c('copy', 'csv', 'excel'),
       deferRender = TRUE,
+      scrollX=TRUE,
       scrollY = 300,
       scroller = TRUE))
 
@@ -182,13 +205,12 @@ choices = type.bi())
  
  ## scatter plot
 output$p1 = plotly::renderPlotly({
+  validate(need(input$tx, "Loading variable"))
+  validate(need(input$ty, "Loading variable"))
+
 x<-DF3()
-p<-plot_slgt(x, input$tx, input$ty)
+p<-plot_slgt(x, input$tx, input$ty, input$xlab, input$ylab)
 plotly::ggplotly(p)
-#ggplot(DF3(), aes(x=DF3()[, input$tx], y=(as.numeric(as.factor(DF3()[, input$ty]))-1))) + 
-#geom_point(shape = 1,  size = 1) + 
-#stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE,  size = 0.5) +
-#xlab(input$tx) + ylab(input$ty) + theme_minimal()
 })
  
 ## histogram
@@ -201,11 +223,13 @@ plotly::ggplotly(p)
  })
  
 output$p2 = plotly::renderPlotly({
+    validate(need(input$hx, "Loading variable"))
    p<-plot_hist1(DF3(), input$hx, input$bin)
    plotly::ggplotly(p)
    })
 
 output$p21 = plotly::renderPlotly({
+    validate(need(input$hx, "Loading variable"))
      p<-plot_density1(DF3(), input$hx)
      plotly::ggplotly(p)
    })

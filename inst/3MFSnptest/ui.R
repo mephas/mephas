@@ -1,17 +1,23 @@
+if (!require("shiny")) {install.packages("shiny")}; library("shiny")
+if (!require("ggplot2")) {install.packages("ggplot2")}; library("ggplot2")
+if (!require("reshape")) {install.packages("reshape")}; library("reshape")
+if (!require("exactRankTests")) {install.packages("exactRankTests")}; library("exactRankTests")  
+if (!require("psych")) {install.packages("psych")}; library("psych")
+if (!require("DT")) {install.packages("DT")}; library("DT")
+if (!require("plotly")) {install.packages("plotly")}; library("plotly")
+if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
+
 source("../tab/tab.R")
+source("../tab/panel.R")
+source("../tab/func.R")
+
 tagList(
 
-source("../tab/font.R",local=TRUE, encoding="UTF-8")$value,
-#tags$head(includeScript("../0tabs/navtitle.js")),
-tags$head(
-  tags$link(rel = "shortcut icon", href = "../www/favicon.ico"),
-  tags$link(rel = "icon", type = "image/png", sizes = "96x96", href = "../www/favicon-96x96.ico"),
-  tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "../www/favicon-32x32.png"),
-  tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "../www/favicon-16x16.png")
-),
-tags$style(type="text/css", "body {padding-top: 70px;}"),
-#source("../0tabs/onoff.R", local=TRUE)$value,
+includeCSS("../www/style.css"),
+sty.link(),
 tabOF(),
+
+##########--------------------##########--------------------##########
 
 navbarPage(
 theme = shinythemes::shinytheme("cerulean"),
@@ -32,12 +38,12 @@ conditionalPanel(
 condition = "input.explain_on_off",
 HTML(
     "
-<p>This is an alternative to one-sample t-test, when the data cannot be assumed to be normally distributed.
-This method is based on the ranks of observations rather than on their true values</p>
+<p>This method is an alternative to a one-sample t-test when the data cannot be assumed to be normally distributed.
+This method is based on the ranks of observations rather than on their actual values</p>
 
 <h4><b> 1. Functionalities  </b></h4>
 <ul>
-<li> To determine if the median / location of the population from which your data is drawn statistically significantly different from the specified median</li>
+<li> To determine if the median/location of the population from which your data is drawn statistically significantly different from the specified median</li>
 <li> To know the basic descriptive statistics about your data</li>
 <li> To know the descriptive statistics plot such as box-plot, distribution histogram, and density distribution plot about your data</li>
 </ul>
@@ -51,10 +57,10 @@ This method is based on the ranks of observations rather than on their true valu
 <li> No assumption on the distributional shape of your data, which means your data may be not normally distributed</li>
 </ul>
 
-<i><h4>Case Example</h4>
-Suppose we collected the Depression Rating Scale (DRS) measurements of 9 patients from a certain group of patients. DRS Scale > 1 indicated Depression.
+<h4><i>Case Example</i></h4>
+<i>Suppose we collected the Depression Rating Scale (DRS) measurements of 9 patients from a particular group of patients. DRS Scale > 1 indicated Depression.
 We wanted to know if the DRS of patients was significantly greater than 1.
-</h4></i>
+</i>
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 
 
@@ -79,7 +85,7 @@ condition = "input.explain_on_off",
 HTML(
 
     "
-<p>This is an alternative to two-sample t-test, when the data cannot be assumed to be normally distributed</p>
+<p>This method is an alternative to two-sample t-test when the data cannot be assumed to be normally distributed</p>
 
 <h4><b> 1. Functionalities  </b></h4>
 <ul>
@@ -92,17 +98,17 @@ HTML(
 <h4><b> 2. About your data </b></h4>
 
 <ul>
-<li> Your data contain only 2 group of values (or 2 numeric vectors)</li>
+<li> Your data contain only 2 groups of values (or 2 numeric vectors)</li>
 <li> Your data are meaningful to measure the distance between 2 groups values</li>
 <li> The values are independent observations</li>
 <li> No assumption on the distributional shape of your data</li>
 <li> Your data may be not normally distributed</li>
 </ul>
 
-<i><h4>Case Example</h4>
-Suppose we collected the Depression Rating Scale (DRS) measurements of 19 patients from a certain group of patients. Among 19 people, 9 were women, and 10 were men.
+<h4><i>Case Example</i></h4>
+<i>Suppose we collected the Depression Rating Scale (DRS) measurements of 19 patients from a particular group of patients. Among 19 people, 9 were women, and 10 were men.
 We wanted to know if the DRS of patients was significantly different among different genders; or, whether age was related to DRS scores.
-</h4></i>
+</i>
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 
 
@@ -125,8 +131,8 @@ conditionalPanel(
 condition = "input.explain_on_off",
 HTML(
     "
-<b>In paired case, we compare the differences of 2 groups to zero. Thus, it becomes a one-sample test problem.</b>
-<p>This is an alternative to paired-sample t-test, when the data cannot be assumed to be normally distributed</p>
+<b>In the paired case, we compare the differences between 2 groups to zero. Thus, it becomes a one-sample test problem.</b>
+<p>This method is an alternative to paired-sample t-test when the data cannot be assumed to be normally distributed.</p>
 
 <h4><b> 1. Functionalities  </b></h4>
 <ul>
@@ -138,7 +144,7 @@ HTML(
 <h4><b> 2. About your data </b></h4>
 
 <ul>
-<li> Your data contain 2 group of values (or 2 numeric vectors)</li>
+<li> Your data contain 2 groups of values (or 2 numeric vectors)</li>
 <li> Your data are meaningful to measure the distance from the specified median</li>
 <li> The values are paired or matched observations</li>
 <li> No assumption on the distributional shape of your data</li>
@@ -148,14 +154,13 @@ HTML(
 <h4><b> 3. Examples for Matched or Paired Data </b></h4>
 <ul>
 <li>  One person's pre-test and post-test scores</li>
-<li>  When there are two samples that have been matched or paired</li>
+<li>  When two samples have been matched or paired</li>
 </ul>
 
 
-<i><h4>Case Example</h4>
-Suppose we collected the Depression Rating Scale (DRS) measurements of 9 patients from a certain group of patients. We decided to give them some treatment, and after the treatment we tested the DRS again.
-We wanted to know if the DRS of patients before and after were significantly; or, whether the differences were significantly different from 0, which could indicate if the treatment was effective.
-</h4></i>
+<h4><i>Case Example</i></h4>
+<i>We wanted to know if the DRS of patients before and after were significant; or, whether the differences were significantly different from 0, which could indicate if the treatment was effective.
+</i>
 <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
 "
 )

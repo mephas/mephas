@@ -16,7 +16,8 @@ selected = names(DF4())[1],
 choices = names(DF4()),
 multiple = TRUE,
 options = pickerOptions(
-      actionsBox=TRUE)
+      actionsBox=TRUE,
+      size=5)
 )
 })
 
@@ -28,7 +29,8 @@ choices = type.fac4(),
 multiple = TRUE,
 options = pickerOptions(
       maxOptions=2,
-      actionsBox=TRUE)
+      actionsBox=TRUE,
+      size=5)
 )
 })
 
@@ -58,7 +60,7 @@ if (input$time=="A") {surv <- surv()}
 if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", input$c, ")")}
 
 f = paste0(surv, '~', paste0(input$var.x, collapse = "+"))
-if(length(input$conf)==2) {f = paste0(f, paste0("+",input$conf, collapse = ":"))}
+if(length(input$conf)==2) {f = paste0(f, "+",paste0(input$conf, collapse = ":"))}
 
 if (input$effect=="") {f = paste0(f, input$intercept)}
 if (input$effect=="Strata") {f = paste0(f, "+strata(", input$fx.c, ")",input$intercept)}
@@ -131,9 +133,6 @@ Htilde=cumsum(fit$n.event/fit$n.risk)
 d = data.frame(time = fit$time, H = Htilde)
 p<-plot_coxstep(d)
 plotly::ggplotly(p)
-#ggplot() + geom_step(data = d, mapping = aes(x = d[,"time"], y = d[,"H"])) + 
-#  geom_abline(intercept =0,slope = 1, color = "red") +
-#  theme_minimal() + xlab("Cox-Snell residuals") + ylab("Estimated Cumulative Hazard Function")
   })
 
 output$deplot = plotly::renderPlotly({
@@ -144,8 +143,6 @@ p<-plot_res(df, "id", "dev")+
 xlab("Observation Id") + ylab("Deviance residuals")+
 geom_point(shape = 19, size=1, color=(fit.aft()[,2]+1))
 plotly::ggplotly(p)
-#ggplot(df, aes(x=id, y=dev)) + geom_point(shape = 20) + geom_hline(yintercept = 0, color="red", linetype=2)+
-#geom_smooth(method = "loess", linetype=2) + xlab("Observation Id") + ylab("Deviance residuals") + theme_minimal()
   })
 
 output$var.mr2 = renderUI({
@@ -165,8 +162,6 @@ validate(need(length(levels(as.factor(DF3()[,input$var.mr2])))>2, "Please choose
 
 p<-plot_res(df, "id", "dev")+xlab(input$var.mr2) + ylab("Martingale residuals")+geom_point(shape = 19, size=1, color=(fit.aft()[,2]+1))
 plotly::ggplotly(p)
-#ggplot(df, aes(x=id, y=dev)) + geom_point(shape = 20, color="red")+ ylim(-2,2)+
-#geom_smooth(method = "loess", se = FALSE, linetype=1, color="black", size = 0.5) + xlab(input$var.mr) + ylab("Martingale residuals") + theme_minimal()
   })
 
 

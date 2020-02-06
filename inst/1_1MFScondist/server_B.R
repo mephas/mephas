@@ -1,5 +1,9 @@
 #****************************************************************************************************************************************************1.4. beta
 output$b.plot <- renderPlot({
+  validate(need(input$b.xlim && input$b.shape && input$b.scale && input$b.pr, "Please input correct parameters"))
+  validate(need(input$b.shape >0 && input$b.scale>0, "Please input correct parameters"))
+  validate(need(input$b.pr >=0 && input$b.pr<=1, "Please input correct parameters"))
+
   ggplot(data = data.frame(x = c(-0.1, input$b.xlim)), aes(x)) +
   stat_function(fun = "dbeta", args = list(shape1 = input$b.shape, shape2=input$b.scale)) + 
   ylab("Density") +
@@ -16,13 +20,19 @@ output$b.info = renderText({
     paste0("Click Position: ", "\n", xy_str(input$plot_click13))})
 
 output$b = renderTable({
+  validate(need(input$b.shape >0 && input$b.scale>0, "Please input correct parameters"))
+  validate(need(input$b.pr >=0 && input$b.pr<=1, "Please input correct parameters"))
+
   x <- data.frame(x.postion = qbeta(input$b.pr, shape1 = input$b.shape, shape2=input$b.scale))
   rownames(x) <- c("Red-line Position (x)")
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
 
+##########--------------------##########--------------------##########--------------------##########--------------------##########--------------------##########
 B = reactive({ # prepare dataset
   #set.seed(1)
+  validate(need(input$b.size, "Please input correct parameters"))
+  validate(need(input$b.pr >=0 && input$b.pr<=1, "Please input correct parameters"))
   df = data.frame(x = rbeta(input$b.size, shape1 = input$b.shape, shape2=input$b.scale))
   return(df)})
 
@@ -41,24 +51,7 @@ output$b.plot2 = plotly::renderPlotly({
 p<-plot_hist1c(df, x, input$b.bin)
 p<-p+geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
 plotly::ggplotly(p)
-
-#   df = B()
-# ggplot(df, aes(x = x)) + 
-# theme_minimal() + 
-# ggtitle("")+
-# ylab("Frequency")+ 
-# geom_histogram(binwidth = input$b.bin, colour = "white", fill = "cornflowerblue", size = 0.1) + 
-# xlim(-0.1, input$b.xlim) + 
-# geom_vline(aes(xintercept=quantile(x, probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
 })
-
-# output$b.info2 = renderText({
-#     xy_str = function(e) {
-#       if(is.null(e)) return("NULL\n")
-#       paste0(" x = ", round(e$x, 6), "\n", " y = ", round(e$y, 6))
-#     }
-# 
-#     paste0("Click Position: ", "\n", xy_str(input$plot_click12))})
 
 output$b.sum = renderTable({
   x = B()
@@ -66,6 +59,9 @@ output$b.sum = renderTable({
   rownames(x) <- c("Mean", "Standard Deviation","Red-line Position (x0)")
   return(x)
   }, digits = 6, colnames=FALSE, rownames=TRUE, width = "80%")
+
+
+##########--------------------##########--------------------##########--------------------##########--------------------##########--------------------##########
 
 ZZ <- reactive({
   inFile <- input$b.file
@@ -89,14 +85,23 @@ ZZ <- reactive({
     return(as.data.frame(x))
   })
 
+output$ZZ <- DT::renderDT({ZZ()}, 
+    extensions = list(
+      'Buttons'=NULL,
+      'Scroller'=NULL),
+    options = list(
+      dom = 'Bfrtip',
+      buttons = c('copy', 'csv', 'excel'),
+      deferRender = TRUE,
+      scrollY = 200,
+      scroller = TRUE))
+
 output$makeplot.b1 <- plotly::renderPlotly({
   df = ZZ()
   x <- names(df)
   p<-plot_hist1(df, x, input$bin.b)
   p<-p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm=TRUE)), color="red", size=0.3)
   plotly::ggplotly(p)
-  #x = as.data.frame(ZZ())
-  #ggplot(x, aes(x = x[,1])) + geom_histogram(colour = "black", fill = "grey", binwidth = input$bin.b, position = "identity") + xlab("") + ggtitle("") + theme_minimal() + theme(legend.title =element_blank())
    })
 
 output$makeplot.b2 <- plotly::renderPlotly({
@@ -105,8 +110,6 @@ output$makeplot.b2 <- plotly::renderPlotly({
   p<-plot_density1(df, x)
   p<- p+geom_vline(aes(xintercept=quantile(df[,x], probs = input$b.pr, na.rm = TRUE)), color="red", size=0.3)
   plotly::ggplotly(p)
-  #x = as.data.frame(ZZ())
-  #ggplot(x, aes(x = x[,1])) + geom_density() + ggtitle("") + xlab("") + theme_minimal() + theme(legend.title =element_blank()) + geom_vline(aes(xintercept=quantile(x[,1], probs = input$b.pr, na.rm = FALSE)), color="red", size=0.5)
    })
 
 output$b.sum2 = renderTable({

@@ -11,13 +11,22 @@ type.fac4 <- reactive({
 colnames(DF4()[unlist(lapply(DF4(), is.factor))])
 })
 
+#output$g = renderUI({
+#selectInput(
+#'g',
+#tags$b('2. Choose categorical variable'),
+#selected = type.fac4()[1],
+#choices = type.fac4(),
+#multiple=TRUE)
+#})
+
 output$g = renderUI({
-selectInput(
+shinyWidgets::pickerInput(
 'g',
 tags$b('2. Choose categorical variable'),
 selected = type.fac4()[1],
 choices = type.fac4(),
-multiple=TRUE)
+multiple = TRUE)
 })
 
 
@@ -43,12 +52,6 @@ if (input$time=="B") {surv <- paste0("Surv(", input$t2, " - ", input$t1, ",", in
   return(fit)
 })
 
-# 
-# # residual plot
-# output$km.p= renderPlot({
-#autoplot(kmfit(), conf.int = FALSE)+ theme_minimal() + ggtitle("") 
-#+annotate("text", x = .75, y = .25, label = paste("P value ="))
-#	})
 
 output$km.p= renderPlot({
   validate(need(input$g, "Please choose categorical variable"))

@@ -22,15 +22,13 @@ radioButtons("intercept", "3. (Optional) Keep or remove intercept / constant ter
      choices = c("Remove intercept / constant term" = "-1",
                  "Keep intercept / constant term" = ""),
      selected = ""),
-#p(tags$b("4. (Optional) Add interaction term between categorical variables")), 
-#p('Please input: + var1:var2'), 
-#tags$textarea(id='conf', " " ), 
+
 uiOutput('conf'), 
 hr(),
 h4(tags$b("Step 2. Check the model and generate results")),
 tags$b("Valid model example: Y ~ X1 + X2"),
 verbatimTextOutput("formula"),
-p("'-1' in the formula indicates that intercept / constant term has been removed"),
+p("'-1' in the formula indicates that the intercept/constant term has been removed"),
 hr(),
 
 h4(tags$b("Step 3. If data and model are ready, click the blue button to generate model results.")),
@@ -69,11 +67,11 @@ HTML(
 <b> Explanations  </b>
 <ul>
 <li> For each variable, estimated coefficients (95% confidence interval), T statistic (t = ) for the significance of single variable, and P value (p = ) are given</li>
-<li> T test of each variable and P < 0.05 indicates this variable is statistical significant to the model</li>
-<li> Observations means the number of samples</li>
-<li> R2 (R<sup>2</sup>) is a goodness-of-fit measure for linear regression models, and indicates the percentage of the variance in the dependent variable that the independent variables explain collectively.
-Suppose R2 = 0.49. This implies that 49% of the variability of the dependent variable has been accounted for, and the remaining 51% of the variability is still unaccounted for.</li>
-<li> Adjusted R2 (adjusted R<sup>2</sup>) is used to compare the goodness-of-fit for regression models that contain differing numbers of independent variables.</li>
+<li> T test of each variable and P < 0.05 indicates this variable is statistically significant to the model</li>
+<li> Observations mean the number of samples</li>
+<li> R2 (R<sup>2</sup>) is a goodness-of-fit measure for linear regression models and indicates the percentage of the variance in the dependent variable that the independent variables explain collectively.
+Suppose R2 = 0.49. This result implies that 49% of the variability of the dependent variable has been accounted for, and the remaining 51% is still unaccounted for.</li>
+<li> Adjusted R2 (adjusted R<sup>2</sup>) is used to compare the goodness-of-fit for regression models that contain different numbers of independent variables.</li>
 <li> F statistic (F-Test for overall significance in regression) judges on multiple coefficients taken together at the same time. 
      F=(R^2/(k-1))/(1-R^2)/(n-k); n is sample size; k is number of variable + constant term</li>
 </ul>
@@ -127,13 +125,25 @@ HTML(
 </ul>"
 ),
 p(tags$b("1. Q-Q normal plot of residuals")),
-plotly::plotlyOutput("p.lm1", width = "80%"),
+plotly::plotlyOutput("p.lm1"),
 p(tags$b("2. Residuals vs Fitting plot")),
-plotly::plotlyOutput("p.lm2", width = "80%")
+plotly::plotlyOutput("p.lm2")
 
-    )
+    ),
+tabPanel("3D Scatter Plot", p(br()),
+HTML(
+"<b> Explanations </b>
+<ul> 
+<li> 3D scatter plot shows the relation between dependent variable (Y), and 2 independent variable (X1, X2)
+<li> Group variable split the points into groups
+</ul>"
+),
 
-
+uiOutput("vx1"),
+uiOutput("vx2"),
+uiOutput("vgroup"),
+plotly::plotlyOutput("p.3dl")
+)
 
 )
 )

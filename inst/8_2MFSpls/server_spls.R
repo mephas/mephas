@@ -23,8 +23,9 @@ options = pickerOptions(
 )
 })
 
-DF4.s <- reactive({
+type.num4.s <- reactive({
   df <-X()[ ,-which(names(X()) %in% c(input$y.s))]
+  df <- colnames(df[unlist(lapply(df, is.numeric))])
 return(df)
   })
 
@@ -42,8 +43,8 @@ output$x.s = renderUI({
 shinyWidgets::pickerInput(
 'x.s',
 tags$b('2. Add / Remove independent variables (X)'),
-selected = names(DF4.s()),
-choices = names(DF4.s()),
+selected = type.num4.s(),
+choices = type.num4.s(),
 multiple = TRUE,
 options = pickerOptions(
       actionsBox=TRUE,
@@ -58,25 +59,35 @@ output$spls.x <- DT::renderDT({
 
     head(X()[,1:lim])}, options = list(scrollX = TRUE,dom = 't'))
 
-output$spls_cv  <- renderPrint({
-  Y <- as.matrix(X()[,input$y.s])
-  X <- as.matrix(X()[,input$x.s])
-  validate(need(min(ncol(X), nrow(X))>input$cv.s, "Please input enough independent variables"))
+spls_cv <- eventReactive(input$splscv,{
+  x <- as.data.frame(na.omit(X()))
+  Y <- as.matrix(x[,input$y.s])
+  X <- as.matrix(x[,input$x.s])
+  validate(need(input$y.s, "Please choose dependent variable"))
+
+  validate(need(min(ncol(X), nrow(X))>input$cv.s, "Please choose enough independent variables"))
   validate(need(input$cv.s>=1, "Please input correct number of components"))
-  validate(need(input$cv.eta>0 && input$nc.eta<1, "Please correct parameters"))
+  validate(need(input$cv.eta>0 && input$nc.eta<1, "Please input correct parameters"))
+  #validate(need(sum(!complete.cases(Y))<=0, "Please remove the missing values"))
+
+  set.seed(1)
   spls::cv.spls(X,Y, eta = seq(0.1,input$cv.eta,0.1), K = c(1:input$cv.s),
     select="pls2", fit = input$method.s, plot.it = FALSE)
+  })
+
+output$spls_cv  <- renderPrint({
+  spls_cv()
   
   })
 
 spls <- eventReactive(input$spls1,{
-
-  Y <- as.matrix(X()[,input$y.s])
-  X <- as.matrix(X()[,input$x.s])
+  x <- as.data.frame(na.omit(X()))
+  Y <- as.matrix(x[,input$y.s])
+  X <- as.matrix(x[,input$x.s])
   validate(need(min(ncol(X), nrow(X))>input$nc.s, "Please input enough independent variables"))
   validate(need(input$nc.s>=1, "Please input correct number of components"))
   validate(need(input$nc.eta>0 && input$nc.eta<1, "Please correct parameters"))
-  spls::spls(X, Y, K=input$nc.s, eta=input$nc.eta, kappa=0.5, select="pls2", fit=input$method.s)
+  spls::spls(X, Y, K=input$nc.s, eta=input$nc.eta, kappa=0.5, select="pls2", fit=input$method.s,scale.x=input$scale.s, scale.y=input$scale.s)
   })
 
 
@@ -89,7 +100,9 @@ plot(spls(), yvar=input$spls.y)
 })
 
 score.s <- reactive({
-  data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
+  x <- as.data.frame(na.omit(X()))
+  X <- as.matrix(x[,input$x.s])
+  data.frame(as.matrix(X[,spls()$A])%*%as.matrix(spls()$projection))
   }) 
 load.s <- reactive({
   as.data.frame(spls()$projection)
@@ -133,7 +146,10 @@ output$spls.pres <- DT::renderDT({
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])}, 
+output$spls.sv <- DT::renderDT({
+  x <- as.data.frame(na.omit(X()))
+  X <- as.matrix(x[,input$x.s])
+  as.data.frame(X[,spls()$A])}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
@@ -142,44 +158,67 @@ output$spls.sv <- DT::renderDT({as.data.frame(X()[spls()$A])},
 
 
 
+#output$spls.s.plot  <- plotly::renderPlotly({ 
+#  validate(need(input$nc.s>=2, "The number of components must be >=2"))#
+
+#  score <- score.s()
+#  p<-plot_score(score, input$c1.s, input$c2.s)
+#  plotly::ggplotly(p)
+#  })
+##########----------##########----------##########---------- score plot
+output$g.s = renderUI({
+selectInput(
+'g.s',
+tags$b('1. Choose one group variable, categorical to add group circle'),
+selected = "None",
+choices = c("None",type.fac4())
+)
+})
+
+output$type.s = renderUI({
+radioButtons("type.s", "The type of ellipse",
+ choices = c(
+  "None" = "",
+  "T: assumes a multivariate t-distribution" = 't',
+ "Normal: assumes a multivariate normal-distribution" = "norm",
+ "Euclid: the euclidean distance from the center" = "euclid"),
+ selected = 'euclid',
+ width="500px")
+})
+
 output$spls.s.plot  <- plotly::renderPlotly({ 
-  validate(need(input$nc.s>=2, "The number of components must be >=2"))
+#output$pca.ind  <- renderPlot({ 
+df <- score.s()
+if (input$g.s == "None") {
+#df$group <- rep(1, nrow(df))
+p<-plot_score(df, input$c1.s, input$c2.s)
 
-  score <- score.s()
-  p<-plot_score(score, input$c1.s, input$c2.s)
-  plotly::ggplotly(p)
-#df <- data.frame(as.matrix(X()[spls()$A])%*%as.matrix(spls()$projection))
+}
+else {
+  
+  if (input$type.s==""){
+    
+    p<-plot_scoreg(df, input$c1.s, input$c2.s, X()[,input$g.s])
+  }
+  else{
+    #group <- X()[,input$g.s]
+    p<-plot_scorec(df, input$c1.s, input$c2.s, X()[,input$g.s], input$type.s)
+}
 
-  #ggplot(df, aes(x = df[,input$c1.s], y = df[,input$c2.s]))+
-  #geom_point() + geom_hline(yintercept=0, lty=2) +geom_vline(xintercept=0, lty=2)+
-  #theme_minimal()+
-  #xlab(paste0("Comp", input$c1.s))+ylab(paste0("Comp", input$c2.s))
+}
+plotly::ggplotly(p)
+})
 
-  })
+##########----------##########----------##########---------- load plot
 
 output$spls.l.plot  <- plotly::renderPlotly({ 
 load <- load.s()
-p <- plot_load(loads=load, a=input$nc.s)
+p <- plot_load(load, input$nc.s)
 plotly::ggplotly(p)
-# ll$group <- rownames(ll)
-# loadings.m <- reshape::melt(ll, id="group",
-#                    measure=colnames(ll)[1:spls()$K])
-# 
-# ggplot(loadings.m, aes(loadings.m$group, abs(loadings.m$value), fill=loadings.m$value)) + 
-#   facet_wrap(~ loadings.m$variable, nrow=1) + #place the factors in separate facets
-#   geom_bar(stat="identity") + #make the bars
-#   coord_flip() + #flip the axes so the test names can be horizontal  
-#   #define the fill color gradient: blue=positive, red=negative
-#   scale_fill_gradient2(name = "Loading", 
-#                        high = "blue", mid = "white", low = "red", 
-#                        midpoint=0, guide=F) +
-#   ylab("Loading Strength") + #improve y-axis label
-#   theme_bw(base_size=10)
-
   })
 
 output$spls.biplot<- plotly::renderPlotly({ 
-validate(need(input$nc>=2, "The number of components must be >= 2"))
+validate(need(input$nc.s>=2, "The number of components must be >= 2"))
 score <- score.s()
 load <- load.s()
 p<-plot_biplot(score, load, input$c11.s, input$c22.s)
@@ -194,54 +233,6 @@ load <- load.s()
 
 plot_3D(scores=score, loads=load, nx=input$td1.s,ny=input$td2.s,nz=input$td3.s, scale=input$lines.s)
 
-# 
-# x <- scores[,input$td1.s]
-# y <- scores[,input$td2.s]
-# z <- scores[,input$td3.s]
-# # Scale factor for loadings
-# scale.loads <- input$lines.s
-# 
-# layout <- list(
-#   scene = list(
-#     xaxis = list(
-#       title = paste0("PC", input$td1.s), 
-#       showline = TRUE
-#     ), 
-#     yaxis = list(
-#       title = paste0("PC", input$td2.s), 
-#       showline = TRUE
-#     ), 
-#     zaxis = list(
-#       title = paste0("PC", input$td3.s), 
-#       showline = TRUE
-#     )
-#   ), 
-#   title = "SPLS (3D)"
-# )
-# 
-# rnn <- rownames(scores)
-# 
-# p <- plot_ly() %>%
-#   add_trace(x=x, y=y, z=z, 
-#             type="scatter3d", mode = "text+markers", 
-#             name = "original", 
-#             linetypes = NULL, 
-#             opacity = 0.5,
-#             marker = list(size=2),
-#             text = rnn
-#             ) %>%
-#   layout(p, scene=layout$scene, title=layout$title)
-# 
-# for (k in 1:nrow(loads)) {
-#   x <- c(0, loads[k,1])*scale.loads
-#   y <- c(0, loads[k,2])*scale.loads
-#   z <- c(0, loads[k,3])*scale.loads
-#   p <- p %>% add_trace(x=x, y=y, z=z,
-#                        type="scatter3d", mode="lines",
-#                        line = list(width=4),
-#                        opacity = 1) 
-# }
-# p
 
 })
 

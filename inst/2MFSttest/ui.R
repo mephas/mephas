@@ -1,18 +1,22 @@
+if (!require("shiny")) {install.packages("shiny")}; library("shiny")
+if (!require("ggplot2")) {install.packages("ggplot2")}; library("ggplot2")
+if (!require("reshape")) {install.packages("reshape")}; library("reshape")
+if (!require("psych")) {install.packages("psych")}; library("psych")
+if (!require("DT")) {install.packages("DT")}; library("DT")
+if (!require("plotly")) {install.packages("plotly")}; library("plotly")
+if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
+
 source("../tab/tab.R")
+source("../tab/panel.R")
+source("../tab/func.R")
+
 tagList(
 
-source("../tab/font.R",local=TRUE, encoding="UTF-8")$value,
-#tags$head(includeScript("../0tabs/navtitle.js")),
-tags$head(
-  tags$link(rel = "shortcut icon", href = "../www/favicon.ico"),
-  tags$link(rel = "icon", type = "image/png", sizes = "96x96", href = "../www/favicon-96x96.ico"),
-  tags$link(rel = "icon", type = "image/png", sizes = "32x32", href = "../www/favicon-32x32.png"),
-  tags$link(rel = "icon", type = "image/png", sizes = "16x16", href = "../www/favicon-16x16.png")
-),
-tags$style(type="text/css", "body {padding-top: 70px;}"),
-#source("../0tabs/onoff.R", local=TRUE)$value,
+includeCSS("../www/style.css"),
+sty.link(),
 tabOF(),
 
+##########--------------------##########--------------------##########
 navbarPage(
 theme = shinythemes::shinytheme("cerulean"),
 #title = a("Parametric T Test for Means", href = "https://alain003.phs.osaka-u.ac.jp/mephas/", style = "color:white;"),
@@ -33,9 +37,9 @@ HTML(
 
 <h4><b> 1. Functionalities  </b></h4>
 <ul>
-<li> To determine if your data is statistically significantly different from the specified mean from T test results</li>
-<li> To know the basic descriptive statistics about your data</li>
-<li> To know the descriptive statistics plot such as box-plot, mean-sd plot, QQ-plot, distribution histogram, and density distribution plot about your data to determine if your data is close to normal distribution</li>
+<li> To determine if your data is statistically significantly different from the specified mean from T-test results</li>
+<li> To understand the basic descriptive statistics about your data</li>
+<li> To understand the descriptive statistics plot such as box-plot, mean-sd plot, QQ-plot, distribution histogram, and density distribution plot about your data to determine if your data is close to a normal distribution</li>
 </ul>
 
 <h4><b> 2. About your data </b></h4>
@@ -46,7 +50,7 @@ HTML(
 </ul>
 
 <i><h4>Case Example</h4>
-Suppose we collected the age of 144 independent lymph node positive patients, and wanted to know whether the general age of lymph node positive patients was 50 years old
+Suppose we collected the age of 50 independent lymph node-positive patients and wanted to know whether the general age of lymph node-positive patients was 50 years old
 </h4></i>
 
 
@@ -90,7 +94,7 @@ HTML(
 </ul>
 
 <i><h4>Case Example</h4>
-Suppose we collected the age of 144 independent lymph node positive patients. Among them, 27 had Estrogen receptor (ER) positive, 114 had ER negative.
+Suppose we collected the age of 50 independent lymph node-positive patients. Among them, 25 had Estrogen receptor (ER) positive, 25 had ER negative.
 We wanted to know if the ages of patients with ER positive was significantly different from patients with ER negative in general. Or, whether ER is related to age.
 </h4></i>
 

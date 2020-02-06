@@ -3,7 +3,6 @@
 
 function(input, output) {
 
-
 ##########----------##########----------##########
 source("../tab/func.R")
 
@@ -26,6 +25,9 @@ source("server_F.R", local=TRUE)$value
 observe({
       if (input$close > 0) stopApp()                             # stop shiny
     })
+
+
+
 
 }
 #)

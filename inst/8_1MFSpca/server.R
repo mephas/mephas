@@ -2,7 +2,6 @@
 
 function(input, output, session) {
 
-source("../tab/func.R")
 ##########----------##########----------##########
 source("server_data.R", local=TRUE, encoding="UTF-8")
 
