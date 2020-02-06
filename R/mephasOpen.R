@@ -5,6 +5,11 @@
 ##'
 ##' @return shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)
 ##'
+##' @import shiny
+##' @import mephas.tools
+##' @import ggplot2
+##' @import shinyWidgets
+##' 
 ##' @examples
 ##' if (interactive()) {
 ##'   mephasOpen("condist")
