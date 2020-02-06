@@ -43,7 +43,8 @@ mephasOpen <- function(method=c("condist",
                                 "surv",
                                 "pca",
                                 "pls")){
-if (!require("mephas.tools")) {devtools::install_github("mephas.tools")}; 
+        
+if (!requireNamespace("mephas.tools")) {devtools::install_github("mephas.tools")}; 
 requireNamespace("mephas.tools", quietly = TRUE)
 
 method <- match.arg(method)
