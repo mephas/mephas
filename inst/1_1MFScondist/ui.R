@@ -11,7 +11,7 @@ if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; requireNamespa
 tagList(
 
 includeCSS("../www/style.css"),
-stylink(),
+#stylink(),
 tabOF(),
 
 ##########--------------------##########--------------------##########
