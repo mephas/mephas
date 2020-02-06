@@ -30,42 +30,42 @@ tabPanel("Normal",
 headerPanel("Normal Distribution"),
 
 #condiPa 1
-conditionalPanel(
-condition = "input.explain_on_off",
-HTML(
-"
-<h4><b>Functionalities</b></h4>
-<p><b>Draw a Mathematical-based Normal Distribution</b></p>
-<ul>
-<li>Draw a Normal Distribution with N(&#956, &#963); &#956 indicates the mean (location), and &#963 indicates its standard deviation (shape).</li>
-<li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ≤ x<sub>0</sub>) that is the possibility of a variable X being in an interval (−∞, x<sub>0</sub>] from the probability distribution.
-<br>In the curve, the left area to the red-line indicates this possibility value, and the intersection of the red line and horizontal axis (X-axis) is the x<sub>0</sub>.</li>
-<li>Calculate the probability Pr(μ – n × σ < X ≤ μ + n × σ) that is the possibility of a variable X being in an interval (μ – n × σ, μ + n × σ],
-<br>where μ indicates the mean and σ indicates the Standard Deviation.
-<br>In the curve, the blue area indicates this possibility value, and the user can define n by setting the parameter.</li>
-</ul>
-<p><b>Draw a Simulated-based Normal Distribution</b></p>
-<ul>
-<li>Generate and download random numbers of normal distribution using a user-defined sample size.</li>
-<li>Draw histogram of the generated random numbers.</li>
-<li>Calculate the Mean(μ) and Standard Deviation(σ) of the generated random numbers.</li>
-<li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ≤ x<sub>0</sub>) that is the possibility of a variable X being in an interval (−∞, x<sub>0</sub>] from the probability distribution of the generated random numbers.</li>
-</ul>
-<p><b>Draw a User Data-based Normal Distribution</b></p>
-<ul>
-<li>Upload your data using Manual Input or from CSV/TXT files.</li>
-<li>Draw histogram and density plots of your data.</li>
-<li>Calculate the Mean(μ) and Standard Deviation(σ) of your data.</li>
-<li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ≤ x<sub>0</sub>) that is the possibility of a variable X being in an interval (−∞, x<sub>0</sub>] from the probability distribution of your data.</li>
-</ul>
-
-<i><h4>Case Example</h4>
-Suppose we wanted to see the shape of N(0, 1) and wanted to know 1. at which point x<sub>0</sub> when Pr(X < x<sub>0</sub>) = 0.025, and 2. what is the probability between means +/- 1SD area</i>
-
-<h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
-"
-)
-	),
+#conditionalPanel(
+#condition = "input.explain_on_off",
+# HTML(
+# "
+# <h4><b>Functionalities</b></h4>
+# <p><b>Draw a Mathematical-based Normal Distribution</b></p>
+# <ul>
+# <li>Draw a Normal Distribution with N(&#956, &#963); &#956 indicates the mean (location), and &#963 indicates its standard deviation (shape).</li>
+# <li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ??? x<sub>0</sub>) that is the possibility of a variable X being in an interval (??????, x<sub>0</sub>] from the probability distribution.
+# <br>In the curve, the left area to the red-line indicates this possibility value, and the intersection of the red line and horizontal axis (X-axis) is the x<sub>0</sub>.</li>
+# <li>Calculate the probability Pr(?? ??? n ?? ?? < X ??? ?? + n ?? ??) that is the possibility of a variable X being in an interval (?? ??? n ?? ??, ?? + n ?? ??],
+# <br>where ?? indicates the mean and ?? indicates the Standard Deviation.
+# <br>In the curve, the blue area indicates this possibility value, and the user can define n by setting the parameter.</li>
+# </ul>
+# <p><b>Draw a Simulated-based Normal Distribution</b></p>
+# <ul>
+# <li>Generate and download random numbers of normal distribution using a user-defined sample size.</li>
+# <li>Draw histogram of the generated random numbers.</li>
+# <li>Calculate the Mean(??) and Standard Deviation(??) of the generated random numbers.</li>
+# <li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ??? x<sub>0</sub>) that is the possibility of a variable X being in an interval (??????, x<sub>0</sub>] from the probability distribution of the generated random numbers.</li>
+# </ul>
+# <p><b>Draw a User Data-based Normal Distribution</b></p>
+# <ul>
+# <li>Upload your data using Manual Input or from CSV/TXT files.</li>
+# <li>Draw histogram and density plots of your data.</li>
+# <li>Calculate the Mean(??) and Standard Deviation(??) of your data.</li>
+# <li>Calculate the position x<sub>0</sub> of a user-defined probability Pr(X ??? x<sub>0</sub>) that is the possibility of a variable X being in an interval (??????, x<sub>0</sub>] from the probability distribution of your data.</li>
+# </ul>
+#
+# <i><h4>Case Example</h4>
+# Suppose we wanted to see the shape of N(0, 1) and wanted to know 1. at which point x<sub>0</sub> when Pr(X < x<sub>0</sub>) = 0.025, and 2. what is the probability between means +/- 1SD area</i>
+#
+# <h4> Please follow the <b>Steps</b>, and <b>Outputs</b> will give real-time analytical results.</h4>
+# "
+# )
+#	),
 
 
 hr(),
