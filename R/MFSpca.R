@@ -22,7 +22,8 @@
 ##' @export
 MFSpca <- function(){
 
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("8_1MFSpca", package = "mephas"))
-  )
+  ))
 }

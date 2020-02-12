@@ -24,7 +24,8 @@
 MFSproptest <- function(){
 
 
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("4MFSproptest", package = "mephas"))
-  )
+  ))
 }

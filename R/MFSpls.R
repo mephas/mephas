@@ -24,8 +24,8 @@
 ##'
 ##' @export
 MFSpls <- function(){
-
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("8_2MFSpls", package = "mephas"))
-  )
+  ))
 }

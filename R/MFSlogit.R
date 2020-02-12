@@ -22,8 +22,8 @@
 ##'
 ##' @export
 MFSlogit <- function(){
-
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("7_2MFSlogit", package = "mephas"))
-  )
+  ))
 }

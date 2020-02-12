@@ -23,8 +23,8 @@
 ##' @export
 MFSrctabtest <- function(){
 
-
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("5MFSrctabtest", package = "mephas"))
-  )
+  ))
 }

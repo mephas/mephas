@@ -27,7 +27,8 @@
 ##' @export
 MFSsurv <- function(){
 
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("7_3MFSsurv", package = "mephas"))
-  )
+  ))
 }

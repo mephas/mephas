@@ -24,7 +24,8 @@
 ##' @export
 MFSdisdist <- function(){
 
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("1_2MFSdisdist", package = "mephas"))
-  )
+  ))
 }
