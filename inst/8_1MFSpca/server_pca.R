@@ -11,13 +11,13 @@
 #})
 
 output$x = renderUI({
-  pickerInput(
+  shinyWidgets::pickerInput(
     inputId = "x",
     label = "1. Add / Remove independent variables (X)",
     selected =type.num3(),
     choices = type.num3(),
     multiple = TRUE,
-    options = pickerOptions(
+    options = shinyWidgets::pickerOptions(
       actionsBox=TRUE,
       size=5)
 )
@@ -29,22 +29,6 @@ DF4 <- eventReactive(input$pca1,{
 
 output$table.x <- DT::renderDT(
     head(X()), options = list(scrollX = TRUE,dom = 't'))
-
-output$cor <- DT::renderDT({
-  c <- as.data.frame(cor(DF4()))
-  c <- c[ , order(names(c))]
-  c <- c[order(rownames(c)),]
-  return(c)}, 
-  extensions = 'Buttons', 
-    options = list(
-    dom = 'Bfrtip',
-    buttons = c('copy', 'csv', 'excel'),
-    scrollX = TRUE))
-
-output$cor.plot   <- renderPlot({ 
-plot_corr(DF4())
-
-})
 
 pca <- eventReactive(input$pca1,{
 
@@ -63,7 +47,7 @@ output$var  <- DT::renderDT({
   validate(need(input$nc>=2, "Components must be >= 2."))
   res <- summary(pca())
   res.tab<- as.data.frame(res$importance)[,1:input$nc]
-  return(res.tab)
+  return(round(res.tab,6))
   },
   extensions = 'Buttons', 
     options = list(
@@ -72,14 +56,14 @@ output$var  <- DT::renderDT({
     scrollX = TRUE))
 
 output$comp <- DT::renderDT({
-  as.data.frame(pca()$x)}, 
+  as.data.frame(round(pca()$x,6))}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$load <- DT::renderDT({pca()$rotation}, 
+output$load <- DT::renderDT({round(pca()$rotation,6)}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',

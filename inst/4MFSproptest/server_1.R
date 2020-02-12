@@ -5,11 +5,11 @@ validate(need(input$n>=input$x, "Please check your data whether x <= n"))
   res = binom.test(x = input$x, n= input$n, p = input$p, alternative = input$alt)
 
    res.table = t(data.frame(
-    Num.success = res$statistic,
-    Num.trial = res$parameter,
-    Estimated.prob.success = res$estimate,
+    Num.success = round(res$statistic,6),
+    Num.trial = round(res$parameter,6),
+    Estimated.prob.success = round(res$estimate,6),
     p.value = round(res$p.value,6),
-    Confidence.Interval.95 = paste0("(", round(res$conf.int[1],4),",",round(res$conf.int[2],4), ")")
+    Confidence.Interval.95 = paste0("(", round(res$conf.int[1],6),",",round(res$conf.int[2],6), ")")
     ))
 
   colnames(res.table) = res$method
@@ -28,10 +28,10 @@ validate(need(input$n>=input$x, "Please check your data whether x <= n"))
   res = prop.test(x = input$x, n= input$n, p = input$p, alternative = input$alt, correct = TRUE)
 
     res.table = t(data.frame(
-    X.squared = res$statistic,
-    Estimated.prob.success = res$estimate,
-    p.value = (res$p.value),
-    Confidence.Interval.95 = paste0("(", round(res$conf.int[1],4),",",round(res$conf.int[2],4), ")")
+    X.squared = round(res$statistic,6),
+    Estimated.prob.success = round(res$estimate,6),
+    p.value = round(res$p.value,6),
+    Confidence.Interval.95 = paste0("(", round(res$conf.int[1],6),",",round(res$conf.int[2],6), ")")
     ))
 
   colnames(res.table) = res$method

@@ -11,13 +11,13 @@
 #})
 
 output$x.fa = renderUI({
-  pickerInput(
+ shinyWidgets::pickerInput(
     inputId = "x.fa",
     label = "1. Add / Remove independent variables (X)",
     selected =type.num3(),
     choices = type.num3(),
     multiple = TRUE,
-    options = pickerOptions(
+    options = shinyWidgets::pickerOptions(
       actionsBox=TRUE,
       size=5)
 )
@@ -49,22 +49,22 @@ output$fa  <- renderPrint({
   summary(fa())
   })
 
-fa1 <- eventReactive(input$pca1.fa,{
-  validate(need(nrow(DF4.fa())>ncol(DF4.fa()), "Number of variables should be less than the number of rows"))
-  psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
-  })
+#fa1 <- eventReactive(input$pca1.fa,{
+#  validate(need(nrow(DF4.fa())>ncol(DF4.fa()), "Number of variables should be less than the number of rows"))
+#  psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
+#  })
 
-output$fa.plot   <- renderPlot({ fa1()
+#output$fa.plot   <- renderPlot({ fa1()
 #psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
-})
+#})
 
-output$fancomp   <- renderPrint({ 
-#x <- psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
-cat(paste0("Parallel analysis suggests that the number of factors: ", fa1()$nfact))
-})
+#output$fancomp   <- renderPrint({ 
+##x <- psych::fa.parallel((DF4.fa()),fa="fa",fm="ml")
+#cat(paste0("Parallel analysis suggests that the number of factors: ", fa1()$nfact))
+#})
 
 
-output$comp.fa <- DT::renderDT({as.data.frame(fa()$scores)}, 
+output$comp.fa <- DT::renderDT({as.data.frame(round(fa()$scores,6))}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
@@ -73,14 +73,14 @@ output$comp.fa <- DT::renderDT({as.data.frame(fa()$scores)},
 
 output$load.fa <- DT::renderDT({
   validate(need(input$ncfa>=2, "Components must be >= 2."))
-  as.data.frame(fa()$loadings[,1:input$ncfa])}, 
+  as.data.frame(round(fa()$loadings[,1:input$ncfa],6))}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$var.fa <- DT::renderDT({as.data.frame(fa()$Vaccounted)}, 
+output$var.fa <- DT::renderDT({as.data.frame(round(fa()$Vaccounted,6))}, 
   extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
@@ -152,17 +152,17 @@ plotly::ggplotly(p)
 #fa.cor <- eventReactive(input$pca1.fa,{
 #  as.data.frame(cor(DF4.fa()))
 #  })
-output$cor.fa <- DT::renderDT({as.data.frame(cor(DF4.fa()))}, 
-  extensions = 'Buttons', 
-    options = list(
-    dom = 'Bfrtip',
-    buttons = c('copy', 'csv', 'excel'),
-    scrollX = TRUE))
+#output$cor.fa <- DT::renderDT({as.data.frame(cor(DF4.fa()))}, 
+#  extensions = 'Buttons', 
+#    options = list(
+#    dom = 'Bfrtip',
+#    buttons = c('copy', 'csv', 'excel'),
+#    scrollX = TRUE))
 
-output$cor.fa.plot   <- renderPlot({ 
-plot_corr(DF4.fa())
+#output$cor.fa.plot   <- renderPlot({ 
+#plot_corr(DF4.fa())#
 
-})
+#})
 
 output$fa.bp   <- plotly::renderPlotly({ 
   validate(need(input$ncfa>=2, "Components are not enough to create the plot."))

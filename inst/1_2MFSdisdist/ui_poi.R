@@ -51,7 +51,9 @@ sidebarLayout(
 	    condition = "input.InputSrc_p == 'DataDist'",
 	    tabsetPanel(
 	      tabPanel("Manual Input",p(br()),
-		p("Data point can be separated by , ; /Enter /Tab /Space"),
+    p("Data point can be separated by , ; /Enter /Tab /Space"),
+    p(tags$b("Data be copied from CSV (one column) and pasted in the box")), 
+    		
     	tags$textarea(
         id = "x.p", #p
         rows = 10,
@@ -79,7 +81,9 @@ mainPanel(
  		p(tags$b("Poisson probability plot")),
     	plotly::plotlyOutput("p.plot"),
     	p(tags$b("Probability at the observed number of occurrences (Red-Dot)")),
-    	tableOutput("p.k")
+    	tableOutput("p.k"),
+    hr(),
+     plotly::plotlyOutput("p.plot.cdf")   
     	),
     	conditionalPanel(
 		  condition = "input.InputSrc_p == 'MathDist' && input.explain_on_off",
@@ -103,6 +107,8 @@ mainPanel(
  		p(tags$b("Histogram from upload data")),
         plotly::plotlyOutput("makeplot.2"),
         p(tags$b("Sample descriptive statistics")),
+    		tags$b("CDF from upload data"),
+    		plotly::plotlyOutput("makeplot.22"),        
         tableOutput("sum2.p")
 
 

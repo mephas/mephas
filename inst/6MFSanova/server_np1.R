@@ -5,16 +5,8 @@ namesnp1 <- reactive({
   return(x[1:2])
   }) 
 
-levelnp1 <- reactive({
-  F1 <-as.factor(unlist(strsplit(input$fnp1, "[,;\n\t ]")))
-  x <- matrix(levels(F1), nrow=1)
-  colnames(x) <- c(1:length(x))
-  rownames(x) <- names1()[2]
-  return(x)
-  })
-output$level.tnp1 <- DT::renderDT({levelnp1()}, options = list(dom = 't'))
 
-Ynp1 <- reactive({
+Ynp1.0 <- reactive({
   inFile <- input$filenp1
   if (is.null(inFile)) {
     X <- as.numeric(unlist(strsplit(input$xnp1, "[,;\n\t ]")))
@@ -42,6 +34,44 @@ if(!input$colnp1){
     return(as.data.frame(x))
 })
 
+type.num3 <- reactive({
+colnames(Ynp1.0()[unlist(lapply(Ynp1.0(), is.numeric))])
+})
+
+output$value3 = renderUI({
+selectInput(
+  'value3',
+  HTML('For upload data, choose the numeric values'),
+  choices = type.num3()
+  )
+})
+
+Ynp1 <- reactive({
+  inFile <- input$filenp1
+  if (is.null(inFile)) {
+    x <- Ynp1.0()
+  }
+  else{
+    x <- data.frame(
+      value = Ynp1.0()[, input$value3],
+      factor = as.factor(Ynp1.0()[, -which(names(Ynp1.0()) %in% c(input$value3))])
+      )
+    colnames(x) = c(input$value3, names(Ynp1.0())[!names(Ynp1.0()) %in% input$value3])
+
+  }
+  return(as.data.frame(x))
+  })
+
+
+levelnp1 <- reactive({
+F1 <- as.factor(Ynp1()[,2])  
+x <- matrix(levels(F1), nrow=1)
+  colnames(x) <- c(1:length(x))
+  rownames(x) <- names(Ynp1())[2]
+  return(x)
+  })
+output$level.tnp1 <- DT::renderDT({levelnp1()}, options = list(dom = 't'))
+
 
 output$tablenp1 <- DT::renderDT(Ynp1(),
     extensions = list(
@@ -59,7 +89,7 @@ basnp1 <- reactive({
   res <- (psych::describeBy(x[,1], x[,2], mat=TRUE))[,-c(1,2,3,8,9)]
   rownames(res) <- levels(x[,2])
   colnames(res) <- c("Total Number of Valid Values","Mean", "SD", "Median", "Minimum","Maximum", "Range","Skew", "Kurtosis","SE")
-  return(res)
+  return(round(res,6))
   })
 
 output$basnp1.t <- DT::renderDT({
@@ -85,7 +115,7 @@ output$kwtest <- DT::renderDT({
                             df= res[["parameter"]][["df"]]))
   colnames(res.table) <- res$method
   rownames(res.table) <- c("Kruskal-Wallis chi-squared", "P Value","Degree of Freedom")
-  return(res.table)
+  return(round(res.table,6))
     },
     extensions = 'Buttons', 
     options = list(

@@ -28,8 +28,10 @@ if(!input$col){
   x <- as.data.frame(csv)
 }
 
-  if(input$transform) {x <- as.data.frame(t(x))}
-
+  if(input$transform) {
+    x <- as.data.frame(t(x))
+    names(x)<- make.names(names(x), unique = TRUE, allow_ = FALSE)
+    }
 return(as.data.frame(x))
 })
 
@@ -132,7 +134,7 @@ sum <- reactive({
   res <- as.data.frame(psych::describe(x))[,-c(1,6,7)]
   rownames(res) = names(x)
   colnames(res) <- c("Total Number of Valid Values", "Mean" ,"SD", "Median", "Minimum", "Maximum", "Range","Skew","Kurtosis","SE")
-  return(res)
+  return(round(res,6))
   })
 
 output$sum <- DT::renderDT({sum()}, 
@@ -178,8 +180,8 @@ output$tx = renderUI({
  })
 
  output$p1 = plotly::renderPlotly({
-    validate(need(input$tx, "Loading variable"))
-  validate(need(input$ty, "Loading variable"))
+  validate(need(input$tx, "Waiting for a variable"))
+  validate(need(input$ty, "Waiting for a variable"))
 
    p<- plot_scat(X(), input$tx, input$ty, input$xlab, input$ylab)
    plotly::ggplotly(p)
@@ -196,16 +198,101 @@ output$hx = renderUI({
 })
 
 output$p2 = plotly::renderPlotly({
-    validate(need(input$hx, "Loading variable"))
-
+  validate(need(input$hx, "Waiting for a variable"))
    p<-plot_hist1(X(), input$hx, input$bin)
    plotly::ggplotly(p)
    })
 
 output$p21 = plotly::renderPlotly({
-    validate(need(input$hx, "Loading variable"))
-
+    validate(need(input$hx, "Waiting for a variable"))
      p<-plot_density1(X(), input$hx)
      plotly::ggplotly(p)
    })
 
+
+output$heat.x = renderUI({
+  shinyWidgets::pickerInput(
+    inputId = "heat.x",
+    label = "Choose variables to plot heatmap",
+    selected =type.num3(),
+    choices = type.num3(),
+    multiple = TRUE,
+    options = shinyWidgets::pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+  })
+
+output$heat = plotly::renderPlotly({
+  validate(need(input$heat.x, "Waiting for a variable"))
+    if(input$heat.scale){
+    plotly::plot_ly(x = input$heat.x,
+             y = paste0("s.",c(rownames(X()))),
+            z = scale(as.matrix(X()[,input$heat.x])), 
+            type = "heatmap")      
+    }
+    else{
+    plotly::plot_ly(x = input$heat.x,
+             y = paste0("s.",c(rownames(X()))),
+            z = as.matrix(X()[,input$heat.x]), 
+            type = "heatmap")
+  }
+   })
+
+
+output$cor.x = renderUI({
+  shinyWidgets::pickerInput(
+    inputId = "cor.x",
+    label = "Choose variables to plot correlation matrix",
+    selected =type.num3(),
+    choices = type.num3(),
+    multiple = TRUE,
+    options = shinyWidgets::pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+  })
+
+output$cor <- DT::renderDT({
+  c <- as.data.frame(cor(X()[,input$cor.x]))
+  c <- c[ , order(names(c))]
+  c <- c[order(rownames(c)),]
+  return(round(c,6))}, 
+  extensions = 'Buttons', 
+    options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel'),
+    scrollX = TRUE))
+
+output$cor.plot   <- renderPlot({ 
+    validate(need(input$cor.x, "Waiting for a variable"))
+plot_corr(X()[,input$cor.x])
+
+})
+
+output$para.x = renderUI({
+  shinyWidgets::pickerInput(
+    inputId = "para.x",
+    label = "Choose variables to plot parallel analysis for PCA and EFA",
+    selected =type.num3(),
+    choices = type.num3(),
+    multiple = TRUE,
+    options = shinyWidgets::pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+  })
+
+output$fa.plot   <- renderPlot({
+df <- X()[,input$para.x]
+validate(need(nrow(df)>ncol(df), "Number of variables should be less than the number of rows"))
+validate(need(input$para.x, "Waiting for a variables"))
+
+psych::fa.parallel(df,fa="both")
+})
+
+output$fancomp   <- renderPrint({ 
+df <- X()[,input$para.x]
+psych::fa.parallel(df,fa="both")
+#cat(paste0("Parallel analysis suggests that the number of factors: ", f$nfact))
+})

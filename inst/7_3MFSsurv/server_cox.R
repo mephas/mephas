@@ -16,7 +16,7 @@ tags$b('2. Add / Remove independent variables (X)'),
 selected = names(DF4())[1],
 choices = names(DF4()),
 multiple = TRUE,
-options = pickerOptions(
+options = shinyWidgets::pickerOptions(
       actionsBox=TRUE,
       size=5)
 )
@@ -28,7 +28,7 @@ shinyWidgets::pickerInput(
 tags$b('3 (Optional). Add interaction term between 2 categorical variables'),
 choices = type.fac4(),
 multiple = TRUE,
-options = pickerOptions(
+options = shinyWidgets::pickerOptions(
       maxOptions=2,
       actionsBox=TRUE,
       size=5)
@@ -108,7 +108,7 @@ output$zph = DT::renderDT({
 res <- cox.zph(coxfit())
 res.tab<- as.data.frame(res[["table"]])
 colnames(res.tab) <- c("Chi-squared", "Degree of Freedom", "P Value")
-return(res.tab)
+return(round(res.tab,6))
 },
 extensions = 'Buttons', 
 options = list(
@@ -135,7 +135,7 @@ else {y=DF3()[,input$t]}
  colnames(res) <- c("Time", "Censor", "Linear Part = bX", "Risk Score = exp(bX)", 
   #"Expected number of events", "survival Prob. = exp(-Expected number of events)",
   "Martingale Residuals", "Deviance Residuals", "Cox-Snell Residuals")
- return(res)
+ return(round(res,6))
   })
 # 
  output$fit.cox = DT::renderDT(fit.cox(),

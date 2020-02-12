@@ -28,9 +28,10 @@ if(!input$col){
   x <- as.data.frame(csv)
 }
 
-  if(input$transform) {x <- t(x)}
-   
-  #if(input$scale) {x <- scale(x)}
+  if(input$transform) {
+    x <- as.data.frame(t(x))
+    names(x)<- make.names(names(x), unique = TRUE, allow_ = FALSE)
+    }
 
 return(as.data.frame(x))
 })
@@ -140,7 +141,7 @@ sum <- reactive({
   return(res)
   })
 
-output$sum <- DT::renderDT({sum()}, 
+output$sum <- DT::renderDT({round(sum(),6)}, 
     extensions = 'Buttons', 
     options = list(
     dom = 'Bfrtip',
@@ -183,8 +184,8 @@ output$tx = renderUI({
  })
 
  output$p1 = plotly::renderPlotly({
-    validate(need(input$tx, "Loading variable"))
-  validate(need(input$ty, "Loading variable"))
+    validate(need(input$tx, "Waiting for a variable"))
+  validate(need(input$ty, "Waiting for a variable"))
 
    p<- plot_scat(X(), input$tx, input$ty, input$xlab, input$ylab)
    plotly::ggplotly(p)
@@ -201,16 +202,44 @@ output$hx = renderUI({
 })
 
 output$p2 = plotly::renderPlotly({
-    validate(need(input$hx, "Loading variable"))
+    validate(need(input$hx, "Waiting for a variable"))
 
    p<-plot_hist1(X(), input$hx, input$bin)
    plotly::ggplotly(p)
    })
 
 output$p21 = plotly::renderPlotly({
-    validate(need(input$hx, "Loading variable"))
+    validate(need(input$hx, "Waiting for a variable"))
 
      p<-plot_density1(X(), input$hx)
      plotly::ggplotly(p)
    })
 
+output$heat.x = renderUI({
+  shinyWidgets::pickerInput(
+    inputId = "heat.x",
+    label = "Choose variables to plot heatmap",
+    selected =type.num3(),
+    choices = type.num3(),
+    multiple = TRUE,
+    options = shinyWidgets::pickerOptions(
+      actionsBox=TRUE,
+      size=5)
+)
+  })
+
+output$heat = plotly::renderPlotly({
+    validate(need(input$heat.x, "Waiting for a variable"))
+    if(input$heat.scale){
+    plotly::plot_ly(x = input$heat.x,
+             y = paste0("s.",c(rownames(X()))),
+            z = scale(as.matrix(X()[,input$heat.x])), 
+            type = "heatmap")      
+    }
+    else{
+    plotly::plot_ly(x = input$heat.x,
+             y = paste0("s.",c(rownames(X()))),
+            z = as.matrix(X()[,input$heat.x]), 
+            type = "heatmap")
+  }
+   })

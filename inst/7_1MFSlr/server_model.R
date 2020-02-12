@@ -31,7 +31,7 @@ tags$b('2. Add / Remove independent variables (X)'),
 selected = names(DF4()),
 choices = names(DF4()),
 multiple = TRUE,
-options = pickerOptions(
+options = shinyWidgets::pickerOptions(
       actionsBox=TRUE,
       size=5)
 )
@@ -47,7 +47,7 @@ shinyWidgets::pickerInput(
 tags$b('4 (Optional). Add interaction term between 2 categorical variables'),
 choices = type.fac4(),
 multiple = TRUE,
-options = pickerOptions(
+options = shinyWidgets::pickerOptions(
       maxOptions=2,
       actionsBox=TRUE,
       size=5)
@@ -106,7 +106,7 @@ lm(as.formula(formula()), data = DF3())
 afit = reactive( {
   res.table <- anova(fit())
   colnames(res.table) <- c("Degree of Freedom (DF)", "Sum of Squares (SS)", "Mean Squares (MS)", "F Statistic", "P Value")
-  return(res.table)
+  return(round(res.table,6))
   })
 
 output$anova = DT::renderDT({(afit())},
@@ -122,8 +122,8 @@ output$step = renderPrint({step(fit())})
 # 
 # # residual plot
 output$p.lm1 = plotly::renderPlotly({
-x <-data.frame(res=fit()$residuals)
-p <- plot_qq1(data=x, varx="res")
+x <-data.frame(residuals=fit()$residuals)
+p <- plot_qq1(data=x, varx="residuals")
 plotly::ggplotly(p)
 	})
 
@@ -139,7 +139,7 @@ plotly::ggplotly(p)
  Residuals = fit()[["residuals"]]
  )
  colnames(res) <- c("Dependent Variable = Y", "Fittings = Predicted Y", "Residuals = Y - Predicted Y")
- return(res)
+ return(round(res,6))
  	})
 # 
 output$fitdt0 = DT::renderDT(fit.lm(),

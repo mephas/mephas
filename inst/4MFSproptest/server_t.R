@@ -24,7 +24,7 @@ output$dt4 = DT::renderDT({
     buttons = c('copy', 'csv', 'excel'),
     scrollX = TRUE))
 
-output$dt4.2 = DT::renderDT({prop.table(T4(), 2)},
+output$dt4.2 = DT::renderDT({round(prop.table(T4(), 2),6)},
 
     extensions = 'Buttons', 
     options = list(
@@ -48,9 +48,9 @@ output$c.test4 = DT::renderDT({
 
     res = prop.trend.test(X,Y,score)
     res.table = t(data.frame(
-    Statistic = res$statistic,
-    Degree.of.freedom = res$parameter,
-    P.value = (res$p.value)
+    Statistic = round(res$statistic,6),
+    Degree.of.freedom = round(res$parameter,6),
+    P.value = round(res$p.value,6)
     ))
   colnames(res.table) = c(res$method)
   rownames(res.table) =c("Chi-Squared Statistic", "Degree of Freedom", "P Value")

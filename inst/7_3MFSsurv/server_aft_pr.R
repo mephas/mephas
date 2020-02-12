@@ -28,7 +28,7 @@ pred = eventReactive(input$B1.1,
   lp = predict(aftfit(), newdata = newX(), type="link"),
   predict= predict(aftfit(), newdata = newX(), type="response"))
   colnames(res) <- c("Linear Predictors", "Predictors")
-  res <- cbind.data.frame(res, newX())
+  res <- cbind.data.frame(round(res,6), newX())
   return(res)
 })
 
@@ -49,7 +49,7 @@ pred.n <- reactive({
                    low.band=ptime$fit - 2*ptime$se.fit,
                    ybreak=1-c(1:98/100))
   colnames(df)=c("Estimated Times", "95% CI up band", "95% CI lower band", "Survival Probability")
-  return(df)
+  return(round(df,6))
 })
 
 output$pred.n = DT::renderDT({

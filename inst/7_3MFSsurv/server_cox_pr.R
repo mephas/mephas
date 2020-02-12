@@ -28,7 +28,7 @@ pred2 = eventReactive(input$B2.1,
   lp = predict(coxfit(), newdata = newX2(), type="lp"),
   risk= predict(coxfit(), newdata = newX2(), type="risk"))
   colnames(res) <- c("Linear Predictors = bX", "Risk score = exp(bX)")
-  res <- cbind.data.frame(res, newX2())
+  res <- cbind.data.frame(round(res,6), newX2())
   return(res)
 })
 
@@ -66,7 +66,7 @@ return(df)
 })
 
 output$bstab = DT::renderDT({
-BStab()},
+round(BStab(),6)},
 extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',
@@ -108,7 +108,7 @@ return(df)
 })
 
 output$auctab = DT::renderDT({
-AUCtab()},
+round(AUCtab(),6)},
 extensions = 'Buttons', 
 options = list(
 dom = 'Bfrtip',

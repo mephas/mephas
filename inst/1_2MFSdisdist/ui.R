@@ -1,11 +1,11 @@
 if (!require("shiny")) {install.packages("shiny")}; library("shiny")
 if (!require("ggplot2")) {install.packages("ggplot2")}; library("ggplot2")
-if (!require("plotly")) {install.packages("plotly")}; library("plotly")
-if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
+#if (!require("plotly")) {install.packages("plotly")}; library("plotly")
+#if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
 
-source("../tab/tab.R")
-source("../tab/panel.R")
-source("../tab/func.R")
+#source("../tab/tab.R")
+#source("../tab/panel.R")
+#source("../tab/func.R")
 
 tagList(
 
@@ -28,7 +28,7 @@ position="fixed-top",
 
 tabPanel("Binomial",p(br()),
 
-titlePanel("Binomial Distribution"),
+headerPanel("Binomial Distribution"),
 
 #condiPa 1
 conditionalPanel(
@@ -59,7 +59,7 @@ hr()
 
 tabPanel("Poisson",
 
-titlePanel("Poisson Distribution"),
+headerPanel("Poisson Distribution"),
 #condiPa 1
 conditionalPanel(
 condition = "input.explain_on_off",

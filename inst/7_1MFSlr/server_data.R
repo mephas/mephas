@@ -26,9 +26,12 @@ if(!input$col){
   x <- as.data.frame(csv)
 }
 
-  if(input$transform) {x <- as.data.frame(t(x))}
+  if(input$transform) {
+    x <- as.data.frame(t(x))
+    names(x)<- make.names(names(x), unique = TRUE, allow_ = FALSE)
+    }
 
-return(as.data.frame(x))
+return(x)
 })
 
 ## variable type
@@ -96,7 +99,7 @@ h4(tags$b('Remove some samples / outliers')),
 selected = NULL,
 choices = rownames(DF2()),
 multiple = TRUE,
-options = pickerOptions(
+options = shinyWidgets::pickerOptions(
       actionsBox=TRUE,
       size=5)
 )
@@ -159,7 +162,7 @@ sum <- reactive({
   res <- as.data.frame(psych::describe(x))[,-c(1,6,7)]
   rownames(res) = names(x)
   colnames(res) <- c("Total Number of Valid Values", "Mean" ,"SD", "Median", "Minimum", "Maximum", "Range","Skew","Kurtosis","SE")
-  return(res)
+  return(round(res,6))
   })
 
 output$sum <- DT::renderDT({sum()}, 
