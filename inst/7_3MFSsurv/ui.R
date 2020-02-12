@@ -15,7 +15,7 @@ if (!require("survAUC")) {install.packages("survAUC")}; library("survAUC")
 tagList(
 
 includeCSS("../www/style.css"),
-sty.link(),
+stylink(),
 tabOF(),
 
 ##########--------------------##########--------------------##########

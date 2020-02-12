@@ -14,7 +14,7 @@ if (!require("exactRankTests")) {install.packages("exactRankTests")}; library("e
 tagList(
 
 includeCSS("../www/style.css"),
-sty.link(),
+stylink(),
 tabOF(),
 
 ##########--------------------##########--------------------##########

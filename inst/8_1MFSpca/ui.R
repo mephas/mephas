@@ -12,7 +12,7 @@ if (!require("plotly")) {install.packages("plotly")}; library("plotly")
 tagList(
 
 includeCSS("../www/style.css"),
-sty.link(),
+stylink(),
 tabOF(),
 
 ##########--------------------##########--------------------##########

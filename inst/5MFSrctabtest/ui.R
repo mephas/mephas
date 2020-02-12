@@ -12,7 +12,7 @@ if (!require("ggplot2")) {install.packages("ggplot2")}; library("ggplot2")
 tagList(
 
 includeCSS("../www/style.css"),
-sty.link(),
+stylink(),
 tabOF(),
 
 ##########--------------------##########--------------------##########
