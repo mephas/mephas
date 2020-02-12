@@ -1,6 +1,6 @@
 Package: mephas
 Type: Package
-Title: Instruments for MEPHAS
+Title: Medical and Pharmaceutical Statistics Based on Shiny
 Description: The shiny-based tools for statistical fundamentals, hypothesis tests, and statistical models, aiming to facilitate researchers to analyze medical, pharmaceutical, and genomic data. 
 Version: 1.1
 Authors@R: c(
@@ -25,7 +25,6 @@ Imports:
     pls,
     plotly,
     reshape,
-    remotes,
     scales,
     shiny,
     shinythemes,
