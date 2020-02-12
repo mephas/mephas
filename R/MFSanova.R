@@ -28,8 +28,8 @@
 
 ##' @export
 MFSanova <- function(){
-
-  suppressPackageStartupMessages(
+requireNamespace("mephas.tools", quietly = TRUE)
+  suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("6MFSanova", package = "mephas"))
-  )
+  ))
 }

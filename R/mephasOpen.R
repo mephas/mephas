@@ -45,7 +45,7 @@ mephasOpen <- function(method=c("condist",
                                 "pls")){
         
 #if (!requireNamespace("mephas.tools")) {remotes::install_github("mephas.tools")}; 
-requireNamespace("mephas.tools", quietly = TRUE)
+#requireNamespace("mephas.tools", quietly = TRUE)
 
 method <- match.arg(method)
 
