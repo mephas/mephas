@@ -1,7 +1,7 @@
 ##'
 ##' Open MEPHAS interfaces
 ##'
-##' @title Open MEPHAS  Windows
+##' @title Open MEPHAS interfaces
 ##'
 ##' @return shiny interface of MEPHAS (see web-based version: https://alain003.phs.osaka-u.ac.jp/mephas/)
 ##'

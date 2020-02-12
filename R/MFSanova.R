@@ -28,8 +28,11 @@
 
 ##' @export
 MFSanova <- function(){
-requireNamespace("mephas.tools", quietly = TRUE)
+if(!requireNamespace("mephas.tools", quietly = TRUE) { stop("Please install package mephas.tools")}
+else {
+	loadNamespace("mephas.tools", quietly = TRUE)
   suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("6MFSanova", package = "mephas"))
   ))
+}
 }

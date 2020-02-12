@@ -2,7 +2,7 @@
 % Please edit documentation in R/mephasOpen.R
 \name{mephasOpen}
 \alias{mephasOpen}
-\title{Open MEPHAS  Windows}
+\title{Open MEPHAS interfaces}
 \usage{
 mephasOpen(
   method = c("condist", "disdist", "ttest", "nptest", "proptest", "tabletest", "anova",
