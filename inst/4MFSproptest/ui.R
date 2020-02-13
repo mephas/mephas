@@ -4,6 +4,8 @@ if (!requireNamespace("ggplot2",quietly = TRUE)) {install.packages("ggplot2")}; 
 
 #if (!require("DT")) {install.packages("DT")}; library("DT")
 if (!requireNamespace("plotly",quietly = TRUE)) {install.packages("plotly")}; require("plotly",quietly = TRUE)
+if (!requireNamespace("mephas.tools",quietly = TRUE)) {remotes::install_github("mephas/mephas.tools", upgrade="never")}; require("mephas.tools",quietly = TRUE)
+
 #if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
 
 #source("../tab/tab.R")

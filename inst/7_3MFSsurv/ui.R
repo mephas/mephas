@@ -6,6 +6,8 @@ if (!requireNamespace("ggplot2",quietly = TRUE)) {install.packages("ggplot2")}; 
 if (!requireNamespace("survival", quietly = TRUE)) {install.packages("survival")}; require("survival",quietly = TRUE)
 if (!requireNamespace("survminer",quietly = TRUE)) {install.packages("survminer")}; require("survminer",quietly = TRUE)
 if (!requireNamespace("survAUC",quietly = TRUE)) {install.packages("survAUC")}; require("survAUC",quietly = TRUE)
+if (!requireNamespace("mephas.tools",quietly = TRUE)) {remotes::install_github("mephas/mephas.tools", upgrade="never")}; require("mephas.tools",quietly = TRUE)
+
 
 #if (!require("psych")) {install.packages("psych")}; library("psych")
 #if (!require("reshape2")) {install.packages("reshape2")}; library("reshape2")

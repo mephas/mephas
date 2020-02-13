@@ -25,6 +25,7 @@ Imports:
     pls,
     plotly,
     reshape,
+    remotes,
     scales,
     shiny,
     shinythemes,

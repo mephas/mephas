@@ -3,6 +3,8 @@ if (!requireNamespace("ggplot2",quietly = TRUE)) {install.packages("ggplot2")}; 
 if (!requireNamespace("plotly",quietly = TRUE)) {install.packages("plotly")}; require("plotly",quietly = TRUE)
 if (!requireNamespace("pls",quietly = TRUE)) {install.packages("pls")}; require("pls",quietly = TRUE)
 if (!requireNamespace("spls",quietly = TRUE)) {install.packages("spls")}; require("spls",quietly = TRUE)
+if (!requireNamespace("mephas.tools",quietly = TRUE)) {remotes::install_github("mephas/mephas.tools", upgrade="never")}; require("mephas.tools",quietly = TRUE)
+
 #if (!require("DT")) {install.packages("DT")}; library("DT")
 #if (!require("psych")) {install.packages("psych")}; library("psych")
 #if (!require("shinyWidgets")) {install.packages("shinyWidgets")}; library("shinyWidgets")
