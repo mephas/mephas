@@ -28,7 +28,7 @@
 
 ##' @export
 MFSanova <- function(){
-if(!requireNamespace("mephas.tools", quietly = TRUE)) { stop("Please install package mephas.tools")}
+#if(!requireNamespace("mephas.tools", quietly = TRUE)) { stop("Please install package mephas.tools")}
 else {
 	loadNamespace("mephas.tools")
   suppressPackageStartupMessages(suppressMessages(

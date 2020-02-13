@@ -23,7 +23,7 @@
 ##' @export
 MFSttest <- function(){
 
-requireNamespace("mephas.tools", quietly = TRUE)
+#requireNamespace("mephas.tools", quietly = TRUE)
   suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("2MFSttest", package = "mephas"))
   ))
