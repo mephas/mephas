@@ -32,5 +32,5 @@ MFSanova <- function(){
   suppressPackageStartupMessages(suppressMessages(
     shiny::runApp(system.file("6MFSanova", package = "mephas"))
   ))
-}
+  
 }
