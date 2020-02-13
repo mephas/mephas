@@ -8,6 +8,7 @@ sidebarPanel(
 tags$head(tags$style("#aft_form {height: 50px; background: ghostwhite; color: blue;word-wrap: break-word;}")),
 tags$head(tags$style("#str3 {overflow-y:scroll; max-height:: 200px; background: white};")),
 tags$head(tags$style("#fit {overflow-y:scroll; max-height:: 400px; background: white};")),
+tags$head(tags$style("#step2 {overflow-y:scroll; max-height:: 400px; background: white};")),
 
 h4(tags$b("Build the Model")),
 p("Prepare the data in the Data tab"),
@@ -126,6 +127,21 @@ tabPanel("Data Fitting", p(br()),
     p(tags$b("Fitting values and residuals from the existed data")),
     DT::DTOutput("fit.aft")
 ),
+
+tabPanel("AIC-based Selection",  br(),
+HTML(
+"<b> Explanations </b>
+  <ul> 
+    <li> The Akaike Information Criterion (AIC) is used to performs stepwise model selection. </li>
+    <li> Model fits are ranked according to their AIC values, and the model with the lowest AIC value is sometime considered the 'best'. </li>
+  </ul>
+</ul>"
+),
+    p(tags$b("Model selection suggested by AIC")),
+    verbatimTextOutput("step2")
+
+
+    ),
 
 tabPanel("Diagnostics Plot", p(br()),
 

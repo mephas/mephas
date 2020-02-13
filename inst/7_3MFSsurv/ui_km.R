@@ -28,12 +28,12 @@ h4(tags$b("Log-rank Test")),
 p(tags$b("Null hypothesis")),
 p("Two groups have identical hazard functions"),
 
-radioButtons("rho", "Choose Log-rank Test Method", selected=1,
+radioButtons("rho", "Choose Log-rank Test Method", selected=0,
   choiceNames = list(
     HTML("1. Log-rank test"),
     HTML("2. Peto & Peto modification of the Gehan-Wilcoxon test")
     ),
-  choiceValues = list(1, 2)
+  choiceValues = list(0, 1)
   ),
 p("See method explanations in Output 2. Log-rank Test tab."),
 hr(),
@@ -43,12 +43,12 @@ h4(tags$b("Pairwise Log-rank Test")),
 p(tags$b("Null hypothesis")),
 p("Two groups have identical hazard functions"),
 
-radioButtons("rho2", "1. Choose Log-rank Test Method)", selected=1,
+radioButtons("rho2", "1. Choose Log-rank Test Method", selected=0,
   choiceNames = list(
     HTML("1. Log-rank test"),
     HTML("2. Peto & Peto modification of the Gehan-Wilcoxon test")
     ),
-  choiceValues = list(1, 2)
+  choiceValues = list(0, 1)
   ),
 radioButtons("pm", 
   "2. Choose a method to adjust P value", selected="BH",
@@ -119,8 +119,9 @@ tabPanel("Log-Rank Test",  p(br()),
 </ul>"),
 
 p(tags$b("Log-rank Test Result")),
-    verbatimTextOutput("kmlr")
-
+    verbatimTextOutput("kmlr"),
+    p(tags$i("In this example, we could not find the statistical difference between 2 laser groups (p=0.8). 
+      Also from the Kaplan-Meier plot, we could found that the survival curves from 2 laser group intersect with each other."))
      ),
 
 tabPanel("Pairwise Log-Rank Test",  p(br()),

@@ -9,6 +9,8 @@ tags$head(tags$style("#str4 {overflow-y:scroll; max-height:: 350px; background: 
 tags$head(tags$style("#fitcx {overflow-y:scroll; max-height:: 400px; background: white};")),
 tags$head(tags$style("#fitcx2 {overflow-y:scroll; max-height:: 400px; background: white};")),
 tags$head(tags$style("#zph {overflow-y:scroll; max-height:: 150px; background: white};")),
+tags$head(tags$style("#step {overflow-y:scroll; max-height:: 400px; background: white};")),
+
 
 
 h4(tags$b("Build the Model")),
@@ -57,9 +59,10 @@ p("Frailty: individuals have different frailties, and those who most frail will 
 
 p("Cluster model is also called marginal model. It estimates the population averaged relative risk due to the independent variable."),
 
-tags$i("In the example of Diabetes data: 'eye' could be used as random effect of strata;
-  'id' can be used as random effect variable of cluster. " )
-  )
+p(tags$i("In the example of Diabetes data: 'eye' could be used as random effect of strata, then the results will be shown by eye group;
+  'id' can be used as random effect variable of cluster, then the result will assume the independent within a cluster;
+  'id' can also be used as random effect variable of frailty, then the result will be adjusted by the simulated distribution from 'id'." ))
+)
   ),
 
 hr(),
@@ -121,6 +124,21 @@ tabPanel("Data Fitting", p(br()),
     p(tags$b("Fitting values and residuals from the existed data")),
     DT::DTOutput("fit.cox")
 ),
+
+tabPanel("AIC-based Selection",  br(),
+HTML(
+"<b> Explanations </b>
+  <ul> 
+    <li> The Akaike Information Criterion (AIC) is used to performs stepwise model selection. </li>
+    <li> Model fits are ranked according to their AIC values, and the model with the lowest AIC value is sometime considered the 'best'. </li>
+  </ul>
+</ul>"
+),
+    p(tags$b("Model selection suggested by AIC")),
+    verbatimTextOutput("step")
+
+
+    ),
 
 tabPanel("Survival Curve", p(br()),
   HTML(
