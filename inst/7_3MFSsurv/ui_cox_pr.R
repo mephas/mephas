@@ -69,7 +69,7 @@ tabPanel("AUC",p(br()),
 HTML(
 "
 <p><b> Explanations  </b></p>
-AUC here is time-dependent AUC, which gives AUC at given time series.
+<p>AUC here is time-dependent AUC, which gives AUC at given time series.</p>
 <ul>
 <li>Chambless and Diao: assumed that lp and lpnew are the predictors of a Cox proportional hazards model. <i> Chambless, L. E. and G. Diao (2006). Estimation of time-dependent area under the ROC curve for long-term risk prediction. Statistics in Medicine 25, 3474–3486.</i></li>
 
