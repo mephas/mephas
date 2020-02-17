@@ -58,10 +58,10 @@ To install package from GitHub, we need R package "remotes". Package "mephas" ne
     > remotes::install_github(c("mephas/mephas.tools", "mephas/mephas"), upgrade="never")
     
 
-Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "remotes" can be replaced by package "[devtools](https://CRAN.R-project.org/package=devtools )"
+Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "remotes" can be replaced by package "[devtools](https://CRAN.R-project.org/package=devtools)"
       
 
-[Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
+[Videos of the installation process on windows](https://www.youtube.com/channel/UC7NNDN2iIjWe2NSRKT-7VgA/playlists)
 
 ------
 
@@ -100,7 +100,7 @@ Installing from ".tar.gz" file is not recommended. Users need to install two pac
 
     > if(length(not.installed.packages)) install.packages(not.installed.packages)
 
-[Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
+[Videos of the installation process on windows](https://www.youtube.com/channel/UC7NNDN2iIjWe2NSRKT-7VgA/playlists)
 
 
 ------
@@ -124,8 +124,6 @@ Then, you can open the applications as follows.
 #### All-in-one function, [see details](https://mephas.github.io/reference/mephasOpen.html)
 
     > mephasOpen()
-
-[Videos of the opening process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
 
 #### Alternatively, open each interfaces using the method names
 
