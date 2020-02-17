@@ -25,6 +25,8 @@ Two platforms are available: (1) web server and (2) R package.
 <a id="r-package-mephas-installations"></a>
 ## **R package mephas, installations**
 
+**We suggested to use the latest version of R and RStudio. The old version may not support some visualization functions**
+
 #### R package needs to be installed in R console. If you have not installed R, download R first:
 
 * R (latest version, >=3.5.0), [download here](https://www.r-project.org/)
@@ -56,7 +58,7 @@ To install package from GitHub, we need R package "remotes". Package "mephas" ne
     > remotes::install_github(c("mephas/mephas.tools", "mephas/mephas"), upgrade="never")
     
 
-Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "devtools" can be replaced by package "remotes", [see details about "devtools"](https://CRAN.R-project.org/package=devtools )
+Note: `upgrade="never"`: suppress the updates of the R packages, [see details here](https://www.rdocumentation.org/packages/remotes/versions/2.1.0/topics/install_github); package "remotes" and "devtools" shared the same `install_github` function, thus package "remotes" can be replaced by package "[devtools](https://CRAN.R-project.org/package=devtools )"
       
 
 [Videos of the installation process on windows](https://alain003.phs.osaka-u.ac.jp/mephas/installation/installation.html)
@@ -113,9 +115,8 @@ Installing from ".tar.gz" file is not recommended. Users need to install two pac
 
 #### Load the package
 
-Before open the applications, we need to load the package "mephas.tools" and "mephas"
+Before open the applications, we need to load the package "mephas" together with "mephas.tools"
 
-    > library(mephas.tools)
     > library(mephas)
 
 Then, you can open the applications as follows. 
